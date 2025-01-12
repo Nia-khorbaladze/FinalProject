@@ -110,6 +110,7 @@ final class AddWalletViewController: UIViewController {
     private func showEmailOptions() {
         addBlurEffect()
         let emailOptionsVC = EmailOptionsViewController()
+        emailOptionsVC.delegate = self
         emailOptionsVC.modalPresentationStyle = .pageSheet
         
         if let sheet = emailOptionsVC.sheetPresentationController {
@@ -139,5 +140,14 @@ final class AddWalletViewController: UIViewController {
     func removeBlurEffect() {
         blurEffectView?.removeFromSuperview()
         blurEffectView = nil
+    }
+}
+
+// MARK: - Extensions
+extension AddWalletViewController: EmailOptionsViewControllerDelegate {
+    func didTapEnterEmailManually() {
+        removeBlurEffect()
+        let credentialsInputVC = CredentialsInputViewController(state: state)
+        navigationController?.pushViewController(credentialsInputVC, animated: true)
     }
 }

@@ -8,6 +8,8 @@
 import UIKit
 
 final class EmailOptionsViewController: UIViewController {
+    weak var delegate: EmailOptionsViewControllerDelegate?
+    
     // MARK: - UI Elements
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -39,6 +41,7 @@ final class EmailOptionsViewController: UIViewController {
         button.setTitleColor(UIColor(named: AppColors.white.rawValue), for: .normal)
         button.layer.cornerRadius = 25
         button.translatesAutoresizingMaskIntoConstraints = false
+        
         return button
     }()
 
@@ -47,6 +50,8 @@ final class EmailOptionsViewController: UIViewController {
         button.setTitle("Enter Email manually", for: .normal)
         button.setTitleColor(UIColor(named: AppColors.white.rawValue), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(enterEmailTapped), for: .touchUpInside)
+
         return button
     }()
     
@@ -80,6 +85,12 @@ final class EmailOptionsViewController: UIViewController {
             enterEmailButton.topAnchor.constraint(equalTo: continueWithGoogleButton.bottomAnchor, constant: 16),
             enterEmailButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+    }
+    
+    // MARK: - Functions
+    @objc private func enterEmailTapped() {
+        delegate?.didTapEnterEmailManually()
+        dismiss(animated: true)
     }
 }
 
