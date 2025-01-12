@@ -20,7 +20,6 @@ final class CredentialsInputViewController: UIViewController {
     private var confirmPasswordError: String?
     
     private let viewModel = CredentialsInputViewModel()
-    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Elements
     private lazy var emailField: UIHostingController<InputView> = {

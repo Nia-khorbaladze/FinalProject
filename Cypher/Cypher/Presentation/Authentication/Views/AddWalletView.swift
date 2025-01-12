@@ -78,6 +78,3 @@ struct AddWalletView: View {
     }
 }
 
-#Preview {
-    AddWalletView()
-}
