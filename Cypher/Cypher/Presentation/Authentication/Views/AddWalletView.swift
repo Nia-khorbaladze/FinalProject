@@ -20,6 +20,7 @@ struct AddWalletView: View {
                     .scaledToFit()
                     .frame(width: 185, height: 185)
                     .padding(.bottom, 20)
+                
                 VStack(spacing: 8) {
                     Text("Add A Wallet")
                         .font(Fonts.bold.size(28))

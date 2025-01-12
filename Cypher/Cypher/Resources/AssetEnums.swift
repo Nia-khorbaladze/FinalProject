@@ -15,6 +15,7 @@ public enum Icons: String {
     case wand = "magicWand"
     case shield = "shield"
     case recovery = "recovery"
+    case successfulAuth = "SuccessfulAuth"
 }
 
 public enum AppColors: String {

@@ -185,7 +185,12 @@ final class CredentialsInputViewController: UIViewController {
     
     // MARK: - Functions
     private func navigate() {
-        let errors = viewModel.validateFields(email: email, password: password, confirmPassword: confirmPassword)
+        let errors = viewModel.validateFields(
+            email: email,
+            password: password,
+            confirmPassword: confirmPassword,
+            isRegistration: state == .register
+        )
         
         emailError = errors.contains(.email) ? ValidationError.email.errorDescription : nil
         emailError = errors.contains(.emailEmpty) ? ValidationError.emailEmpty.errorDescription : emailError
@@ -193,11 +198,19 @@ final class CredentialsInputViewController: UIViewController {
         passwordError = errors.contains(.password) ? ValidationError.password.errorDescription : nil
         passwordError = errors.contains(.passwordEmpty) ? ValidationError.passwordEmpty.errorDescription : passwordError
         
-        confirmPasswordError = errors.contains(.confirmPassword) ? ValidationError.confirmPassword.errorDescription : nil
-        confirmPasswordError = errors.contains(.confirmPasswordEmpty) ? ValidationError.confirmPasswordEmpty.errorDescription : confirmPasswordError
+        if state == .register {
+            confirmPasswordError = errors.contains(.confirmPassword) ? ValidationError.confirmPassword.errorDescription : nil
+            confirmPasswordError = errors.contains(.confirmPasswordEmpty) ? ValidationError.confirmPasswordEmpty.errorDescription : confirmPasswordError
+        }
         
         updateUIWithErrors()
+        
+        guard errors.isEmpty else { return }
+        
+        let successAuthViewController = SuccessfulAuthViewController(state: state)
+        navigationController?.pushViewController(successAuthViewController, animated: true)
     }
+
 
     private func updateUIWithErrors() {
         emailField.rootView.errorText = emailError

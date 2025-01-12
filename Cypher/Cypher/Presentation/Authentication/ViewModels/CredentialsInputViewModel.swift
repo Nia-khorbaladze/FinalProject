@@ -19,7 +19,7 @@ final class CredentialsInputViewModel: ObservableObject {
         return predicate.evaluate(with: password)
     }
     
-    func validateFields(email: String, password: String, confirmPassword: String) -> [ValidationError] {
+    func validateFields(email: String, password: String, confirmPassword: String?, isRegistration: Bool) -> [ValidationError] {
         var errors: [ValidationError] = []
         
         if email.isEmpty {
@@ -34,12 +34,19 @@ final class CredentialsInputViewModel: ObservableObject {
             errors.append(.password)
         }
         
-        if confirmPassword.isEmpty {
-            errors.append(.confirmPasswordEmpty)
-        } else if password != confirmPassword {
-            errors.append(.confirmPassword)
+        if isRegistration {
+            if let confirmPassword = confirmPassword {
+                if confirmPassword.isEmpty {
+                    errors.append(.confirmPasswordEmpty)
+                } else if password != confirmPassword {
+                    errors.append(.confirmPassword)
+                }
+            } else {
+                errors.append(.confirmPasswordEmpty)
+            }
         }
         
         return errors
     }
+
 }
