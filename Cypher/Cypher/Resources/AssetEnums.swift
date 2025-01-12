@@ -11,6 +11,10 @@ import SwiftUI
 
 public enum Icons: String {
     case welcomeImage = "WelcomeImage"
+    case wallet = "Wallet"
+    case wand = "magicWand"
+    case shield = "shield"
+    case recovery = "recovery"
 }
 
 public enum AppColors: String {

@@ -1,5 +1,5 @@
 //
-//  AuthenticationViewModel.swift
+//  WelcomeViewModel.swift
 //  Cypher
 //
 //  Created by Nkhorbaladze on 11.01.25.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-final class AuthenticationViewModel: ObservableObject {
+final class WelcomeViewModel {
     var state: AuthenticationState
     var isAgreementAccepted: Bool = false
     

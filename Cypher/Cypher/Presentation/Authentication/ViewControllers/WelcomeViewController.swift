@@ -10,7 +10,7 @@ import UIKit
 import SwiftUI
 
 final class WelcomeViewController: UIViewController {
-    private let viewModel: AuthenticationViewModel
+    private let viewModel: WelcomeViewModel
     
     // MARK: - UI Elements
     private lazy var welcomeImage: UIImageView = {
@@ -101,12 +101,13 @@ final class WelcomeViewController: UIViewController {
         button.titleLabel?.font = Fonts.bold.uiFont(size: 15)
         button.titleLabel?.textColor = UIColor(named: AppColors.white.rawValue)
         button.addTarget(self, action: #selector(alredyHaveAWalletButtonTapped), for: .touchUpInside)
+        button.isUserInteractionEnabled = false
 
         return button
     }()
     
     // MARK: - Initializers
-    init(viewModel: AuthenticationViewModel = AuthenticationViewModel(state: .login)) {
+    init(viewModel: WelcomeViewModel = WelcomeViewModel(state: .login)) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -205,16 +206,21 @@ final class WelcomeViewController: UIViewController {
     
     @objc private func CreateWalletButtonTapped() {
         viewModel.updateState(to: .register)
+        let vc = AddWalletViewController(state: .register)
+        navigationController?.pushViewController(vc, animated: true)
     }
-    
+
     @objc private func alredyHaveAWalletButtonTapped() {
         viewModel.updateState(to: .login)
+        let vc = AddWalletViewController(state: .login)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func agreementButtonTapped() {
         viewModel.toggleAgreement()
         updateAgreementButtonAppearance()
         updateCreateWalletButton()
+        alredyHaveAWalletButton.isUserInteractionEnabled = true
     }
     
     private func updateAgreementButtonAppearance() {
