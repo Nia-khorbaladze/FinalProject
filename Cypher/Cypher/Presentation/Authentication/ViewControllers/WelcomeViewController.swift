@@ -10,6 +10,7 @@ import UIKit
 import SwiftUI
 
 final class WelcomeViewController: UIViewController {
+    private let viewModel: AuthenticationViewModel
     
     // MARK: - UI Elements
     private lazy var welcomeImage: UIImageView = {
@@ -54,12 +55,13 @@ final class WelcomeViewController: UIViewController {
     }()
     
     private lazy var agreementButton: UIButton = {
-        let button = UIButton(type: .system)
+        let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "circle"), for: .normal)
         button.heightAnchor.constraint(equalToConstant: 30).isActive = true
         button.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        
+        button.addTarget(self, action: #selector(agreementButtonTapped), for: .touchUpInside)
+
         return button
     }()
     
@@ -79,7 +81,7 @@ final class WelcomeViewController: UIViewController {
         return label
     }()
     
-    private lazy var CreateWalletButton: UIHostingController<PrimaryButton> = {
+    private lazy var createWalletButton: UIHostingController<PrimaryButton> = {
         let hostingController = UIHostingController(
             rootView: PrimaryButton(
                 title: "Create a new wallet",
@@ -98,9 +100,20 @@ final class WelcomeViewController: UIViewController {
         button.setTitle("I already have a wallet", for: .normal)
         button.titleLabel?.font = Fonts.bold.uiFont(size: 15)
         button.titleLabel?.textColor = UIColor(named: AppColors.white.rawValue)
-        
+        button.addTarget(self, action: #selector(alredyHaveAWalletButtonTapped), for: .touchUpInside)
+
         return button
     }()
+    
+    // MARK: - Initializers
+    init(viewModel: AuthenticationViewModel = AuthenticationViewModel(state: .login)) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -135,9 +148,9 @@ final class WelcomeViewController: UIViewController {
         view.addSubview(termsOfAgreementContainer)
         termsOfAgreementContainer.addSubview(agreementButton)
         termsOfAgreementContainer.addSubview(termsLabel)
-        addChild(CreateWalletButton)
-        termsOfAgreementContainer.addSubview(CreateWalletButton.view)
-        CreateWalletButton.didMove(toParent: self)
+        addChild(createWalletButton)
+        view.addSubview(createWalletButton.view)
+        createWalletButton.didMove(toParent: self)
         view.addSubview(alredyHaveAWalletButton)
     }
     
@@ -174,12 +187,12 @@ final class WelcomeViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            CreateWalletButton.view.topAnchor.constraint(equalTo: termsOfAgreementContainer.bottomAnchor, constant: 20),
-            CreateWalletButton.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            createWalletButton.view.topAnchor.constraint(equalTo: termsOfAgreementContainer.bottomAnchor, constant: 20),
+            createWalletButton.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
         NSLayoutConstraint.activate([
-            alredyHaveAWalletButton.topAnchor.constraint(equalTo: CreateWalletButton.view.bottomAnchor, constant: 15),
+            alredyHaveAWalletButton.topAnchor.constraint(equalTo: createWalletButton.view.bottomAnchor, constant: 15),
             alredyHaveAWalletButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
@@ -190,7 +203,31 @@ final class WelcomeViewController: UIViewController {
         navigationController?.present(termsViewController, animated: true)
     }
     
-    private func CreateWalletButtonTapped() {
-       
+    @objc private func CreateWalletButtonTapped() {
+        viewModel.updateState(to: .register)
     }
+    
+    @objc private func alredyHaveAWalletButtonTapped() {
+        viewModel.updateState(to: .login)
+    }
+    
+    @objc private func agreementButtonTapped() {
+        viewModel.toggleAgreement()
+        updateAgreementButtonAppearance()
+        updateCreateWalletButton()
+    }
+    
+    private func updateAgreementButtonAppearance() {
+        let imageName = viewModel.isAgreementAccepted ? "checkmark.circle.fill" : "circle"
+        agreementButton.setImage(UIImage(systemName: imageName), for: .normal)
+    }
+    
+    private func updateCreateWalletButton() {
+        createWalletButton.rootView = PrimaryButton(
+            title: "Create a new wallet",
+            isActive: viewModel.isCreateWalletButtonActive,
+            action: { self.CreateWalletButtonTapped() }
+        )
+    }
+    
 }
