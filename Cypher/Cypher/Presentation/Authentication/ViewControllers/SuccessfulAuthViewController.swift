@@ -29,7 +29,7 @@ final class SuccessfulAuthViewController: UIViewController {
             rootView: PrimaryButton(
                 title: "Get Started",
                 isActive: true,
-                action: {  }
+                action: { self.navigate() }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -76,7 +76,12 @@ final class SuccessfulAuthViewController: UIViewController {
             authView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
             authView.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             continueButton.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            continueButton.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
+            continueButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
+    }
+    
+    private func navigate() {
+        let vc = HomePageViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
