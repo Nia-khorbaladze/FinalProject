@@ -81,7 +81,7 @@ final class CredentialsInputViewController: UIViewController {
             rootView: PrimaryButton(
                 title: "Continue",
                 isActive: true,
-                action: { self.continueButtonTapped() }
+                action: { self.authenticate() }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -104,7 +104,9 @@ final class CredentialsInputViewController: UIViewController {
     init(state: AuthenticationState) {
         self.state = state
         let authRepository = FirebaseAuthRepository()
-        self.viewModel = CredentialsInputViewModel(authRepository: authRepository)
+        let loginUseCase = LoginUseCase(repository: authRepository)
+        let registerUseCase = RegisterUseCase(repository: authRepository)
+        self.viewModel = CredentialsInputViewModel(loginUseCase: loginUseCase, registerUseCase: registerUseCase)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -185,66 +187,20 @@ final class CredentialsInputViewController: UIViewController {
     }
     
     // MARK: - Functions
-    private func navigate() {
-        let errors = viewModel.validateFields(
-            email: email,
-            password: password,
-            confirmPassword: confirmPassword,
-            isRegistration: state == .register
-        )
-        
-        emailError = errors.contains(.email) ? ValidationError.email.errorDescription : nil
-        emailError = errors.contains(.emailEmpty) ? ValidationError.emailEmpty.errorDescription : emailError
-        
-        passwordError = errors.contains(.password) ? ValidationError.password.errorDescription : nil
-        passwordError = errors.contains(.passwordEmpty) ? ValidationError.passwordEmpty.errorDescription : passwordError
-        
-        if state == .register {
-            confirmPasswordError = errors.contains(.confirmPassword) ? ValidationError.confirmPassword.errorDescription : nil
-            confirmPasswordError = errors.contains(.confirmPasswordEmpty) ? ValidationError.confirmPasswordEmpty.errorDescription : confirmPasswordError
-        }
-        
-        updateUIWithErrors()
-
-        guard errors.isEmpty else { return }
-        
-        let successAuthViewController = SuccessfulAuthViewController(state: state)
-        navigationController?.pushViewController(successAuthViewController, animated: true)
-    }
-    
-    private func validateAndNavigate() {
-        let confirmPasswordForValidation: String? = state == .register ? confirmPassword : nil
-
-        let errors = viewModel.validateFields(
-            email: email,
-            password: password,
-            confirmPassword: confirmPasswordForValidation,
-            isRegistration: state == .register
-        )
-
+    private func validateFields(_ errors: [ValidationError]) {
         emailError = errors.contains(.email) || errors.contains(.emailEmpty)
-            ? errors.contains(.email)
-                ? ValidationError.email.errorDescription
-                : ValidationError.emailEmpty.errorDescription
-            : nil
-
+        ? errors.contains(.email) ? ValidationError.email.errorDescription : ValidationError.emailEmpty.errorDescription
+        : nil
+        
         passwordError = errors.contains(.password) || errors.contains(.passwordEmpty)
-            ? errors.contains(.password)
-                ? ValidationError.password.errorDescription
-                : ValidationError.passwordEmpty.errorDescription
-            : nil
-
+        ? errors.contains(.password) ? ValidationError.password.errorDescription : ValidationError.passwordEmpty.errorDescription
+        : nil
+        
         confirmPasswordError = state == .register && (errors.contains(.confirmPassword) || errors.contains(.confirmPasswordEmpty))
-            ? errors.contains(.confirmPassword)
-                ? ValidationError.confirmPassword.errorDescription
-                : ValidationError.confirmPasswordEmpty.errorDescription
-            : nil
-
+        ? errors.contains(.confirmPassword) ? ValidationError.confirmPassword.errorDescription : ValidationError.confirmPasswordEmpty.errorDescription
+        : nil
+        
         updateUIWithErrors()
-
-        guard errors.isEmpty else { return }
-
-        authenticate()
     }
     
     private func authenticate() {
@@ -260,8 +216,10 @@ final class CredentialsInputViewController: UIViewController {
                 switch result {
                 case .success(let user):
                     self?.navigateToSuccessScreen(for: user)
-                case .failure(let error):
-                    self?.handleAuthenticationError(error)
+                case .failure(let errors):
+                    if let validationErrors = errors as? ValidationErrors {
+                        self?.validateFields(validationErrors.errors)
+                    }
                 }
             }
         }
@@ -272,17 +230,9 @@ final class CredentialsInputViewController: UIViewController {
         navigationController?.pushViewController(successAuthViewController, animated: true)
     }
 
-    private func handleAuthenticationError(_ error: Error) {
-        print("Error")
-    }
-
     private func updateUIWithErrors() {
         emailField.rootView.errorText = emailError
         passwordField.rootView.errorText = passwordError
         confirmPasswordField?.rootView.errorText = confirmPasswordError
-    }
-
-    @objc private func continueButtonTapped() {
-        validateAndNavigate()
     }
 }

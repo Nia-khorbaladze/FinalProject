@@ -13,7 +13,7 @@ final class FirebaseAuthRepository: AuthRepository {
             if let error = error {
                 completion(.failure(error))
             } else if let result = authResult {
-                let user = User(id: result.user.uid, email: result.user.email ?? "")
+                let user = User(id: result.user.uid, email: result.user.email ?? "", isNewUser: false)
                 completion(.success(user))
             }
         }
@@ -24,10 +24,11 @@ final class FirebaseAuthRepository: AuthRepository {
             if let error = error {
                 completion(.failure(error))
             } else if let result = authResult {
-                let user = User(id: result.user.uid, email: result.user.email ?? "")
+                let user = User(id: result.user.uid, email: result.user.email ?? "", isNewUser: true)
                 completion(.success(user))
             }
         }
     }
 }
+
 
