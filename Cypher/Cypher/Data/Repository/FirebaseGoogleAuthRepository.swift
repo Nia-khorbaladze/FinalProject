@@ -38,7 +38,11 @@ final class FirebaseGoogleAuthRepository: GoogleAuthRepository {
                 } else if let authResult = authResult {
                     let isNewUser = authResult.additionalUserInfo?.isNewUser ?? false
                     let user = User(id: authResult.user.uid, email: authResult.user.email ?? "", isNewUser: isNewUser)
-                    completion(.success(user))
+                    if KeychainManager.shared.save(key: "userId", value: authResult.user.uid) {
+                        completion(.success(user))
+                    } else {
+                        completion(.failure(AuthError.keychainSaveFailed))
+                    }
                 }
             }
         }

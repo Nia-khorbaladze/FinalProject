@@ -14,7 +14,11 @@ final class FirebaseAuthRepository: AuthRepository {
                 completion(.failure(error))
             } else if let result = authResult {
                 let user = User(id: result.user.uid, email: result.user.email ?? "", isNewUser: false)
-                completion(.success(user))
+                if KeychainManager.shared.save(key: "userId", value: result.user.uid) {
+                    completion(.success(user))
+                } else {
+                    completion(.failure(AuthError.keychainSaveFailed))
+                }
             }
         }
     }
@@ -30,7 +34,11 @@ final class FirebaseAuthRepository: AuthRepository {
                 }
             } else if let result = authResult {
                 let user = User(id: result.user.uid, email: result.user.email ?? "", isNewUser: true)
-                completion(.success(user))
+                if KeychainManager.shared.save(key: "userId", value: result.user.uid) {
+                    completion(.success(user))
+                } else {
+                    completion(.failure(AuthError.keychainSaveFailed))
+                }
             }
         }
     }

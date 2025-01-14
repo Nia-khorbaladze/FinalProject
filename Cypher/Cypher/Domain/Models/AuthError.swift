@@ -11,6 +11,7 @@ enum AuthError: Error {
     case noPresentingViewController
     case tokenNotFound
     case emailAlreadyInUse
+    case keychainSaveFailed
     case unknown(Error)
 
     var errorDescription: String? {
@@ -21,9 +22,10 @@ enum AuthError: Error {
             return "Authentication token was not found."
         case .emailAlreadyInUse:
             return "This email is already in use. Please log in or use a different email."
+        case .keychainSaveFailed:
+            return "Failed to save data in the Keychain."
         case .unknown(let error):
             return error.localizedDescription
         }
     }
 }
-
