@@ -77,5 +77,4 @@ final class CredentialsInputViewModel: ObservableObject {
             loginUseCase.execute(email: email, password: password, completion: completion)
         }
     }
-
 }

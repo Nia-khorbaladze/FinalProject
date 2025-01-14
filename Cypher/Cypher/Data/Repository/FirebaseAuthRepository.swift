@@ -22,7 +22,12 @@ final class FirebaseAuthRepository: AuthRepository {
     func register(email: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
             if let error = error {
-                completion(.failure(error))
+                if let authError = error as NSError?,
+                   authError.code == AuthErrorCode.emailAlreadyInUse.rawValue {
+                    completion(.failure(AuthError.emailAlreadyInUse))
+                } else {
+                    completion(.failure(AuthError.unknown(error)))
+                }
             } else if let result = authResult {
                 let user = User(id: result.user.uid, email: result.user.email ?? "", isNewUser: true)
                 completion(.success(user))
