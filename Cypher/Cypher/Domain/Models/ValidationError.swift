@@ -32,3 +32,7 @@ enum ValidationError: LocalizedError {
         }
     }
 }
+
+struct ValidationErrors: Error {
+    let errors: [ValidationError]
+}

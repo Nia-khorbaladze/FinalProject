@@ -38,9 +38,9 @@ struct HomePageTopSectionView: View {
                 }
             }
             .padding(.horizontal, 12)
-            .padding(.top, 50)
-            .background(Color.clear)
+            .padding(.top, 40)
         }
+        .background(Color.clear)
     }
 }
 
