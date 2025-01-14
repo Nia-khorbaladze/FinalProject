@@ -16,6 +16,10 @@ public enum Icons: String {
     case shield = "shield"
     case recovery = "recovery"
     case successfulAuth = "SuccessfulAuth"
+    case scan = "scan"
+    case swap = "swap"
+    case send = "send"
+    case buy = "buy"
 }
 
 public enum AppColors: String {
@@ -24,6 +28,9 @@ public enum AppColors: String {
     case lightGrey = "LightGreyText"
     case accent = "AccentColor"
     case inactiveAccent = "InactiveAccentColor"
+    case green = "AppGreen"
+    case red = "AppRed"
+    case greyBlue = "GreyBlue"
 }
 
 public enum Fonts: String {
