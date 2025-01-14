@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import GoogleSignIn
 
 final class EmailOptionsViewController: UIViewController {
     weak var delegate: EmailOptionsViewControllerDelegate?
+    private let viewModel: GoogleSignInViewModel
     
     // MARK: - UI Elements
     private lazy var titleLabel: UILabel = {
@@ -41,6 +43,7 @@ final class EmailOptionsViewController: UIViewController {
         button.setTitleColor(UIColor(named: AppColors.white.rawValue), for: .normal)
         button.layer.cornerRadius = 25
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(continueWithGoogleTapped), for: .touchUpInside)
         
         return button
     }()
@@ -54,6 +57,17 @@ final class EmailOptionsViewController: UIViewController {
 
         return button
     }()
+    // MARK: - Initializers
+    init() {
+        let googleAuthRepository = FirebaseGoogleAuthRepository() 
+        let googleSignInUseCase = GoogleSignInUseCase(repository: googleAuthRepository)
+        self.viewModel = GoogleSignInViewModel(googleSignInUseCase: googleSignInUseCase)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -91,6 +105,31 @@ final class EmailOptionsViewController: UIViewController {
     @objc private func enterEmailTapped() {
         delegate?.didTapEnterEmailManually()
         dismiss(animated: true)
+    }
+    
+    @objc private func continueWithGoogleTapped() {
+        viewModel.signInWithGoogle { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let user):
+                    let state: AuthenticationState = user.isNewUser ? .register : .login
+                    self?.navigateToSuccessScreen(state: state)
+                case .failure(let error):
+                    self?.showErrorAlert(error: error)
+                }
+            }
+        }
+    }
+    
+    private func navigateToSuccessScreen(state: AuthenticationState) {
+        let successAuthViewController = SuccessfulAuthViewController(state: state)
+        navigationController?.pushViewController(successAuthViewController, animated: true)
+    }
+    
+    private func showErrorAlert(error: Error) {
+        let alert = UIAlertController(title: "Error", message: "Something went wrong. Try again later.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 

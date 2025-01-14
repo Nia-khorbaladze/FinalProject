@@ -7,7 +7,7 @@
 
 import UIKit
 import SwiftUI
-import Combine
+import FirebaseAuth
 
 final class CredentialsInputViewController: UIViewController {
     private let state: AuthenticationState
@@ -19,7 +19,7 @@ final class CredentialsInputViewController: UIViewController {
     private var passwordError: String?
     private var confirmPasswordError: String?
     
-    private let viewModel = CredentialsInputViewModel()
+    private let viewModel: CredentialsInputViewModel
     
     // MARK: - UI Elements
     private lazy var emailField: UIHostingController<InputView> = {
@@ -81,7 +81,7 @@ final class CredentialsInputViewController: UIViewController {
             rootView: PrimaryButton(
                 title: "Continue",
                 isActive: true,
-                action: { self.navigate() }
+                action: { self.authenticate() }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -103,6 +103,10 @@ final class CredentialsInputViewController: UIViewController {
     // MARK: - Initializers
     init(state: AuthenticationState) {
         self.state = state
+        let authRepository = FirebaseAuthRepository()
+        let loginUseCase = LoginUseCase(repository: authRepository)
+        let registerUseCase = RegisterUseCase(repository: authRepository)
+        self.viewModel = CredentialsInputViewModel(loginUseCase: loginUseCase, registerUseCase: registerUseCase)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -183,38 +187,68 @@ final class CredentialsInputViewController: UIViewController {
     }
     
     // MARK: - Functions
-    private func navigate() {
-        let errors = viewModel.validateFields(
-            email: email,
-            password: password,
-            confirmPassword: confirmPassword,
-            isRegistration: state == .register
-        )
+    private func validateFields(_ errors: [ValidationError]) {
+        emailError = errors.contains(.email) || errors.contains(.emailEmpty)
+        ? errors.contains(.email) ? ValidationError.email.errorDescription : ValidationError.emailEmpty.errorDescription
+        : nil
         
-        emailError = errors.contains(.email) ? ValidationError.email.errorDescription : nil
-        emailError = errors.contains(.emailEmpty) ? ValidationError.emailEmpty.errorDescription : emailError
+        passwordError = errors.contains(.password) || errors.contains(.passwordEmpty)
+        ? errors.contains(.password) ? ValidationError.password.errorDescription : ValidationError.passwordEmpty.errorDescription
+        : nil
         
-        passwordError = errors.contains(.password) ? ValidationError.password.errorDescription : nil
-        passwordError = errors.contains(.passwordEmpty) ? ValidationError.passwordEmpty.errorDescription : passwordError
-        
-        if state == .register {
-            confirmPasswordError = errors.contains(.confirmPassword) ? ValidationError.confirmPassword.errorDescription : nil
-            confirmPasswordError = errors.contains(.confirmPasswordEmpty) ? ValidationError.confirmPasswordEmpty.errorDescription : confirmPasswordError
-        }
+        confirmPasswordError = state == .register && (errors.contains(.confirmPassword) || errors.contains(.confirmPasswordEmpty))
+        ? errors.contains(.confirmPassword) ? ValidationError.confirmPassword.errorDescription : ValidationError.confirmPasswordEmpty.errorDescription
+        : nil
         
         updateUIWithErrors()
+    }
+    
+    private func authenticate() {
+        let confirmPasswordForValidation: String? = state == .register ? confirmPassword : nil
         
-        guard errors.isEmpty else { return }
-        
-        let successAuthViewController = SuccessfulAuthViewController(state: state)
+        viewModel.authenticate(
+            email: email,
+            password: password,
+            confirmPassword: confirmPasswordForValidation,
+            isRegistration: state == .register
+        ) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let user):
+                    self?.navigateToSuccessScreen(for: user)
+                case .failure(let error):
+                    if case AuthError.emailAlreadyInUse = error {
+                        self?.showErrorAlert(error: error)
+                    } else if let validationErrors = error as? ValidationErrors {
+                        self?.validateFields(validationErrors.errors)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func navigateToSuccessScreen(for user: User) {
+        let successAuthViewController = SuccessfulAuthViewController(state: self.state)
         navigationController?.pushViewController(successAuthViewController, animated: true)
     }
-
 
     private func updateUIWithErrors() {
         emailField.rootView.errorText = emailError
         passwordField.rootView.errorText = passwordError
         confirmPasswordField?.rootView.errorText = confirmPasswordError
     }
+    
+    private func showErrorAlert(error: Error) {
+        let errorMessage: String
 
+        if let authError = error as? AuthError {
+            errorMessage = authError.errorDescription ?? "Something went wrong. Try again later."
+        } else {
+            errorMessage = "Something went wrong. Try again later."
+        }
+
+        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
 }

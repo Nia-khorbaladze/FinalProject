@@ -7,7 +7,15 @@
 
 import Foundation
 
-final class CredentialsInputViewModel: ObservableObject {    
+final class CredentialsInputViewModel: ObservableObject {
+    private let loginUseCase: LoginUseCase
+    private let registerUseCase: RegisterUseCase
+    
+    init(loginUseCase: LoginUseCase, registerUseCase: RegisterUseCase) {
+        self.loginUseCase = loginUseCase
+        self.registerUseCase = registerUseCase
+    }
+    
     func validateEmail(_ email: String) -> Bool {
         let pattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         return NSPredicate(format: "SELF MATCHES %@", pattern).evaluate(with: email)
@@ -48,5 +56,25 @@ final class CredentialsInputViewModel: ObservableObject {
         
         return errors
     }
+    
+    func authenticate(
+        email: String,
+        password: String,
+        confirmPassword: String?,
+        isRegistration: Bool,
+        completion: @escaping (Result<User, Error>) -> Void
+    ) {
+        let errors = validateFields(email: email, password: password, confirmPassword: confirmPassword, isRegistration: isRegistration)
 
+        guard errors.isEmpty else {
+            completion(.failure(ValidationErrors(errors: errors)))
+            return
+        }
+
+        if isRegistration {
+            registerUseCase.execute(email: email, password: password, completion: completion)
+        } else {
+            loginUseCase.execute(email: email, password: password, completion: completion)
+        }
+    }
 }
