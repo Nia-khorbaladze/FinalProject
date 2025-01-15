@@ -81,7 +81,7 @@ final class SuccessfulAuthViewController: UIViewController {
     }
     
     private func navigate() {
-        let vc = HomePageViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        let factory = ViewControllerFactory()
+        navigationController?.pushViewController(factory.makeHomePageViewController(), animated: true)
     }
 }

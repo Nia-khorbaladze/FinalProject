@@ -15,14 +15,16 @@ class TabBarController: UITabBarController {
     }
     
     private func setupTabs() {
+        let factory = ViewControllerFactory()
+        
         let home = createTab(iconActive: TabBarIcons.homeSelected.rawValue,
                            iconInactive: TabBarIcons.home.rawValue,
-                           vc: HomePageViewController(),
+                             vc: factory.makeHomePageViewController(),
                            identifier: "homeTab")
         
         let favorites = createTab(iconActive: TabBarIcons.favoritesSelected.rawValue,
                                 iconInactive: TabBarIcons.favorites.rawValue,
-                                vc: FavoritesPageViewController(),
+                                  vc: factory.makeFavoritesPageViewController(),
                                 identifier: "favoritesTab")
         
         let swap = createCentralTab(vc: SwapPageViewController(),
