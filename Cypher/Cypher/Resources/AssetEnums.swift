@@ -47,3 +47,15 @@ public enum Fonts: String {
         UIFont(name: self.rawValue, size: size) ?? UIFont.systemFont(ofSize: size)
     }
 }
+
+public enum TabBarIcons: String {
+    case home = "home"
+    case homeSelected = "homeSelected"
+    case favorites = "favorites"
+    case favoritesSelected = "favoritesSelected"
+    case portfolio = "portfolio"
+    case portfolioSelected = "portfolioSelected"
+    case search = "search"
+    case searchSelected = "searchSelected"
+    case swap = "swapTabBar"
+}

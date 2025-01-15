@@ -20,8 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: scene)
         
         if isLoggedIn {
-            let homePageViewController = HomePageViewController()
-            window?.rootViewController = UINavigationController(rootViewController: homePageViewController)
+            let tabBarController = TabBarController()
+            window?.rootViewController = tabBarController
         } else {
             let welcomeViewController = WelcomeViewController()
             window?.rootViewController = UINavigationController(rootViewController: welcomeViewController)
