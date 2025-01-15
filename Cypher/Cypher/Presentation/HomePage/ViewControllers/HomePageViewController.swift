@@ -27,6 +27,15 @@ final class HomePageViewController: UIViewController {
         return hostingController
     }()
     
+    private lazy var profilePopupButtonView: UIHostingController<ProfilePopupButtonView> = {
+        let hostingController = UIHostingController(
+            rootView: ProfilePopupButtonView(action: openProfilePopup)
+        )
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.view.backgroundColor = .clear
+        return hostingController
+    }()
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,6 +70,10 @@ final class HomePageViewController: UIViewController {
         addChild(trendingCoinsView)
         contentView.addSubview(trendingCoinsView.view)
         trendingCoinsView.didMove(toParent: self)
+        
+        addChild(profilePopupButtonView)
+        contentView.addSubview(profilePopupButtonView.view)
+        profilePopupButtonView.didMove(toParent: self)
     }
     
     private func setupConstraints() {
@@ -80,7 +93,13 @@ final class HomePageViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            homePageTopView.view.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            profilePopupButtonView.view.topAnchor.constraint(equalTo: contentView.topAnchor),
+            profilePopupButtonView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            profilePopupButtonView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            homePageTopView.view.topAnchor.constraint(equalTo: profilePopupButtonView.view.bottomAnchor, constant: 20),
             homePageTopView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             homePageTopView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
         ])
@@ -91,5 +110,10 @@ final class HomePageViewController: UIViewController {
             trendingCoinsView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             trendingCoinsView.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor) 
         ])
+    }
+    
+    @objc private func openProfilePopup() {
+        let profilePopup = ProfilePopupViewController()
+        navigationController?.present(profilePopup, animated: true)
     }
 }
