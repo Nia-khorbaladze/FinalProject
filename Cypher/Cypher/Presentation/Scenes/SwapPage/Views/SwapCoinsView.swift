@@ -47,7 +47,7 @@ struct SwapCoinsView: View {
                 SwapRow(
                     label: "You Receive",
                     selectedCoin: $selectedReceiveCoin,
-                    amount: .constant("0"),
+                    amount: $viewModel.receiveAmount, 
                     showCoinList: $showCoinListForReceive
                 )
                 .onTapGesture {
@@ -82,6 +82,7 @@ struct SwapCoinsView: View {
         selectedReceiveCoin = tempCoin
         
         let tempAmount = viewModel.payAmount
-        viewModel.payAmount = "0"
+        viewModel.payAmount = viewModel.receiveAmount
+        viewModel.receiveAmount = tempAmount
     }
 }

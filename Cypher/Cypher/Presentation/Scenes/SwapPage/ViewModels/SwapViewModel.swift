@@ -10,6 +10,7 @@ import Combine
 
 class SwapViewModel: ObservableObject {
     @Published var isButtonActive: Bool = false
+    @Published var receiveAmount: String = "0"
     @Published var payAmount: String = "0" {
         didSet {
             isButtonActive = (Double(payAmount) ?? 0) > 0

@@ -8,12 +8,6 @@
 import SwiftUI
 
 func trendingCoinsView(for coins: [Coin], onCoinTap: @escaping (Coin) -> Void) -> some View {
-    VStack(alignment: .leading) {
-        Text("Trending Coins")
-            .font(Fonts.bold.size(24))
-            .foregroundStyle(Color(AppColors.white.rawValue))
-            .padding(.leading, 20)
-        
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(coins) { coin in
@@ -55,7 +49,6 @@ func trendingCoinsView(for coins: [Coin], onCoinTap: @escaping (Coin) -> Void) -
         }
         .frame(maxWidth: .infinity, minHeight: CGFloat(coins.count) * 50)
         .padding(.horizontal, 20)
-    }
     .background(Color(AppColors.backgroundColor.rawValue))
 }
 
