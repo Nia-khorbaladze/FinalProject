@@ -18,10 +18,16 @@ struct TrendingCoinsListView: View {
     ]
 
     var body: some View {
-        trendingCoinsView(for: trendingCoins) { coin in
-            print("..")
+        VStack(alignment: .leading) {
+            Text("Trending Coins")
+                .font(Fonts.bold.size(24))
+                .foregroundStyle(Color(AppColors.white.rawValue))
+                .padding(.leading, 20)
+            trendingCoinsView(for: trendingCoins) { coin in
+                print("..")
+            }
+            .frame(maxWidth: .infinity, minHeight: 400)
+            .background(Color.clear)
         }
-        .frame(maxWidth: .infinity, minHeight: 400)
-        .background(Color.clear)
     }
 }

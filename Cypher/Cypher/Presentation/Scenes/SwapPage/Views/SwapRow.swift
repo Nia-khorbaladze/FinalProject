@@ -20,10 +20,16 @@ struct SwapRow: View {
                     .font(Fonts.semiBold.size(13))
                     .foregroundColor(Color(AppColors.lightGrey.rawValue))
                 
-                TextField("0", text: $amount)
-                    .font(Fonts.semiBold.size(32))
-                    .keyboardType(.decimalPad)
-                    .foregroundColor(Color(AppColors.lightGrey.rawValue))
+                TextField(
+                    "",
+                    text: $amount,
+                    prompt: Text("0")
+                        .font(Fonts.semiBold.size(32))
+                        .foregroundColor(Color(AppColors.lightGrey.rawValue).opacity(0.5))
+                )
+                .font(Fonts.semiBold.size(32))
+                .keyboardType(.decimalPad)
+                .foregroundColor(Color(AppColors.lightGrey.rawValue))
             }
             Spacer()
             VStack {
