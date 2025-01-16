@@ -15,3 +15,12 @@ struct Coin: Identifiable {
     let changePercentage: Double
     let icon: String 
 }
+
+struct OwnedCoin {
+    let name: String
+    let symbol: String
+    let amount: String
+    let amountInDollar: Double
+    let changePercentage: Double
+    let icon: String
+}
