@@ -21,7 +21,7 @@ struct TrendingCoinsListView: View {
         trendingCoinsView(for: trendingCoins) { coin in
             print("..")
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, minHeight: 400)
         .background(Color.clear)
     }
 }

@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct SwapCoinsView: View {
+    @ObservedObject var viewModel: SwapViewModel
+
     @State private var selectedPayCoin: Coin = Coin(name: "Solana", symbol: "SOL", price: 0.0, changePercentage: 0.0, icon: "s.circle")
     @State private var selectedReceiveCoin: Coin = Coin(name: "USDC", symbol: "USDC", price: 0.0, changePercentage: 0.0, icon: "circle.fill")
-    @State private var payAmount: String = "0"
-    @State private var receiveAmount: String = "0"
     @State private var showCoinListForPay = false
     @State private var showCoinListForReceive = false
     
@@ -35,7 +35,7 @@ struct SwapCoinsView: View {
                 SwapRow(
                     label: "You Pay",
                     selectedCoin: $selectedPayCoin,
-                    amount: $payAmount,
+                    amount: $viewModel.payAmount,
                     showCoinList: $showCoinListForPay
                 )
                 .onTapGesture {
@@ -56,7 +56,7 @@ struct SwapCoinsView: View {
                 SwapRow(
                     label: "You Receive",
                     selectedCoin: $selectedReceiveCoin,
-                    amount: $receiveAmount,
+                    amount: .constant("0"),
                     showCoinList: $showCoinListForReceive
                 )
                 .onTapGesture {
@@ -90,13 +90,7 @@ struct SwapCoinsView: View {
         selectedPayCoin = selectedReceiveCoin
         selectedReceiveCoin = tempCoin
         
-        let tempAmount = payAmount
-        payAmount = receiveAmount
-        receiveAmount = tempAmount
+        let tempAmount = viewModel.payAmount
+        viewModel.payAmount = "0"
     }
-    
-}
-
-#Preview {
-    SwapCoinsView()
 }

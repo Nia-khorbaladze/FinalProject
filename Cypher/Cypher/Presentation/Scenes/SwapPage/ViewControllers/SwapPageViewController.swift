@@ -7,11 +7,16 @@
 
 import UIKit
 import SwiftUI
+import Combine
 
 final class SwapPageViewController: UIViewController {
+    private let viewModel: SwapViewModel
+    private var cancellables = Set<AnyCancellable>()
+
+    // MARK: - UI Elements
     private lazy var swapCoinsView: UIHostingController<SwapCoinsView> = {
         let hostingController = UIHostingController(
-            rootView: SwapCoinsView()
+            rootView: SwapCoinsView(viewModel: viewModel)
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
@@ -21,6 +26,19 @@ final class SwapPageViewController: UIViewController {
     private lazy var trendingCoinsList: UIHostingController<TrendingCoinsListView> = {
         let hostingController = UIHostingController(
             rootView: TrendingCoinsListView()
+        )
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.view.backgroundColor = .clear
+        return hostingController
+    }()
+    
+    private lazy var swapButton: UIHostingController<PrimaryButton> = {
+        let hostingController = UIHostingController(
+            rootView: PrimaryButton(
+                title: "Swap",
+                isActive: viewModel.isButtonActive,
+                action: { }
+            )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
@@ -39,15 +57,28 @@ final class SwapPageViewController: UIViewController {
         return view
     }()
     
+    // MARK: - Initializers
+    init(viewModel: SwapViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
     
+    // MARK: - UI Setup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()
         setupConstraints()
+        setupBindings()
     }
     
     private func setupUI() {
@@ -61,6 +92,10 @@ final class SwapPageViewController: UIViewController {
         addChild(trendingCoinsList)
         contentView.addSubview(trendingCoinsList.view)
         trendingCoinsList.didMove(toParent: self)
+        
+        addChild(swapButton)
+        contentView.addSubview(swapButton.view)
+        swapButton.didMove(toParent: self)
     }
     
     private func setupConstraints() {
@@ -84,10 +119,29 @@ final class SwapPageViewController: UIViewController {
             swapCoinsView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             swapCoinsView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
-            trendingCoinsList.view.topAnchor.constraint(equalTo: swapCoinsView.view.bottomAnchor),
+            swapButton.view.topAnchor.constraint(equalTo: swapCoinsView.view.bottomAnchor),
+            swapButton.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            swapButton.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            
+            trendingCoinsList.view.topAnchor.constraint(equalTo: swapButton.view.bottomAnchor, constant: 30),
             trendingCoinsList.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             trendingCoinsList.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             trendingCoinsList.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+    }
+    
+    // MARK: - Functions
+    private func setupBindings() {
+        viewModel.$isButtonActive
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isActive in
+                guard let self = self else { return }
+                self.swapButton.rootView = PrimaryButton(
+                    title: "Swap",
+                    isActive: isActive,
+                    action: { }
+                )
+            }
+            .store(in: &cancellables)
     }
 }
