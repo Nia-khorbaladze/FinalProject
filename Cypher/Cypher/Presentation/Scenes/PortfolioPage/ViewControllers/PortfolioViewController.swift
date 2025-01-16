@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 
 final class PortfolioViewController: UIViewController {
+    // MARK: - UI Elements
     private lazy var emptyPortfolioView: UIHostingController<EmptyPortfolioView> = {
         let hostingController = UIHostingController(
             rootView: EmptyPortfolioView()
@@ -18,11 +19,13 @@ final class PortfolioViewController: UIViewController {
         return hostingController
     }()
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
     
+    // MARK: - UI Setup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()

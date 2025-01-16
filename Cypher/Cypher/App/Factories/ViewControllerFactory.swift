@@ -17,4 +17,9 @@ final class ViewControllerFactory {
         let viewModel = HomePageViewModel()
         return FavoritesPageViewController(viewModel: viewModel)
     }
+    
+    func makeSwapPageViewController() -> UIViewController {
+        let viewModel = SwapViewModel()
+        return SwapPageViewController(viewModel: viewModel)
+    }
 }

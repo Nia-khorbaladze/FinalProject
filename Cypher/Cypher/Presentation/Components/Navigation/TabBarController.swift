@@ -27,8 +27,7 @@ class TabBarController: UITabBarController {
                                   vc: factory.makeFavoritesPageViewController(),
                                 identifier: "favoritesTab")
         
-        let swap = createCentralTab(vc: SwapPageViewController(),
-                                  identifier: "swapTab")
+        let swap = createCentralTab(vc: factory.makeSwapPageViewController(), identifier: "swapTab")
         
         let portfolio = createTab(iconActive: TabBarIcons.portfolioSelected.rawValue,
                                 iconInactive: TabBarIcons.portfolio.rawValue,

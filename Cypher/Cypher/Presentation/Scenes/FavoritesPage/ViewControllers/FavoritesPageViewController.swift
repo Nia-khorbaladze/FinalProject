@@ -14,7 +14,7 @@ final class FavoritesPageViewController: UIViewController {
     // MARK: - UI Elements
     private lazy var favoriteCoinsListView: UIHostingController<CoinsListView> = {
         let hostingController = UIHostingController(
-            rootView: CoinsListView(coins: viewModel.trendingCoins, title: "Trending")
+            rootView: CoinsListView(coins: viewModel.trendingCoins, title: "Favorites")
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear

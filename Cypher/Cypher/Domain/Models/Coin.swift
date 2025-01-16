@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Coin {
+struct Coin: Identifiable {
+    let id = UUID()
     let name: String
     let symbol: String
     let price: Double
