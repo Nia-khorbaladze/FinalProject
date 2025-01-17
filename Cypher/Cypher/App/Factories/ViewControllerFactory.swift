@@ -8,18 +8,33 @@
 import UIKit
 
 final class ViewControllerFactory {
-    func makeHomePageViewController() -> UIViewController {
+    func makeHomePageViewController() -> UINavigationController {
         let viewModel = HomePageViewModel()
-        return HomePageViewController(viewModel: viewModel)
+        let viewController = HomePageViewController(viewModel: viewModel)
+        return UINavigationController(rootViewController: viewController)
     }
     
-    func makeFavoritesPageViewController() -> UIViewController {
-        let viewModel = HomePageViewModel()
-        return FavoritesPageViewController(viewModel: viewModel)
+    func makeFavoritesPageViewController() -> UINavigationController {
+        let viewModel = FavoritesViewModel()
+        let viewController = FavoritesPageViewController(viewModel: viewModel)
+        return UINavigationController(rootViewController: viewController)
     }
     
-    func makeSwapPageViewController() -> UIViewController {
+    func makeSwapPageViewController() -> UINavigationController {
         let viewModel = SwapViewModel()
-        return SwapPageViewController(viewModel: viewModel)
+        let viewController = SwapPageViewController(viewModel: viewModel)
+        return UINavigationController(rootViewController: viewController)
+    }
+    
+    func makePortfolioPageViewController() -> UINavigationController {
+        let viewModel = PortfolioViewModel()
+        let viewController = PortfolioViewController(viewModel: viewModel)
+        return UINavigationController(rootViewController: viewController)
+    }
+    
+    func makeSearchPageViewController() -> UINavigationController {
+        let viewModel = SearchViewModel()
+        let viewController = SearchViewController(viewModel: viewModel)
+        return UINavigationController(rootViewController: viewController)
     }
 }

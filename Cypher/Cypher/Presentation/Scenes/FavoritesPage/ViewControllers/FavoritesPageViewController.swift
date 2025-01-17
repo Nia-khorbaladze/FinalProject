@@ -9,12 +9,18 @@ import UIKit
 import SwiftUI
 
 final class FavoritesPageViewController: UIViewController {
-    private let viewModel: HomePageViewModel
+    private let viewModel: FavoritesViewModel
     
     // MARK: - UI Elements
     private lazy var favoriteCoinsListView: UIHostingController<CoinsListView> = {
         let hostingController = UIHostingController(
-            rootView: CoinsListView(coins: viewModel.trendingCoins, title: "Favorites")
+            rootView: CoinsListView(
+                coins: viewModel.trendingCoins,
+                title: "Trending",
+                onCoinTapped: { [weak self] coin in
+                    print("Tapped")
+                }
+            )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
@@ -22,7 +28,7 @@ final class FavoritesPageViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(viewModel: HomePageViewModel) {
+    init(viewModel: FavoritesViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

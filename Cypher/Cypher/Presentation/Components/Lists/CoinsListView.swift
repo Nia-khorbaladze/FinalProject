@@ -10,6 +10,7 @@ import SwiftUI
 struct CoinsListView: View {
     let coins: [Coin]
     let title: String
+    let onCoinTapped: (Coin) -> Void
 
     var body: some View {
         ScrollView {
@@ -55,10 +56,13 @@ struct CoinsListView: View {
                         .cornerRadius(15)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 10)
+                        .onTapGesture {
+                            onCoinTapped(coin)
+                        }
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading) 
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
         .background(Color.clear)
     }
