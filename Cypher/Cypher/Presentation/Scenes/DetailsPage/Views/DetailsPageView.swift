@@ -13,17 +13,23 @@ struct DetailsPageView: View {
             Color(AppColors.backgroundColor.rawValue)
                 .ignoresSafeArea(edges: .all)
             
-            VStack(spacing: 5) {
-                Text("$0.00")
-                    .font(Fonts.bold.size(48))
-                    .foregroundStyle(Color(AppColors.white.rawValue))
-                
-                HStack(spacing: 8) {
-                    AmountChangeView(amountChange: nil)
+            ScrollView {
+                VStack(spacing: 5) {
+                    Text("$0.00")
+                        .font(Fonts.bold.size(48))
+                        .foregroundStyle(Color(AppColors.white.rawValue))
                     
-                    PercentageChangeView(percentageChange: nil)
+                    HStack(spacing: 8) {
+                        AmountChangeView(amountChange: nil)
+                        
+                        PercentageChangeView(percentageChange: nil)
+                    }
+                    
+                    ChartView()
+                    CoinInfoView()
                 }
             }
+            .padding(.vertical)
         }
     }
 }
