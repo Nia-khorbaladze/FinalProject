@@ -9,7 +9,7 @@ import UIKit
 import SwiftUI
 
 final class HomePageViewController: UIViewController {
-    private let viewModel: HomePageViewModel
+    private let viewModel: CoinViewModel
     
     // MARK: - UI Elements
     private lazy var homePageTopView: UIHostingController<HomePageTopSectionView> = {
@@ -24,7 +24,7 @@ final class HomePageViewController: UIViewController {
     private lazy var trendingCoinsView: UIHostingController<CoinsListView> = {
         let hostingController = UIHostingController(
             rootView: CoinsListView(
-                coins: viewModel.trendingCoins,
+                viewModel: viewModel,
                 title: "Trending",
                 onCoinTapped: { [weak self] coin in
                     self?.navigateToCoinDetails()
@@ -33,6 +33,9 @@ final class HomePageViewController: UIViewController {
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
+
+        viewModel.fetchCoins()
+
         return hostingController
     }()
     
@@ -58,7 +61,7 @@ final class HomePageViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(viewModel: HomePageViewModel) {
+    init(viewModel: CoinViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -130,7 +133,7 @@ final class HomePageViewController: UIViewController {
             trendingCoinsView.view.topAnchor.constraint(equalTo: homePageTopView.view.bottomAnchor),
             trendingCoinsView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             trendingCoinsView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            trendingCoinsView.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor) 
+            trendingCoinsView.view.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor)
         ])
     }
     

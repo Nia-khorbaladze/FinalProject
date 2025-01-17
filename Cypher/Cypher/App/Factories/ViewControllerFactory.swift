@@ -9,8 +9,12 @@ import UIKit
 
 final class ViewControllerFactory {
     func makeHomePageViewController() -> UINavigationController {
-        let viewModel = HomePageViewModel()
+        let networkService = NetworkService()
+        let coinRepository = CoinRepository(networkService: networkService)
+        let fetchCoinsUseCase = FetchCoinsUseCase(repository: coinRepository)
+        let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         let viewController = HomePageViewController(viewModel: viewModel)
+        
         return UINavigationController(rootViewController: viewController)
     }
     
