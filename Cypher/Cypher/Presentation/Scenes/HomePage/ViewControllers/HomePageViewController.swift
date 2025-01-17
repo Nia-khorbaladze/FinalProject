@@ -23,7 +23,13 @@ final class HomePageViewController: UIViewController {
     
     private lazy var trendingCoinsView: UIHostingController<CoinsListView> = {
         let hostingController = UIHostingController(
-            rootView: CoinsListView(coins: viewModel.trendingCoins, title: "Trending")
+            rootView: CoinsListView(
+                coins: viewModel.trendingCoins,
+                title: "Trending",
+                onCoinTapped: { [weak self] coin in
+                    self?.navigateToCoinDetails()
+                }
+            )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
@@ -131,5 +137,10 @@ final class HomePageViewController: UIViewController {
     @objc private func openProfilePopup() {
         let profilePopup = ProfilePopupViewController()
         navigationController?.present(profilePopup, animated: true)
+    }
+    
+    private func navigateToCoinDetails() {
+        let coinDetailsViewController = DetailsPageViewController()
+        navigationController?.pushViewController(coinDetailsViewController, animated: true)
     }
 }

@@ -29,7 +29,7 @@ struct DetailsPageView: View {
                     CoinInfoView()
                 }
             }
-            .padding(.vertical)
+            .padding(.top)
         }
     }
 }

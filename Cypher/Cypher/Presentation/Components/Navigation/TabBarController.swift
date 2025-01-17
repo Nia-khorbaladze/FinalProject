@@ -31,12 +31,12 @@ class TabBarController: UITabBarController {
         
         let portfolio = createTab(iconActive: TabBarIcons.portfolioSelected.rawValue,
                                 iconInactive: TabBarIcons.portfolio.rawValue,
-                                vc: PortfolioViewController(),
+                                  vc: factory.makePortfolioPageViewController(),
                                 identifier: "portfolioTab")
         
         let search = createTab(iconActive: TabBarIcons.searchSelected.rawValue,
                              iconInactive: TabBarIcons.search.rawValue,
-                             vc: SearchViewController(),
+                               vc: factory.makeSearchPageViewController(),
                              identifier: "searchTab")
         
         customizeTabBarAppearance()

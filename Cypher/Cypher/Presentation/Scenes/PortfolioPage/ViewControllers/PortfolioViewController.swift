@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 
 final class PortfolioViewController: UIViewController {
+    private let viewModel: PortfolioViewModel
     // MARK: - UI Elements
     private lazy var emptyPortfolioView: UIHostingController<EmptyPortfolioView> = {
         let hostingController = UIHostingController(
@@ -18,6 +19,16 @@ final class PortfolioViewController: UIViewController {
         hostingController.view.backgroundColor = .clear
         return hostingController
     }()
+    
+    // MARK: - Initializers
+    init(viewModel: PortfolioViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
