@@ -12,7 +12,9 @@ final class DetailsPageViewController: UIViewController {
     // MARK: - UI Elements
     private lazy var detailsPageView: UIHostingController<DetailsPageView> = {
         let hostingController = UIHostingController(
-            rootView: DetailsPageView()
+            rootView: DetailsPageView {
+                self.navigationController?.popViewController(animated: true)
+            }
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
@@ -27,7 +29,7 @@ final class DetailsPageViewController: UIViewController {
     
     // MARK: - Setup UI
     private func setup() {
-        view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
+        view.backgroundColor = UIColor(named: AppColors.greyBlue.rawValue)
         setupUI()
         setupConstraints()
     }
