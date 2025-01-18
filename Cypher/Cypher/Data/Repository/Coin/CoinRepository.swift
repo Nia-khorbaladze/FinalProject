@@ -26,22 +26,25 @@ final class CoinRepository: CoinRepositoryProtocol {
     }
     
     func fetchCoinDetail(name: String) -> AnyPublisher<CoinDetailModel, NetworkError> {
-        let lowercaseName = name.lowercased()
-        guard let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(lowercaseName)") else {
-            return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()
-        }
-        
-        if let cachedCoin = coreDataService.fetchCoinDetail(by: lowercaseName),
-           let lastUpdated = cachedCoin.lastUpdated,
-           Date().timeIntervalSince(lastUpdated) < cacheTimeout {
-            return Just(cachedCoin)
-                .setFailureType(to: NetworkError.self)
+            let lowercaseName = name.lowercased()
+            
+            coreDataService.cleanupExpiredCoinDetails()
+            
+            guard let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(lowercaseName)") else {
+                return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()
+            }
+            
+            if let cachedCoin = coreDataService.fetchCoinDetail(by: lowercaseName),
+               let lastUpdated = cachedCoin.lastUpdated,
+               Date().timeIntervalSince(lastUpdated) < cacheTimeout {
+                return Just(cachedCoin)
+                    .setFailureType(to: NetworkError.self)
+                    .eraseToAnyPublisher()
+            }
+            
+            return networkService.request(url: url, method: "GET", headers: nil, body: nil, decoder: JSONDecoder())
                 .eraseToAnyPublisher()
         }
-        
-        return networkService.request(url: url, method: "GET", headers: nil, body: nil, decoder: JSONDecoder())
-            .eraseToAnyPublisher()
-    }
     
     func saveCoinDetail(_ coin: CoinDetailModel) {
         coreDataService.saveCoinDetail(coin)

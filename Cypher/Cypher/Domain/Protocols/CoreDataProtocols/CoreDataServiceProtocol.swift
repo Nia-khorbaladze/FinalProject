@@ -9,5 +9,6 @@ import Foundation
 
 protocol CoreDataServiceProtocol {
     func saveCoinDetail(_ coin: CoinDetailModel)
-    func fetchCoinDetail(by name: String) -> CoinDetailModel? 
+    func fetchCoinDetail(by name: String) -> CoinDetailModel?
+    func cleanupExpiredCoinDetails()
 }

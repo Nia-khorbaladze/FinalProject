@@ -10,7 +10,7 @@ import SwiftUI
 
 final class DetailsPageViewController: UIViewController {
     private let coinName: String
-    private var viewModel: DetailsPageViewModel!
+    private var viewModel: DetailsPageViewModel
 
     // MARK: - UI Elements
     private lazy var detailsPageView: UIHostingController<DetailsPageView> = {
@@ -25,12 +25,12 @@ final class DetailsPageViewController: UIViewController {
     }()
     
     // MARK: - Initializer
-    init(coinName: String, repository: CoinRepositoryProtocol) {
+    init(coinName: String, fetchCoinDetailUseCase: FetchCoinDetailUseCase) {
         self.coinName = coinName
-        self.viewModel = DetailsPageViewModel(repository: repository)
+        self.viewModel = DetailsPageViewModel(fetchCoinDetailUseCase: fetchCoinDetailUseCase)
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

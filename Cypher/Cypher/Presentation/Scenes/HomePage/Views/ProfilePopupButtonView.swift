@@ -34,8 +34,3 @@ struct ProfilePopupButtonView: View {
         .background(Color.clear)
     }
 }
-
-
-#Preview {
-    ProfilePopupButtonView(action: { print("Abc") })
-}

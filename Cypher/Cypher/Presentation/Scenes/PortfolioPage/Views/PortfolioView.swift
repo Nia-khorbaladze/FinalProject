@@ -62,7 +62,3 @@ struct PortfolioView: View {
         }
     }
 }
-
-#Preview {
-    PortfolioView()
-}

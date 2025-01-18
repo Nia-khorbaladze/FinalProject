@@ -76,4 +76,19 @@ final class CoreDataService: CoreDataServiceProtocol {
         model.lastUpdated = coin.lastUpdated
         return model
     }
+
+    func cleanupExpiredCoinDetails() {
+        let fetchRequest: NSFetchRequest<CoinDetail> = CoinDetail.fetchRequest()
+        
+        if let coins = try? context.fetch(fetchRequest) {
+            for coin in coins {
+                if let lastUpdated = coin.lastUpdated,
+                   Date().timeIntervalSince(lastUpdated) > 300 {
+                    context.delete(coin) 
+                }
+            }
+            try? context.save()
+        }
+    }
 }
+

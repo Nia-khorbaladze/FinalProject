@@ -144,11 +144,7 @@ final class HomePageViewController: UIViewController {
     }
     
     private func navigateToCoinDetails(coinName: String) {
-        let repository = CoinRepository(
-            networkService: NetworkService(),
-            coreDataService: CoreDataService()
-        )
-        let coinDetailsViewController = DetailsPageViewController(coinName: coinName, repository: repository)
-        navigationController?.pushViewController(coinDetailsViewController, animated: true)
+        let viewController = ViewControllerFactory().makeDetailsPageViewController(coinName: coinName)
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }

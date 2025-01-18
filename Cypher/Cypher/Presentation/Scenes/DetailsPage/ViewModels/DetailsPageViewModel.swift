@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 final class DetailsPageViewModel: ObservableObject {
-    private let repository: CoinRepositoryProtocol
+    private let fetchCoinDetailUseCase: FetchCoinDetailUseCase
     private var cancellables = Set<AnyCancellable>()
     
     @Published var coinDetail: CoinDetailModel?
@@ -17,14 +17,14 @@ final class DetailsPageViewModel: ObservableObject {
     @Published var error: String?
     @Published var isFavorited: Bool = false
     
-    init(repository: CoinRepositoryProtocol) {
-        self.repository = repository
+    init(fetchCoinDetailUseCase: FetchCoinDetailUseCase) {
+        self.fetchCoinDetailUseCase = fetchCoinDetailUseCase
     }
     
     func fetchCoinDetails(coinName: String) {
         isLoading = true
         
-        repository.fetchCoinDetail(name: coinName)
+        fetchCoinDetailUseCase.execute(name: coinName)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self = self else { return }
@@ -38,7 +38,6 @@ final class DetailsPageViewModel: ObservableObject {
                 }
             } receiveValue: { [weak self] coinDetail in
                 guard let self = self else { return }
-                self.repository.saveCoinDetail(coinDetail)
                 self.coinDetail = coinDetail
             }
             .store(in: &cancellables)

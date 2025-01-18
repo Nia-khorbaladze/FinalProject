@@ -43,7 +43,3 @@ struct EmptyPortfolioView: View {
         }
     }
 }
-
-#Preview {
-    EmptyPortfolioView()
-}

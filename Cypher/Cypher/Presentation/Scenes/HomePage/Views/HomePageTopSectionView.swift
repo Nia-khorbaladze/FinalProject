@@ -43,7 +43,3 @@ struct HomePageTopSectionView: View {
         .background(Color.clear)
     }
 }
-
-#Preview {
-    HomePageTopSectionView()
-}
