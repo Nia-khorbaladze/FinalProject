@@ -10,9 +10,12 @@ import Combine
 
 final class CoinRepository: CoinRepositoryProtocol {
     private let networkService: NetworkServiceProtocol
+    private let coreDataService: CoreDataServiceProtocol
+    private let cacheTimeout: TimeInterval = 300
 
-    init(networkService: NetworkServiceProtocol) {
+    init(networkService: NetworkServiceProtocol, coreDataService: CoreDataServiceProtocol) {
         self.networkService = networkService
+        self.coreDataService = coreDataService
     }
 
     func fetchCoins() -> AnyPublisher<[CoinResponse], NetworkError> {
@@ -20,5 +23,31 @@ final class CoinRepository: CoinRepositoryProtocol {
             return Fail(error: NetworkError.invalidResponse).eraseToAnyPublisher()
         }
         return networkService.request(url: url, method: "GET", headers: nil, body: nil, decoder: JSONDecoder())
+    }
+    
+    func fetchCoinDetail(name: String) -> AnyPublisher<CoinDetailModel, NetworkError> {
+        let lowercaseName = name.lowercased()
+        guard let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(lowercaseName)") else {
+            return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()
+        }
+        
+        if let cachedCoin = coreDataService.fetchCoinDetail(by: lowercaseName),
+           let lastUpdated = cachedCoin.lastUpdated,
+           Date().timeIntervalSince(lastUpdated) < cacheTimeout {
+            return Just(cachedCoin)
+                .setFailureType(to: NetworkError.self)
+                .eraseToAnyPublisher()
+        }
+        
+        return networkService.request(url: url, method: "GET", headers: nil, body: nil, decoder: JSONDecoder())
+            .eraseToAnyPublisher()
+    }
+    
+    func saveCoinDetail(_ coin: CoinDetailModel) {
+        coreDataService.saveCoinDetail(coin)
+    }
+
+    func getCoinDetail(name: String) -> CoinDetailModel? {
+        return coreDataService.fetchCoinDetail(by: name) 
     }
 }

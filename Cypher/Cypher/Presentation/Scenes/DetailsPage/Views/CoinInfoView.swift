@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CoinInfoView: View {
+    let coinDetail: CoinDetailModel
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Info")
@@ -16,12 +18,12 @@ struct CoinInfoView: View {
                 .padding(.bottom, 8)
             
             VStack(spacing: 8) {
-                InfoRow(label: "Symbol", value: "BTC", showDivider: true)
-                InfoRow(label: "Network", value: "Bitcoin", showDivider: true)
-                InfoRow(label: "Market Cap", value: "$1.92T", showDivider: true)
-                InfoRow(label: "Total Supply", value: "21M", showDivider: true)
-                InfoRow(label: "Circulating Supply", value: "19.8M", showDivider: true)
-                InfoRow(label: "Max Supply", value: "21M", showDivider: false)
+                InfoRow(label: "Symbol", value: coinDetail.symbol, showDivider: true)
+                InfoRow(label: "Name", value: coinDetail.name, showDivider: true)
+                InfoRow(label: "Market Cap", value: String(format: "$%.2f", coinDetail.marketCap), showDivider: true)
+                InfoRow(label: "Total Supply", value: String(format: "%.2f", coinDetail.totalSupply ?? 0), showDivider: true)
+                InfoRow(label: "Circulating Supply", value: String(format: "%.2f", coinDetail.circulatingSupply ?? 0), showDivider: true)
+                InfoRow(label: "Max Supply", value: String(format: "%.2f", coinDetail.maxSupply ?? 0), showDivider: false)
             }
             .padding()
             .background(Color(AppColors.greyBlue.rawValue))
@@ -31,6 +33,7 @@ struct CoinInfoView: View {
         .background(Color(AppColors.backgroundColor.rawValue).edgesIgnoringSafeArea(.all))
     }
 }
+
 
 struct InfoRow: View {
     let label: String
@@ -57,8 +60,4 @@ struct InfoRow: View {
                 .padding(.horizontal, -16)
         }
     }
-}
-
-#Preview {
-    CoinInfoView()
 }

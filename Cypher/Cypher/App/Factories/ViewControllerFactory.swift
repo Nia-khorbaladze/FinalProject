@@ -10,7 +10,8 @@ import UIKit
 final class ViewControllerFactory {
     func makeHomePageViewController() -> UINavigationController {
         let networkService = NetworkService()
-        let coinRepository = CoinRepository(networkService: networkService)
+        let coreDataService = CoreDataService()
+        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
         let fetchCoinsUseCase = FetchCoinsUseCase(repository: coinRepository)
         let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         let viewController = HomePageViewController(viewModel: viewModel)
