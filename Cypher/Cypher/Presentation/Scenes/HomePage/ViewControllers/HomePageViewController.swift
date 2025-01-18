@@ -27,7 +27,8 @@ final class HomePageViewController: UIViewController {
                 viewModel: viewModel,
                 title: "Trending",
                 onCoinTapped: { [weak self] coin in
-                    self?.navigateToCoinDetails()
+                    guard let self = self else { return }
+                    self.navigateToCoinDetails(coinName: coin.name)
                 }
             )
         )
@@ -142,8 +143,8 @@ final class HomePageViewController: UIViewController {
         navigationController?.present(profilePopup, animated: true)
     }
     
-    private func navigateToCoinDetails() {
-        let coinDetailsViewController = DetailsPageViewController()
-        navigationController?.pushViewController(coinDetailsViewController, animated: true)
+    private func navigateToCoinDetails(coinName: String) {
+        let viewController = ViewControllerFactory().makeDetailsPageViewController(coinName: coinName)
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }

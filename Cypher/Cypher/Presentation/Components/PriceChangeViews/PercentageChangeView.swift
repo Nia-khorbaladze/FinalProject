@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct PercentageChangeView: View {
-    let percentageChange: String?
+    let percentageChange: Double?
 
     var body: some View {
-        Text(percentageChange ?? "+0.00%")
+        Text(formatPercentage())
             .font(Fonts.semiBold.size(20))
             .foregroundColor(getTextColor())
             .padding(.horizontal, 8)
@@ -20,6 +20,11 @@ struct PercentageChangeView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(getBackgroundColor())
             )
+    }
+    
+    private func formatPercentage() -> String {
+        guard let value = percentageChange else { return "0.00%" }
+        return String(format: "%.2f%%", value)
     }
 
     private func getTextColor() -> Color {
@@ -33,10 +38,10 @@ struct PercentageChangeView: View {
     private func getBackgroundColor() -> Color {
         if percentageChange == nil {
             return Color.gray.opacity(0.2)
-        } else if let percentage = percentageChange, percentage.starts(with: "+") {
-            return Color(AppColors.green.rawValue)
-        } else {
+        } else if let percentage = percentageChange, percentage < 0 {
             return Color(AppColors.red.rawValue)
+        } else {
+            return Color(AppColors.green.rawValue)
         }
     }
 }

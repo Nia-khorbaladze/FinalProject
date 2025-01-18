@@ -10,7 +10,8 @@ import UIKit
 final class ViewControllerFactory {
     func makeHomePageViewController() -> UINavigationController {
         let networkService = NetworkService()
-        let coinRepository = CoinRepository(networkService: networkService)
+        let coreDataService = CoreDataService()
+        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
         let fetchCoinsUseCase = FetchCoinsUseCase(repository: coinRepository)
         let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         let viewController = HomePageViewController(viewModel: viewModel)
@@ -40,5 +41,16 @@ final class ViewControllerFactory {
         let viewModel = SearchViewModel()
         let viewController = SearchViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
+    }
+    
+    func makeDetailsPageViewController(coinName: String) -> DetailsPageViewController {
+        let networkService = NetworkService()
+        let coreDataService = CoreDataService()
+        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
+        let fetchCoinDetailUseCase = FetchCoinDetailUseCase(repository: coinRepository)
+        let viewModel = DetailsPageViewModel(fetchCoinDetailUseCase: fetchCoinDetailUseCase)
+        let viewController = DetailsPageViewController(coinName: coinName, fetchCoinDetailUseCase: fetchCoinDetailUseCase)
+        
+        return viewController
     }
 }

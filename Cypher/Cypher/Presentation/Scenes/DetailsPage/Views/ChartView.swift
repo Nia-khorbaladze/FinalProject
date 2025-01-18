@@ -63,7 +63,3 @@ struct ChartView: View {
         .background(Color(AppColors.backgroundColor.rawValue).ignoresSafeArea(.all))
     }
 }
-
-#Preview {
-    ChartView()
-}

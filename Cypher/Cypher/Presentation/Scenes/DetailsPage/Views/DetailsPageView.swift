@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailsPageView: View {
-    @State private var isFavorited: Bool = false
+    @ObservedObject var viewModel: DetailsPageViewModel
     var onBack: (() -> Void)?
     
     var body: some View {
@@ -20,14 +20,12 @@ struct DetailsPageView: View {
                         .foregroundColor(Color(AppColors.white.rawValue))
                 }
                 Spacer()
-                Text("Bitcoin")
+                Text(viewModel.coinDetail?.name ?? "Loading...")
                     .font(Fonts.medium.size(18))
                     .foregroundColor(Color(AppColors.white.rawValue))
                 Spacer()
-                Button(action: {
-                    isFavorited.toggle()
-                }) {
-                    Image(systemName: isFavorited ? "heart.fill" : "heart")
+                Button(action: { viewModel.toggleFavorite() }) {
+                    Image(systemName: viewModel.isFavorited ? "heart.fill" : "heart")
                         .font(Fonts.regular.size(18))
                         .foregroundColor(Color(AppColors.lightGrey.rawValue))
                 }
@@ -36,24 +34,35 @@ struct DetailsPageView: View {
             .background(Color(AppColors.greyBlue.rawValue))
             .ignoresSafeArea(edges: .top)
             
-            ScrollView {
-                VStack(spacing: 5) {
-                    Text("$0.00")
-                        .font(Fonts.bold.size(48))
-                        .foregroundStyle(Color(AppColors.white.rawValue))
-                        .padding(.top, 20)
-                    
-                    HStack(spacing: 8) {
-                        AmountChangeView(amountChange: nil)
+            if viewModel.isLoading {
+                ProgressView()
+                    .padding(.top, 20)
+            } else if let error = viewModel.error {
+                Text(error)
+                    .foregroundColor(.red)
+                    .padding()
+            } else if let coinDetail = viewModel.coinDetail {
+                ScrollView {
+                    VStack(spacing: 5) {
+                        Text("$\(coinDetail.currentPrice, specifier: "%.2f")")
+                            .font(Fonts.bold.size(48))
+                            .foregroundStyle(Color(AppColors.white.rawValue))
+                            .padding(.top, 20)
                         
-                        PercentageChangeView(percentageChange: nil)
+                        HStack(spacing: 8) {
+                            AmountChangeView(amountChange: coinDetail.priceChange24h)
+                            PercentageChangeView(percentageChange: coinDetail.priceChangePercentage24h)
+                        }
+                        
+                        ChartView()
+                        CoinInfoView(coinDetail: coinDetail)
                     }
-                    
-                    ChartView()
-                    CoinInfoView()
                 }
+                .background(Color(AppColors.backgroundColor.rawValue))
+            } else {
+                ProgressView()
+                    .padding(.top, 20)
             }
-            .background(Color(AppColors.backgroundColor.rawValue))
         }
     }
 }

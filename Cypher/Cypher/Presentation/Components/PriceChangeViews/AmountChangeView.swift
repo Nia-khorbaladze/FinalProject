@@ -8,21 +8,26 @@
 import SwiftUI
 
 struct AmountChangeView: View {
-    let amountChange: String?
+    let amountChange: Double?
     
     var body: some View {
-        Text(amountChange ?? "+0.00%")
+        Text(formatAmount())
             .font(Fonts.semiBold.size(20))
             .foregroundColor(getTextColor())
+    }
+    
+    private func formatAmount() -> String {
+        guard let value = amountChange else { return "0.00" }
+        return String(format: "%.2f", value) + "$"
     }
     
     private func getTextColor() -> Color {
         if amountChange == nil {
             return Color(AppColors.lightGrey.rawValue)
-        } else if let amount = amountChange, amount.starts(with: "+") {
-            return Color(AppColors.green.rawValue)
-        } else {
+        } else if let amount = amountChange, amount < 0 {
             return Color(AppColors.red.rawValue)
+        } else {
+            return Color(AppColors.green.rawValue)
         }
     }
 }
