@@ -20,10 +20,10 @@ struct CoinInfoView: View {
             VStack(spacing: 8) {
                 InfoRow(label: "Symbol", value: coinDetail.symbol, showDivider: true)
                 InfoRow(label: "Name", value: coinDetail.name, showDivider: true)
-                InfoRow(label: "Market Cap", value: String(format: "$%.2f", coinDetail.marketCap), showDivider: true)
-                InfoRow(label: "Total Supply", value: String(format: "%.2f", coinDetail.totalSupply ?? 0), showDivider: true)
-                InfoRow(label: "Circulating Supply", value: String(format: "%.2f", coinDetail.circulatingSupply ?? 0), showDivider: true)
-                InfoRow(label: "Max Supply", value: String(format: "%.2f", coinDetail.maxSupply ?? 0), showDivider: false)
+                InfoRow(label: "Market Cap", value: InfoRow.formatCurrency(coinDetail.marketCap), showDivider: true)
+                InfoRow(label: "Total Supply", value: InfoRow.formatLargeNumber(coinDetail.totalSupply ?? 0), showDivider: true)
+                InfoRow(label: "Circulating Supply", value: InfoRow.formatLargeNumber(coinDetail.circulatingSupply ?? 0), showDivider: true)
+                InfoRow(label: "Max Supply", value: InfoRow.formatLargeNumber(coinDetail.maxSupply ?? 0), showDivider: false)
             }
             .padding()
             .background(Color(AppColors.greyBlue.rawValue))
@@ -58,6 +58,40 @@ struct InfoRow: View {
                 .frame(height: 1)
                 .foregroundColor(Color(AppColors.backgroundColor.rawValue))
                 .padding(.horizontal, -16)
+        }
+    }
+    
+    static func formatLargeNumber(_ number: Double) -> String {
+        let billion = 1_000_000_000.0
+        let million = 1_000_000.0
+        let thousand = 1_000.0
+        
+        switch number {
+        case ..<thousand:
+            return String(format: "%.2f", number)
+        case ..<million:
+            return String(format: "%.2fK", number / thousand)
+        case ..<billion:
+            return String(format: "%.2fM", number / million)
+        default:
+            return String(format: "%.2fB", number / billion)
+        }
+    }
+    
+    static func formatCurrency(_ number: Double) -> String {
+        let trillion = 1_000_000_000_000.0
+        let billion = 1_000_000_000.0
+        let million = 1_000_000.0
+        
+        switch number {
+        case ..<million:
+            return "$" + String(format: "%.2f", number)
+        case ..<billion:
+            return "$" + String(format: "%.2fM", number / million)
+        case ..<trillion:
+            return "$" + String(format: "%.2fB", number / billion)
+        default:
+            return "$" + String(format: "%.2fT", number / trillion)
         }
     }
 }
