@@ -26,6 +26,8 @@ final class CoreDataService: CoreDataServiceProtocol {
             existingCoin.symbol = coin.symbol
             existingCoin.name = coin.name
             existingCoin.lastUpdated = Date()
+            existingCoin.priceChange24h = coin.priceChange24h
+            existingCoin.priceChangePercentage24h = coin.priceChangePercentage24h
         } else {
             let newCoin = CoinDetail(context: context)
             newCoin.id = coin.id
@@ -38,6 +40,8 @@ final class CoreDataService: CoreDataServiceProtocol {
             newCoin.maxSupply = coin.maxSupply ?? 0.0
             newCoin.coinDescription = coin.description.en
             newCoin.lastUpdated = Date()
+            newCoin.priceChange24h = coin.priceChange24h
+            newCoin.priceChangePercentage24h = coin.priceChangePercentage24h
         }
         
         try? context.save()
@@ -54,7 +58,9 @@ final class CoreDataService: CoreDataServiceProtocol {
             marketCap: CoinDetailModel.PriceData(usd: coin.marketCap),
             totalSupply: coin.totalSupply,
             circulatingSupply: coin.circulatingSupply,
-            maxSupply: coin.maxSupply
+            maxSupply: coin.maxSupply,
+            priceChange24h: coin.priceChange24h,
+            priceChangePercentage24h: coin.priceChangePercentage24h
         )
         
         let description = CoinDetailModel.Description(en: coin.coinDescription)
@@ -71,4 +77,3 @@ final class CoreDataService: CoreDataServiceProtocol {
         return model
     }
 }
-

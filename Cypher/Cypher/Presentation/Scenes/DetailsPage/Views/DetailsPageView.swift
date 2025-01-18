@@ -50,8 +50,8 @@ struct DetailsPageView: View {
                             .padding(.top, 20)
                         
                         HStack(spacing: 8) {
-                            AmountChangeView(amountChange: nil)
-                            PercentageChangeView(percentageChange: nil)
+                            AmountChangeView(amountChange: coinDetail.priceChange24h)
+                            PercentageChangeView(percentageChange: coinDetail.priceChangePercentage24h)
                         }
                         
                         ChartView()

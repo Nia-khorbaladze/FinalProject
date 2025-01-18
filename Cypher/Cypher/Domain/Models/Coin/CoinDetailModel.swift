@@ -20,6 +20,8 @@ struct CoinDetailModel: Codable {
     var circulatingSupply: Double? { marketData.circulatingSupply }
     var maxSupply: Double? { marketData.maxSupply }
     var lastUpdated: Date?
+    var priceChange24h: Double { marketData.priceChange24h ?? 0.0 }
+    var priceChangePercentage24h: Double { marketData.priceChangePercentage24h ?? 0.0 }
 
     init(id: String, symbol: String, name: String, description: Description, marketData: MarketData) {
         self.id = id
@@ -40,6 +42,8 @@ struct CoinDetailModel: Codable {
         let totalSupply: Double?
         let circulatingSupply: Double?
         let maxSupply: Double?
+        let priceChange24h: Double?
+        let priceChangePercentage24h: Double?
         
         enum CodingKeys: String, CodingKey {
             case currentPrice = "current_price"
@@ -47,6 +51,8 @@ struct CoinDetailModel: Codable {
             case totalSupply = "total_supply"
             case circulatingSupply = "circulating_supply"
             case maxSupply = "max_supply"
+            case priceChange24h = "price_change_24h"
+            case priceChangePercentage24h = "price_change_percentage_24h"
         }
     }
     
