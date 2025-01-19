@@ -23,15 +23,6 @@ final class SwapPageViewController: UIViewController {
         return hostingController
     }()
     
-    private lazy var trendingCoinsList: UIHostingController<TrendingCoinsListView> = {
-        let hostingController = UIHostingController(
-            rootView: TrendingCoinsListView()
-        )
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        hostingController.view.backgroundColor = .clear
-        return hostingController
-    }()
-    
     private lazy var swapButton: UIHostingController<PrimaryButton> = {
         let hostingController = UIHostingController(
             rootView: PrimaryButton(
@@ -43,18 +34,6 @@ final class SwapPageViewController: UIViewController {
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
         return hostingController
-    }()
-    
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    
-    private lazy var contentView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
     }()
     
     // MARK: - Initializers
@@ -82,51 +61,25 @@ final class SwapPageViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        
         addChild(swapCoinsView)
-        contentView.addSubview(swapCoinsView.view)
+        view.addSubview(swapCoinsView.view)
         swapCoinsView.didMove(toParent: self)
         
-        addChild(trendingCoinsList)
-        contentView.addSubview(trendingCoinsList.view)
-        trendingCoinsList.didMove(toParent: self)
-        
         addChild(swapButton)
-        contentView.addSubview(swapButton.view)
+        view.addSubview(swapButton.view)
         swapButton.didMove(toParent: self)
     }
     
     private func setupConstraints() {
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
         
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
-            swapCoinsView.view.topAnchor.constraint(equalTo: contentView.topAnchor),
-            swapCoinsView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            swapCoinsView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            swapCoinsView.view.topAnchor.constraint(equalTo: view.topAnchor),
+            swapCoinsView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            swapCoinsView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
             swapButton.view.topAnchor.constraint(equalTo: swapCoinsView.view.bottomAnchor),
-            swapButton.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            swapButton.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            
-            trendingCoinsList.view.topAnchor.constraint(equalTo: swapButton.view.bottomAnchor, constant: 30),
-            trendingCoinsList.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            trendingCoinsList.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            trendingCoinsList.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            swapButton.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            swapButton.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
     
