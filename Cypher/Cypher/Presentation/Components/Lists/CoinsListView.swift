@@ -52,13 +52,23 @@ struct CoinRowView: View {
     
     var body: some View {
         HStack {
-            Image(systemName: "bitcoinsign.circle")
-                .resizable()
-                .frame(width: 40, height: 40)
-                .foregroundColor(.white)
-                .background(Circle().fill(Color.gray.opacity(0.3)))
-                .padding(.trailing, 10)
-
+            if let image = coin.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: 40, height: 40)
+                    .scaledToFit()
+                    .foregroundColor(.white)
+                    .background(Circle().fill(Color.gray.opacity(0.3)))
+                    .padding(.trailing, 10)
+            } else {
+                Image(systemName: "bitcoinsign.circle")
+                    .resizable()
+                    .frame(width: 40, height: 40)
+                    .foregroundColor(.white)
+                    .background(Circle().fill(Color.gray.opacity(0.3)))
+                    .padding(.trailing, 10)
+            }
+            
             VStack(alignment: .leading, spacing: 2) {
                 Text(coin.name)
                     .font(Fonts.medium.size(18))

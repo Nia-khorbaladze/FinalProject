@@ -7,10 +7,12 @@
 
 import Foundation
 import Combine
+import UIKit
 
 protocol CoinRepositoryProtocol {
     func fetchCoins() -> AnyPublisher<[CoinResponse], NetworkError>
     func fetchCoinDetail(name: String) -> AnyPublisher<CoinDetailModel, NetworkError>  
     func getCoinDetail(name: String) -> CoinDetailModel?
     func saveCoinDetail(_ coinDetail: CoinDetailModel)
+    func cleanupExpiredCoinDetails()
 }
