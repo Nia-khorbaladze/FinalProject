@@ -17,8 +17,9 @@ struct AmountChangeView: View {
     }
     
     private func formatAmount() -> String {
-        guard let value = amountChange else { return "0.00" }
-        return String(format: "%.2f", value) + "$"
+        guard let value = amountChange else { return "0.00$" }
+        let formattedValue = String(format: "%.2f", value)
+        return value < 0 ? formattedValue + "$" : "+" + formattedValue + "$"
     }
     
     private func getTextColor() -> Color {

@@ -12,7 +12,8 @@ final class ViewControllerFactory {
         let networkService = NetworkService()
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let fetchCoinsUseCase = FetchCoinsUseCase(repository: coinRepository)
+        let imageRepository = ImageRepository()
+        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
         let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         let viewController = HomePageViewController(viewModel: viewModel)
         

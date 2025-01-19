@@ -24,7 +24,8 @@ struct PercentageChangeView: View {
     
     private func formatPercentage() -> String {
         guard let value = percentageChange else { return "0.00%" }
-        return String(format: "%.2f%%", value)
+        let formattedValue = String(format: "%.2f%%", value)
+        return value < 0 ? formattedValue : "+" + formattedValue
     }
 
     private func getTextColor() -> Color {

@@ -35,12 +35,16 @@ struct DetailsPageView: View {
             .ignoresSafeArea(edges: .top)
             
             if viewModel.isLoading {
+                Spacer()
                 ProgressView()
                     .padding(.top, 20)
+                Spacer()
             } else if let error = viewModel.error {
+                Spacer()
                 Text(error)
                     .foregroundColor(.red)
                     .padding()
+                Spacer()
             } else if let coinDetail = viewModel.coinDetail {
                 ScrollView {
                     VStack(spacing: 5) {

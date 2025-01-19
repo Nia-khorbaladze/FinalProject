@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct Coin: Identifiable {
     let id = UUID()
@@ -32,6 +33,8 @@ struct CoinResponse: Identifiable, Decodable {
     let currentPrice: Double
     let priceChangePercentage24h: Double
     let marketCap: Double
+    let imageURL: String
+    var image: UIImage? = nil
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -40,5 +43,6 @@ struct CoinResponse: Identifiable, Decodable {
         case currentPrice = "current_price"
         case priceChangePercentage24h = "price_change_percentage_24h"
         case marketCap = "market_cap"
+        case imageURL = "image"
     }
 }
