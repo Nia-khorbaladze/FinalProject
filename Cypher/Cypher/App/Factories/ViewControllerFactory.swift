@@ -44,12 +44,16 @@ final class ViewControllerFactory {
     }
     
     func makeDetailsPageViewController(coinName: String) -> DetailsPageViewController {
-        let networkService = NetworkService()
-        let coreDataService = CoreDataService()
-        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
+        let dependencies = Dependencies.shared
+        let coinRepository = CoinRepository(
+            networkService: dependencies.networkService,
+            coreDataService: dependencies.coreDataService
+        )
         let fetchCoinDetailUseCase = FetchCoinDetailUseCase(repository: coinRepository)
-        let viewModel = DetailsPageViewModel(fetchCoinDetailUseCase: fetchCoinDetailUseCase)
-        let viewController = DetailsPageViewController(coinName: coinName, fetchCoinDetailUseCase: fetchCoinDetailUseCase)
+        let viewController = DetailsPageViewController(
+            coinName: coinName,
+            fetchCoinDetailUseCase: fetchCoinDetailUseCase
+        )
         
         return viewController
     }
