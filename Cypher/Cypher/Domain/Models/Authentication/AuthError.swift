@@ -12,6 +12,7 @@ enum AuthError: Error {
     case tokenNotFound
     case emailAlreadyInUse
     case keychainSaveFailed
+    case keychainDeleteFailed
     case unknown(Error)
 
     var errorDescription: String? {
@@ -26,6 +27,8 @@ enum AuthError: Error {
             return "Failed to save data in the Keychain."
         case .unknown(let error):
             return error.localizedDescription
+        case .keychainDeleteFailed:
+            return "Failed to delete data in the Keychain."
         }
     }
 }

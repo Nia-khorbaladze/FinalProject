@@ -142,7 +142,7 @@ final class HomePageViewController: UIViewController {
     
     private func openProfilePopup() {
         blurEffectService.addBlurEffect(to: view)
-        let profilePopupVC = ProfilePopupViewController(blurEffectService: blurEffectService)
+        let profilePopupVC = ProfilePopupViewController(blurEffectService: blurEffectService, viewModel: ProfilePopupViewModel())
         profilePopupVC.modalPresentationStyle = .pageSheet
         profilePopupVC.sheetPresentationController?.delegate = profilePopupVC
 

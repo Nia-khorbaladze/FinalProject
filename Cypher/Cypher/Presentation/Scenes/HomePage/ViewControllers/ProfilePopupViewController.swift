@@ -10,6 +10,7 @@ import SwiftUI
 
 final class ProfilePopupViewController: UIViewController {
     private let blurEffectService: BlurEffectService
+    private let viewModel: ProfilePopupViewModel
     
     private lazy var logoutButton: UIButton = {
         let button = UIButton()
@@ -18,6 +19,9 @@ final class ProfilePopupViewController: UIViewController {
         button.tintColor = UIColor(named: AppColors.lightGrey.rawValue)
         button.heightAnchor.constraint(equalToConstant: 20).isActive = true
         button.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.logoutTapped()
+        }), for: .touchUpInside)
         
         return button
     }()
@@ -36,8 +40,9 @@ final class ProfilePopupViewController: UIViewController {
         return button
     }()
     
-    init(blurEffectService: BlurEffectService = BlurEffectService()) {
+    init(blurEffectService: BlurEffectService = BlurEffectService(), viewModel: ProfilePopupViewModel) {
         self.blurEffectService = blurEffectService
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -75,6 +80,42 @@ final class ProfilePopupViewController: UIViewController {
     private func closeButtonTapped() {
         blurEffectService.removeBlurEffect()
         dismiss(animated: true)
+    }
+    
+    private func logoutTapped() {
+        blurEffectService.removeBlurEffect()
+        viewModel.logout { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.handleSuccessfulLogout()
+                case .failure(let error):
+                    self?.handleFailedLogout(error)
+                }
+            }
+            
+        }
+    }
+    
+    private func handleSuccessfulLogout() {
+        guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+        
+        let welcomeViewController = WelcomeViewController()
+        let navigationController = UINavigationController(rootViewController: welcomeViewController)
+        
+        sceneDelegate.window?.rootViewController = navigationController
+        sceneDelegate.window?.makeKeyAndVisible()
+    }
+
+    
+    private func handleFailedLogout(_ error: Error) {
+        let alertController = UIAlertController(
+            title: "Logout Failed",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alertController, animated: true)
     }
 }
 
