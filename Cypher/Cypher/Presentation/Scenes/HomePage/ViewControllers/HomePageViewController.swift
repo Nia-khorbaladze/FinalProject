@@ -10,7 +10,8 @@ import SwiftUI
 
 final class HomePageViewController: UIViewController {
     private let viewModel: CoinViewModel
-    
+    private let blurEffectService: BlurEffectService
+
     // MARK: - UI Elements
     private lazy var homePageTopView: UIHostingController<HomePageTopSectionView> = {
         let hostingController = UIHostingController(
@@ -62,8 +63,9 @@ final class HomePageViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(viewModel: CoinViewModel) {
+    init(viewModel: CoinViewModel, blurEffectService: BlurEffectService = BlurEffectService()) {
         self.viewModel = viewModel
+        self.blurEffectService = blurEffectService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -138,9 +140,22 @@ final class HomePageViewController: UIViewController {
         ])
     }
     
-    @objc private func openProfilePopup() {
-        let profilePopup = ProfilePopupViewController()
-        navigationController?.present(profilePopup, animated: true)
+    private func openProfilePopup() {
+        blurEffectService.addBlurEffect(to: view)
+        let profilePopupVC = ProfilePopupViewController(blurEffectService: blurEffectService, viewModel: ProfilePopupViewModel())
+        profilePopupVC.modalPresentationStyle = .pageSheet
+        profilePopupVC.sheetPresentationController?.delegate = profilePopupVC
+
+        if let sheet = profilePopupVC.sheetPresentationController {
+            sheet.detents = [
+                .custom { context in
+                    return 200
+                }
+            ]
+            sheet.preferredCornerRadius = 40
+        }
+        
+        present(profilePopupVC, animated: true)
     }
     
     private func navigateToCoinDetails(coinName: String) {
