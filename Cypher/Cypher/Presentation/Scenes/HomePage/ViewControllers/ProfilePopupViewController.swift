@@ -98,13 +98,7 @@ final class ProfilePopupViewController: UIViewController {
     }
     
     private func handleSuccessfulLogout() {
-        guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-        
-        let welcomeViewController = WelcomeViewController()
-        let navigationController = UINavigationController(rootViewController: welcomeViewController)
-        
-        sceneDelegate.window?.rootViewController = navigationController
-        sceneDelegate.window?.makeKeyAndVisible()
+        NavigationService.shared.switchToAuth()
     }
 
     
