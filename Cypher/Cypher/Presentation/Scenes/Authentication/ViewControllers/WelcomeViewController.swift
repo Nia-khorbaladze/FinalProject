@@ -60,7 +60,9 @@ final class WelcomeViewController: UIViewController {
         button.setImage(UIImage(systemName: "circle"), for: .normal)
         button.heightAnchor.constraint(equalToConstant: 30).isActive = true
         button.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        button.addTarget(self, action: #selector(agreementButtonTapped), for: .touchUpInside)
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.agreementButtonTapped()
+        }), for: .touchUpInside)
 
         return button
     }()
@@ -86,7 +88,7 @@ final class WelcomeViewController: UIViewController {
             rootView: PrimaryButton(
                 title: "Create a new wallet",
                 isActive: false,
-                action: { self.CreateWalletButtonTapped() }
+                action: { [weak self] in self?.CreateWalletButtonTapped() }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -100,7 +102,9 @@ final class WelcomeViewController: UIViewController {
         button.setTitle("I already have a wallet", for: .normal)
         button.titleLabel?.font = Fonts.bold.uiFont(size: 15)
         button.titleLabel?.textColor = UIColor(named: AppColors.white.rawValue)
-        button.addTarget(self, action: #selector(alredyHaveAWalletButtonTapped), for: .touchUpInside)
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.alredyHaveAWalletButtonTapped()
+        }), for: .touchUpInside)
         button.isUserInteractionEnabled = false
 
         return button
@@ -204,19 +208,19 @@ final class WelcomeViewController: UIViewController {
         navigationController?.present(termsViewController, animated: true)
     }
     
-    @objc private func CreateWalletButtonTapped() {
+    private func CreateWalletButtonTapped() {
         viewModel.updateState(to: .register)
         let vc = AddWalletViewController(state: .register)
         navigationController?.pushViewController(vc, animated: true)
     }
 
-    @objc private func alredyHaveAWalletButtonTapped() {
+    private func alredyHaveAWalletButtonTapped() {
         viewModel.updateState(to: .login)
         let vc = AddWalletViewController(state: .login)
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    @objc private func agreementButtonTapped() {
+    private func agreementButtonTapped() {
         viewModel.toggleAgreement()
         updateAgreementButtonAppearance()
         updateCreateWalletButton()

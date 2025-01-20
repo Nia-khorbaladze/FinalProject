@@ -11,7 +11,7 @@ import SwiftUI
 
 final class AddWalletViewController: UIViewController {
     private let state: AuthenticationState
-    private var blurEffectView: UIVisualEffectView?
+    private let blurEffectService: BlurEffectService
     
     // MARK: - UI Elements
     private let navigateBackButton: UIButton = {
@@ -38,7 +38,7 @@ final class AddWalletViewController: UIViewController {
             rootView: PrimaryButton(
                 title: title,
                 isActive: true,
-                action: { self.showEmailOptions() }
+                action: { [weak self] in self?.showEmailOptions() }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -47,8 +47,9 @@ final class AddWalletViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(state: AuthenticationState) {
+    init(state: AuthenticationState, blurEffectService: BlurEffectService = BlurEffectService()) {
         self.state = state
+        self.blurEffectService = blurEffectService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -108,46 +109,38 @@ final class AddWalletViewController: UIViewController {
     
     // MARK: - Functions
     private func showEmailOptions() {
-        addBlurEffect()
-        let emailOptionsVC = EmailOptionsViewController()
+        blurEffectService.addBlurEffect(to: view)
+        
+        let emailOptionsVC = EmailOptionsViewController(blurEffectService: blurEffectService)
         emailOptionsVC.delegate = self
         emailOptionsVC.modalPresentationStyle = .pageSheet
+        emailOptionsVC.sheetPresentationController?.delegate = emailOptionsVC
         
         if let sheet = emailOptionsVC.sheetPresentationController {
             sheet.detents = [
                 .custom { context in
                     return 200
                 }
-                
             ]
             sheet.preferredCornerRadius = 40
-            sheet.delegate = self
         }
         
         present(emailOptionsVC, animated: true)
-    }
-    
-    private func addBlurEffect() {
-        let blurEffect = UIBlurEffect(style: .dark)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = view.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.addSubview(blurEffectView)
-        
-        self.blurEffectView = blurEffectView
-    }
-
-    func removeBlurEffect() {
-        blurEffectView?.removeFromSuperview()
-        blurEffectView = nil
     }
 }
 
 // MARK: - Extensions
 extension AddWalletViewController: EmailOptionsViewControllerDelegate {
     func didTapEnterEmailManually() {
-        removeBlurEffect()
+        blurEffectService.removeBlurEffect()
         let credentialsInputVC = CredentialsInputViewController(state: state)
         navigationController?.pushViewController(credentialsInputVC, animated: true)
     }
 }
+
+extension AddWalletViewController: UISheetPresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        blurEffectService.removeBlurEffect()
+    }
+}
+

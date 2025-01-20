@@ -26,8 +26,8 @@ final class CredentialsInputViewController: UIViewController {
         let hostingController = UIHostingController(
             rootView: InputView(
                 text: Binding(
-                    get: { self.email },
-                    set: { self.email = $0 }
+                    get: { [weak self] in self?.email ?? "" },
+                    set: { [weak self] value in self?.email = value }
                 ),
                 title: "Email",
                 placeholder: "Enter your email",
@@ -43,8 +43,8 @@ final class CredentialsInputViewController: UIViewController {
         let hostingController = UIHostingController(
             rootView: InputView(
                 text: Binding(
-                    get: { self.password },
-                    set: { self.password = $0 }
+                    get: { [weak self] in self?.password ?? "" },
+                    set: { [weak self] value in self?.password = value }
                 ),
                 title: "Password",
                 placeholder: "Enter your password",
@@ -62,8 +62,8 @@ final class CredentialsInputViewController: UIViewController {
         let hostingController = UIHostingController(
             rootView: InputView(
                 text: Binding(
-                    get: { self.confirmPassword },
-                    set: { self.confirmPassword = $0 }
+                    get: { [weak self] in self?.confirmPassword ?? "" },
+                    set: { [weak self] value in self?.confirmPassword = value }
                 ),
                 title: "Confirm Password",
                 placeholder: "Confirm your password",
@@ -81,7 +81,7 @@ final class CredentialsInputViewController: UIViewController {
             rootView: PrimaryButton(
                 title: "Continue",
                 isActive: true,
-                action: { self.authenticate() }
+                action: { [weak self] in self?.authenticate() }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -89,7 +89,7 @@ final class CredentialsInputViewController: UIViewController {
         return hostingController
     }()
     
-    private let navigateBackButton: UIButton = {
+    private lazy var navigateBackButton: UIButton = {
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentMode = .scaleAspectFit
@@ -98,6 +98,13 @@ final class CredentialsInputViewController: UIViewController {
         button.tintColor = .white
         
         return button
+    }()
+    
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = true
+        return scrollView
     }()
     
     // MARK: - Initializers
@@ -125,32 +132,34 @@ final class CredentialsInputViewController: UIViewController {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()
         setupBackButton()
+        setupConstraints()
     }
     
     private func setupUI() {
-        addChild(emailField)
-        view.addSubview(emailField.view)
+        view.addSubview(scrollView)
+        
+        scrollView.addSubview(emailField.view)
         emailField.didMove(toParent: self)
         
-        addChild(passwordField)
-        view.addSubview(passwordField.view)
+        scrollView.addSubview(passwordField.view)
         passwordField.didMove(toParent: self)
         
         if let confirmPasswordField = confirmPasswordField {
-            addChild(confirmPasswordField)
-            view.addSubview(confirmPasswordField.view)
+            scrollView.addSubview(confirmPasswordField.view)
             confirmPasswordField.didMove(toParent: self)
         }
         
-        addChild(continueButton)
-        view.addSubview(continueButton.view)
+        scrollView.addSubview(continueButton.view)
         continueButton.didMove(toParent: self)
-        
-        setupConstraints()
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             emailField.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             emailField.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             emailField.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),

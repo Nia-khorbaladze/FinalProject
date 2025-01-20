@@ -22,9 +22,22 @@ final class Dependencies {
         )
     }()
     
+    private(set) lazy var googleAuthRepository: FirebaseGoogleAuthRepository = {
+        FirebaseGoogleAuthRepository()
+    }()
+    
     // MARK: - Use Cases
     private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCase = {
         FetchCoinDetailUseCase(repository: coinRepository)
+    }()
+    
+    private(set) lazy var googleSignInUseCase: GoogleSignInUseCase = {
+        GoogleSignInUseCase(repository: googleAuthRepository)
+    }()
+    
+    // MARK: - View Models
+    private(set) lazy var googleSignInViewModel: GoogleSignInViewModel = {
+        GoogleSignInViewModel(googleSignInUseCase: googleSignInUseCase)
     }()
     
     private init() {
