@@ -29,7 +29,7 @@ final class SuccessfulAuthViewController: UIViewController {
             rootView: PrimaryButton(
                 title: "Get Started",
                 isActive: true,
-                action: { self.navigate() }
+                action: { [weak self] in self?.navigate() }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -82,6 +82,9 @@ final class SuccessfulAuthViewController: UIViewController {
     
     private func navigate() {
         let factory = ViewControllerFactory()
-        navigationController?.pushViewController(factory.makeHomePageViewController(), animated: true)
+        guard let homePageViewController = factory.makeHomePageViewController().viewControllers.first else {
+            return
+        }
+        navigationController?.pushViewController(homePageViewController, animated: true)
     }
 }

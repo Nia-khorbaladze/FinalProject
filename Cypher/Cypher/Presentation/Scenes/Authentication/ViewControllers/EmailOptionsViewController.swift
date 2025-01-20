@@ -11,6 +11,7 @@ import GoogleSignIn
 final class EmailOptionsViewController: UIViewController {
     weak var delegate: EmailOptionsViewControllerDelegate?
     private let viewModel: GoogleSignInViewModel
+    private let blurEffectService: BlurEffectService
     
     // MARK: - UI Elements
     private lazy var titleLabel: UILabel = {
@@ -43,7 +44,9 @@ final class EmailOptionsViewController: UIViewController {
         button.setTitleColor(UIColor(named: AppColors.white.rawValue), for: .normal)
         button.layer.cornerRadius = 25
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(continueWithGoogleTapped), for: .touchUpInside)
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.continueWithGoogleTapped()
+        }), for: .touchUpInside)
         
         return button
     }()
@@ -53,15 +56,16 @@ final class EmailOptionsViewController: UIViewController {
         button.setTitle("Enter Email manually", for: .normal)
         button.setTitleColor(UIColor(named: AppColors.white.rawValue), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(enterEmailTapped), for: .touchUpInside)
-
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.enterEmailTapped()
+        }), for: .touchUpInside)
+        
         return button
     }()
     // MARK: - Initializers
-    init() {
-        let googleAuthRepository = FirebaseGoogleAuthRepository() 
-        let googleSignInUseCase = GoogleSignInUseCase(repository: googleAuthRepository)
-        self.viewModel = GoogleSignInViewModel(googleSignInUseCase: googleSignInUseCase)
+    init(viewModel: GoogleSignInViewModel = Dependencies.shared.googleSignInViewModel, blurEffectService: BlurEffectService = BlurEffectService()) {
+        self.viewModel = viewModel
+        self.blurEffectService = blurEffectService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -102,12 +106,12 @@ final class EmailOptionsViewController: UIViewController {
     }
     
     // MARK: - Functions
-    @objc private func enterEmailTapped() {
+    private func enterEmailTapped() {
         delegate?.didTapEnterEmailManually()
         dismiss(animated: true)
     }
     
-    @objc private func continueWithGoogleTapped() {
+    private func continueWithGoogleTapped() {
         viewModel.signInWithGoogle { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -130,6 +134,13 @@ final class EmailOptionsViewController: UIViewController {
         let alert = UIAlertController(title: "Error", message: "Something went wrong. Try again later.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+}
+
+// MARK: - Extensions
+extension EmailOptionsViewController: UISheetPresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        blurEffectService.removeBlurEffect()
     }
 }
 
