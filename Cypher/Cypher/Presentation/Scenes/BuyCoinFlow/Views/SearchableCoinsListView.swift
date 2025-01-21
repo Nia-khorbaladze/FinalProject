@@ -21,28 +21,27 @@ struct SearchableCoinsListView: View {
     }
     
     var body: some View {
-        ZStack {
-            if viewModel.isLoading {
-                ProgressView()
+        ScrollView {
+            ZStack {
+                Color.clear
                     .frame(maxWidth: .infinity, minHeight: 400)
-            } else if let error = viewModel.error {
-                Text(error)
-                    .foregroundColor(.red)
-                    .padding()
-                    .frame(maxWidth: .infinity, minHeight: 400)
-            } else if filteredCoins.isEmpty {
-                Text("No coins found.")
-                    .foregroundColor(Color(AppColors.lightGrey.rawValue))
-                    .frame(maxWidth: .infinity, minHeight: 400)
-            } else {
-                ScrollView {
+                
+                if viewModel.isLoading {
+                    ProgressView()
+                } else if let error = viewModel.error {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .padding()
+                } else if filteredCoins.isEmpty {
+                    Text("No coins found.")
+                        .foregroundColor(Color(AppColors.lightGrey.rawValue))
+                } else {
                     LazyVStack(alignment: .leading, spacing: 0) {
                         ForEach(filteredCoins, id: \.id) { coin in
                             CoinRowView(coin: coin, onCoinTapped: onCoinTapped)
                         }
                     }
                 }
-                .frame(maxWidth: .infinity, minHeight: 400)
             }
         }
         .onAppear {

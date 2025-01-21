@@ -16,8 +16,12 @@ final class SelectCoinViewController: UIViewController {
         let hostingController = UIHostingController(
             rootView: SelectCoinView(
                 viewModel: viewModel,
-                onCoinTap: { coin in
-                    print("Selected coin: \(coin.name)")
+                onCoinTap: { [weak self] coin in
+                    let buyVC = BuyCoinViewController(
+                        coinSymbol: coin.symbol.uppercased(),
+                        currentPrice: coin.currentPrice
+                    )
+                    self?.navigationController?.pushViewController(buyVC, animated: true)
                 },
                 onCloseTap: { [weak self] in
                     self?.navigationController?.popViewController(animated: true)

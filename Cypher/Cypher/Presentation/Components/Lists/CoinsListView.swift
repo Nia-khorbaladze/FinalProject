@@ -22,25 +22,20 @@ struct CoinsListView: View {
                     .padding(.horizontal)
                     .padding(.top)
             }
-            
-            ZStack {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, minHeight: 400)
-                } else if let error = viewModel.error {
-                    Text(error)
-                        .foregroundColor(.red)
-                        .padding()
-                        .frame(maxWidth: .infinity, minHeight: 400)
-                } else {
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 0) {
-                            ForEach(viewModel.coins, id: \.id) { coin in
-                                CoinRowView(coin: coin, onCoinTapped: onCoinTapped)
-                            }
-                        }
-                    }
+
+            if viewModel.isLoading {
+                ProgressView()
                     .frame(maxWidth: .infinity, minHeight: 400)
+            } else if let error = viewModel.error {
+                Text(error)
+                    .foregroundColor(.red)
+                    .padding()
+                    .frame(maxWidth: .infinity, minHeight: 400)
+            } else {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(viewModel.coins, id: \.id) { coin in
+                        CoinRowView(coin: coin, onCoinTapped: onCoinTapped)
+                    }
                 }
             }
         }
