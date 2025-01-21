@@ -40,6 +40,7 @@ final class HomePageViewController: UIViewController {
             rootView: CoinsListView(
                 viewModel: viewModel,
                 title: "Trending",
+                showTitle: true,
                 onCoinTapped: { [weak self] coin in
                     guard let self = self else { return }
                     self.navigateToCoinDetails(coinName: coin.name)

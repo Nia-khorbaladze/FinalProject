@@ -9,16 +9,19 @@ import SwiftUI
 
 struct CoinsListView: View {
     @ObservedObject var viewModel: CoinViewModel
-    let title: String
+    let title: String?
+    let showTitle: Bool
     let onCoinTapped: (CoinResponse) -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(Fonts.bold.size(20))
-                .foregroundStyle(Color(AppColors.white.rawValue))
-                .padding(.horizontal)
-                .padding(.top)
+            if showTitle, let title = title {
+                Text(title)
+                    .font(Fonts.bold.size(20))
+                    .foregroundStyle(Color(AppColors.white.rawValue))
+                    .padding(.horizontal)
+                    .padding(.top)
+            }
             
             ZStack {
                 if viewModel.isLoading {
