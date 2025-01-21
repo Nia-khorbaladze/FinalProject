@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct HomePageTopSectionView: View {
+    var onReceiveTapped: (() -> Void)?
+    var onSendTapped: (() -> Void)?
+    var onSwapTapped: (() -> Void)?
+    var onBuyTapped: (() -> Void)?
+    
     var body: some View {
         VStack(spacing: 5) {
             Text("$0.00")
@@ -22,19 +27,19 @@ struct HomePageTopSectionView: View {
             
             HStack {
                 ActionButton(iconName: Icons.scan.rawValue, title: "Receive", width: 90) {
-                    print("Tapped")
+                    onReceiveTapped?()
                 }
                 
                 ActionButton(iconName: Icons.send.rawValue, title: "Send", width: 90) {
-                    print("Tapped")
+                    onSendTapped?()
                 }
                 
                 ActionButton(iconName: Icons.swap.rawValue, title: "Swap", width: 90) {
-                    print("Tapped")
+                    onSwapTapped?()
                 }
                 
                 ActionButton(iconName: Icons.buy.rawValue, title: "Buy", width: 90) {
-                    print("Tapped")
+                    onBuyTapped?()
                 }
             }
             .padding(.horizontal, 12)

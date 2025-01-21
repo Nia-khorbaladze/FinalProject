@@ -15,7 +15,20 @@ final class HomePageViewController: UIViewController {
     // MARK: - UI Elements
     private lazy var homePageTopView: UIHostingController<HomePageTopSectionView> = {
         let hostingController = UIHostingController(
-            rootView: HomePageTopSectionView()
+            rootView: HomePageTopSectionView(
+                onReceiveTapped: { [weak self] in
+                    self?.navigateToReceiveView()
+                },
+                onSendTapped: { [weak self] in
+                    self?.navigateToSendView()
+                },
+                onSwapTapped: { [weak self] in
+                    self?.navigateToSwapView()
+                },
+                onBuyTapped: { [weak self] in
+                    self?.navigateToBuyView()
+                }
+            )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
@@ -162,4 +175,21 @@ final class HomePageViewController: UIViewController {
         let viewController = ViewControllerFactory().makeDetailsPageViewController(coinName: coinName)
         navigationController?.pushViewController(viewController, animated: true)
     }
+    
+    private func navigateToReceiveView() {
+    
+    }
+
+    private func navigateToSendView() {
+        
+    }
+
+    private func navigateToSwapView() {
+        
+    }
+
+    private func navigateToBuyView() {
+        
+    }
+
 }
