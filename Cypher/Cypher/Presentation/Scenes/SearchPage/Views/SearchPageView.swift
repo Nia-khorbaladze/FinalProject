@@ -19,14 +19,11 @@ struct SearchPageView: View {
     ]
     
     var filteredCoins: [Coin] {
-        if searchText.isEmpty {
-            return coins
-        } else {
-            return coins.filter {
-                $0.name.lowercased().contains(searchText.lowercased()) ||
-                $0.symbol.lowercased().contains(searchText.lowercased())
-            }
-        }
+        FilterUtility.filterItems(
+            coins,
+            searchText: searchText,
+            keyPaths: [\Coin.name, \Coin.symbol]
+        )
     }
     
     var body: some View {

@@ -190,7 +190,7 @@ final class HomePageViewController: UIViewController {
     }
 
     private func navigateToBuyView() {
-        
+        let selectCoinVC = ViewControllerFactory().makeSelectCoinViewController()
+        self.navigationController?.pushViewController(selectCoinVC, animated: true)
     }
-
 }

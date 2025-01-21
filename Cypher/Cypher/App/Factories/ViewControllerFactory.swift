@@ -58,4 +58,14 @@ final class ViewControllerFactory {
         
         return viewController
     }
+    
+    func makeSelectCoinViewController() -> SelectCoinViewController {
+        let dependencies = Dependencies.shared
+        let fetchCoinsUseCase = FetchCoinsUseCase(
+            coinRepository: dependencies.coinRepository,
+            imageRepository: ImageRepository()
+        )
+        let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
+        return SelectCoinViewController(viewModel: viewModel)
+    }
 }
