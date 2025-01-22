@@ -76,7 +76,9 @@ final class BuyCoinViewController: UIViewController {
             rootView: PrimaryButton(
                 title: "Buy",
                 isActive: false,
-                action: { }
+                action: { [weak self] in
+                    self?.handleBuyButtonTap()
+                }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -86,7 +88,10 @@ final class BuyCoinViewController: UIViewController {
     
     // MARK: - Initializers
     init(coinSymbol: String, currentPrice: Double) {
-        self.viewModel = BuyCoinViewModel(coinSymbol: coinSymbol, currentPrice: currentPrice)
+        self.viewModel = Dependencies.shared.makeBuyCoinViewModel(
+            coinSymbol: coinSymbol,
+            currentPrice: currentPrice
+        )
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -166,7 +171,9 @@ final class BuyCoinViewController: UIViewController {
         buyButton.rootView = PrimaryButton(
             title: "Buy",
             isActive: viewModel.isButtonActive,
-            action: { }
+            action: { [weak self] in
+                self?.handleBuyButtonTap()
+            }
         )
     }
     
@@ -204,8 +211,31 @@ final class BuyCoinViewController: UIViewController {
         }
     }
     
+    private func handleBuyButtonTap() {
+        if !viewModel.isButtonActive { return }
+        
+        Task {
+            do {
+                try await viewModel.savePurchase()
+                DispatchQueue.main.async { [weak self] in
+                    self?.navigationController?.pushViewController(SuccessfulTransactionViewController(), animated: true)
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.showErrorAlert(error: error)
+                }
+            }
+        }
+    }
+    
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    private func showErrorAlert(error: Error) {
+        let alert = UIAlertController(title: "Error", message: "Something went wrong. Try again later.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 

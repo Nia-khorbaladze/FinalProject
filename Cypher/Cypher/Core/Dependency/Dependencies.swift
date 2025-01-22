@@ -25,6 +25,10 @@ final class Dependencies {
     private(set) lazy var googleAuthRepository: FirebaseGoogleAuthRepository = {
         FirebaseGoogleAuthRepository()
     }()
+
+    private(set) lazy var purchasedCoinRepository: PurchasedCoinRepositoryProtocol = {
+        PurchasedCoinRepository()
+    }()
     
     // MARK: - Use Cases
     private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCase = {
@@ -35,10 +39,22 @@ final class Dependencies {
         GoogleSignInUseCase(repository: googleAuthRepository)
     }()
     
+    private(set) lazy var purchasedCoinUseCase: PurchasedCoinUseCase = {
+        PurchasedCoinUseCase(repository: purchasedCoinRepository)
+    }()
+    
     // MARK: - View Models
     private(set) lazy var googleSignInViewModel: GoogleSignInViewModel = {
         GoogleSignInViewModel(googleSignInUseCase: googleSignInUseCase)
     }()
+    
+    func makeBuyCoinViewModel(coinSymbol: String, currentPrice: Double) -> BuyCoinViewModel {
+        BuyCoinViewModel(
+            coinSymbol: coinSymbol,
+            currentPrice: currentPrice,
+            purchasedCoinUseCase: purchasedCoinUseCase
+        )
+    }
     
     private init() {
         self.coreDataService = CoreDataService()
