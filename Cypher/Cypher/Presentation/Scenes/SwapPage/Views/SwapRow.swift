@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SwapRow: View {
     let label: String
-    @Binding var selectedCoin: Coin
+    @Binding var selectedCoin: CoinResponse?
     @Binding var amount: String
     @Binding var showCoinList: Bool
     
@@ -37,11 +37,18 @@ struct SwapRow: View {
                     showCoinList = true
                 }) {
                     HStack {
-                        Image(systemName: selectedCoin.icon)
-                            .resizable()
-                            .frame(width: 20, height: 20)
+                        if let image = selectedCoin?.image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .scaledToFit()
+                        } else {
+                            Image(systemName: "bitcoinsign.circle")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                        }
                         
-                        Text(selectedCoin.symbol)
+                        Text(selectedCoin?.symbol ?? "BTC")
                             .font(Fonts.semiBold.size(13))
                             .foregroundColor(Color(AppColors.white.rawValue))
                     }
@@ -51,7 +58,7 @@ struct SwapRow: View {
                     .cornerRadius(20)
                 }
                 
-                Text("\(selectedCoin.price) SOL")
+                Text("\(selectedCoin?.currentPrice ?? 0.00) \(selectedCoin?.symbol ?? "SOL")")
                     .font(Fonts.semiBold.size(13))
                     .foregroundStyle(Color(AppColors.lightGrey.rawValue))
                     .padding(.top, 5)

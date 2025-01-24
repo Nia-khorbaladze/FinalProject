@@ -10,8 +10,8 @@ import SwiftUI
 struct SwapCoinsView: View {
     @ObservedObject var viewModel: SwapViewModel
 
-    @State private var selectedPayCoin: Coin = Coin(name: "Solana", symbol: "SOL", price: 0.0, changePercentage: 0.0, icon: "s.circle")
-    @State private var selectedReceiveCoin: Coin = Coin(name: "USDC", symbol: "USDC", price: 0.0, changePercentage: 0.0, icon: "circle.fill")
+    @State private var selectedPayCoin: CoinResponse? = nil
+    @State private var selectedReceiveCoin: CoinResponse? = nil
     @State private var showCoinListForPay = false
     @State private var showCoinListForReceive = false
     
@@ -29,9 +29,6 @@ struct SwapCoinsView: View {
                     amount: $viewModel.payAmount,
                     showCoinList: $showCoinListForPay
                 )
-                .onTapGesture {
-                    showCoinListForPay = true
-                }
                 
                 Button(action: {
                     swapValues()
@@ -47,12 +44,9 @@ struct SwapCoinsView: View {
                 SwapRow(
                     label: "You Receive",
                     selectedCoin: $selectedReceiveCoin,
-                    amount: $viewModel.receiveAmount, 
+                    amount: $viewModel.receiveAmount,
                     showCoinList: $showCoinListForReceive
                 )
-                .onTapGesture {
-                    showCoinListForReceive = true
-                }
             }
             .padding()
             .background(Color(AppColors.backgroundColor.rawValue))
@@ -62,14 +56,14 @@ struct SwapCoinsView: View {
         }
         .sheet(isPresented: $showCoinListForPay) {
             CoinSelectionView(
-                coins: viewModel.coins,
+                viewModel: viewModel,
                 selectedCoin: $selectedPayCoin,
                 isPresented: $showCoinListForPay
             )
         }
         .sheet(isPresented: $showCoinListForReceive) {
             CoinSelectionView(
-                coins: viewModel.coins,
+                viewModel: viewModel,
                 selectedCoin: $selectedReceiveCoin,
                 isPresented: $showCoinListForReceive
             )
@@ -86,3 +80,4 @@ struct SwapCoinsView: View {
         viewModel.receiveAmount = tempAmount
     }
 }
+

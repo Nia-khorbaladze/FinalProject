@@ -8,17 +8,41 @@
 import SwiftUI
 
 struct CoinSelectionView: View {
-    let coins: [Coin]
-    @Binding var selectedCoin: Coin
+    @ObservedObject var viewModel: SwapViewModel
+    @Binding var selectedCoin: CoinResponse?
     @Binding var isPresented: Bool
     
     var body: some View {
         NavigationView {
             ZStack {
                 Color(AppColors.backgroundColor.rawValue).edgesIgnoringSafeArea(.all)
-                trendingCoinsView(for: coins) { coin in
-                    selectedCoin = coin
-                    isPresented = false
+                
+                ScrollView {
+                    ZStack {
+                        Color.clear
+                            .frame(maxWidth: .infinity, minHeight: 400)
+                        
+                        if viewModel.isLoading {
+                            ProgressView()
+                        } else if let error = viewModel.error {
+                            Text(error)
+                                .foregroundColor(.red)
+                                .padding()
+                        } else {
+                            LazyVStack(alignment: .leading, spacing: 0) {
+                                ForEach(viewModel.coins, id: \.id) { coin in
+                                    TrendingCoinRow(coin: coin) { selectedCoin in
+                                        self.selectedCoin = selectedCoin
+                                        isPresented = false
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                        }
+                    }
+                }
+                .onAppear {
+                    viewModel.fetchCoins()
                 }
             }
             .toolbar {
@@ -32,6 +56,9 @@ struct CoinSelectionView: View {
                     }
                 }
             }
+            .toolbarBackground(Color(AppColors.backgroundColor.rawValue), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
         }
     }
 }
+

@@ -10,17 +10,22 @@ import SwiftUI
 
 
 final class SearchViewController: UIViewController {
-    private let viewModel: SearchViewModel
+    private let viewModel: CoinViewModel
+    
+    // MARK: - UI Elements
     private lazy var searchView: UIHostingController<SearchPageView> = {
         let hostingController = UIHostingController(
-            rootView: SearchPageView()
+            rootView: SearchPageView(
+                viewModel: viewModel,
+                onCoinTapped: { _ in print("Tapped") } )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
         return hostingController
     }()
     
-    init(viewModel: SearchViewModel) {
+    // MARK: - Initializers
+    init(viewModel: CoinViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -29,11 +34,13 @@ final class SearchViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
     
+    // MARK: - UI Setup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()

@@ -9,6 +9,10 @@ import SwiftUI
 import Combine
 
 class SwapViewModel: ObservableObject {
+    @Published var coins: [CoinResponse] = []
+    @Published var isLoading: Bool = false
+    @Published var error: String?
+    
     @Published var isButtonActive: Bool = false
     @Published var receiveAmount: String = "0"
     @Published var payAmount: String = "0" {
@@ -16,14 +20,32 @@ class SwapViewModel: ObservableObject {
             isButtonActive = (Double(payAmount) ?? 0) > 0
         }
     }
-    
-    let coins = [
-        Coin(name: "Bitcoin", symbol: "BTC", price: 70982.0, changePercentage: -0.39, icon: "bitcoinsign.circle"),
-        Coin(name: "Ethereum", symbol: "ETH", price: 3463.27, changePercentage: 3.55, icon: "e.circle"),
-        Coin(name: "BNB", symbol: "BNB", price: 707.69, changePercentage: -0.03, icon: "circle.fill"),
-        Coin(name: "XRP", symbol: "XRP", price: 2.38, changePercentage: 9.70, icon: "x.circle"),
-        Coin(name: "Solana", symbol: "SOL", price: 206.61, changePercentage: 8.48, icon: "s.circle"),
-        Coin(name: "USDC", symbol: "USDC", price: 1.0, changePercentage: 0.0, icon: "dollarsign.circle")
-    ]
+
+    private let fetchCoinsUseCase: FetchCoinsUseCase
+    private var cancellables: Set<AnyCancellable> = []
+
+    init(fetchCoinsUseCase: FetchCoinsUseCase) {
+        self.fetchCoinsUseCase = fetchCoinsUseCase
+    }
+
+    func fetchCoins() {
+        isLoading = true
+        error = nil
+
+        fetchCoinsUseCase.execute()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                switch completion {
+                case .finished:
+                    self?.isLoading = false
+                case .failure(let networkError):
+                    self?.isLoading = false
+                    self?.error = networkError.localizedDescription
+                }
+            }, receiveValue: { [weak self] coins in
+                self?.coins = coins
+            })
+            .store(in: &cancellables)
+    }
 }
 

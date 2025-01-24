@@ -12,14 +12,14 @@ final class FavoritesPageViewController: UIViewController {
     private let viewModel: FavoritesViewModel
     
     // MARK: - UI Elements
-    private lazy var favoriteCoinsListView: UIHostingController<TrendingCoinsListView> = {
-        let hostingController = UIHostingController(
-            rootView: TrendingCoinsListView()
-        )
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        hostingController.view.backgroundColor = .clear
-        return hostingController
-    }()
+//    private lazy var favoriteCoinsListView: UIHostingController<TrendingCoinsListView> = {
+//        let hostingController = UIHostingController(
+//            rootView: TrendingCoinsListView()
+//        )
+//        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+//        hostingController.view.backgroundColor = .clear
+//        return hostingController
+//    }()
     
     // MARK: - Initializers
     init(viewModel: FavoritesViewModel) {
@@ -40,22 +40,22 @@ final class FavoritesPageViewController: UIViewController {
     // MARK: - Setup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
-        setupUI()
-        setupConstraints()
+//        setupUI()
+//        setupConstraints()
     }
     
-    private func setupUI() {
-        addChild(favoriteCoinsListView)
-        view.addSubview(favoriteCoinsListView.view)
-        favoriteCoinsListView.didMove(toParent: self)
-    }
-    
-    private func setupConstraints() {
-        NSLayoutConstraint.activate([
-            favoriteCoinsListView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            favoriteCoinsListView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            favoriteCoinsListView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            favoriteCoinsListView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
+//    private func setupUI() {
+//        addChild(favoriteCoinsListView)
+//        view.addSubview(favoriteCoinsListView.view)
+//        favoriteCoinsListView.didMove(toParent: self)
+//    }
+//    
+//    private func setupConstraints() {
+//        NSLayoutConstraint.activate([
+//            favoriteCoinsListView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+//            favoriteCoinsListView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//            favoriteCoinsListView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+//            favoriteCoinsListView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+//        ])
+//    }
 }

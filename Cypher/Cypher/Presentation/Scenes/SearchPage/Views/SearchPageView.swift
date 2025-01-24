@@ -8,31 +8,47 @@
 import SwiftUI
 
 struct SearchPageView: View {
-    @State private var searchText = ""
-    let coins = [
-        Coin(name: "Bitcoin", symbol: "BTC", price: 70982.0, changePercentage: -0.39, icon: "bitcoinsign.circle"),
-        Coin(name: "Ethereum", symbol: "ETH", price: 3463.27, changePercentage: 3.55, icon: "e.circle"),
-        Coin(name: "BNB", symbol: "BNB", price: 707.69, changePercentage: -0.03, icon: "circle.fill"),
-        Coin(name: "XRP", symbol: "XRP", price: 2.38, changePercentage: 9.70, icon: "x.circle"),
-        Coin(name: "Solana", symbol: "SOL", price: 206.61, changePercentage: 8.48, icon: "s.circle"),
-        Coin(name: "Dogecoin", symbol: "DOGE", price: 0.34, changePercentage: 5.97, icon: "d.circle")
-    ]
+    @ObservedObject var viewModel: CoinViewModel
+    @State private var searchText: String = ""
+    let onCoinTapped: (CoinResponse) -> Void
     
-    var filteredCoins: [Coin] {
+    var filteredCoins: [CoinResponse] {
         FilterUtility.filterItems(
-            coins,
+            viewModel.coins,
             searchText: searchText,
-            keyPaths: [\Coin.name, \Coin.symbol]
+            keyPaths: [\CoinResponse.name, \CoinResponse.symbol]
         )
     }
     
     var body: some View {
         VStack {
             SearchBar(searchText: $searchText)
-            trendingCoinsView(for: filteredCoins) { coin in
-                print("\(coin.name)")
+                .padding(.horizontal)
+            
+            ScrollView {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else if let error = viewModel.error {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .padding()
+                } else if filteredCoins.isEmpty {
+                    Text("No coins found.")
+                        .foregroundColor(Color(AppColors.lightGrey.rawValue))
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        ForEach(filteredCoins, id: \.id) { coin in
+                            TrendingCoinRow(coin: coin, onCoinTap: onCoinTapped)
+                        }
+                        .padding(.horizontal)
+                    }
+                }
             }
-            Spacer()
+            .onAppear {
+                viewModel.fetchCoins()
+            }
         }
         .background(Color(AppColors.backgroundColor.rawValue))
         .edgesIgnoringSafeArea(.bottom)
