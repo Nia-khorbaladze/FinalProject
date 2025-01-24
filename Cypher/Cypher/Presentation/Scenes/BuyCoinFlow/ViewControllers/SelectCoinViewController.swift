@@ -19,7 +19,8 @@ final class SelectCoinViewController: UIViewController {
                 onCoinTap: { [weak self] coin in
                     let buyVC = BuyCoinViewController(
                         coinSymbol: coin.symbol.uppercased(),
-                        currentPrice: coin.currentPrice
+                        currentPrice: coin.currentPrice,
+                        coinName: coin.name
                     )
                     self?.navigationController?.pushViewController(buyVC, animated: true)
                 },

@@ -22,13 +22,15 @@ final class BuyCoinViewModel {
     
     private let coinSymbol: String
     private let currentPrice: Double
+    private let coinName: String
     var onAmountUpdate: (() -> Void)?
-    private let purchasedCoinUseCase: PurchasedCoinUseCase
+    private let savePurchasedCoinUseCase: SavePurchasedCoinUseCase
     
-    init(coinSymbol: String, currentPrice: Double, purchasedCoinUseCase: PurchasedCoinUseCase) {
+    init(coinSymbol: String, currentPrice: Double, coinName: String, savePurchasedCoinUseCase: SavePurchasedCoinUseCase) {
         self.coinSymbol = coinSymbol.uppercased()
         self.currentPrice = currentPrice
-        self.purchasedCoinUseCase = purchasedCoinUseCase
+        self.coinName = coinName
+        self.savePurchasedCoinUseCase = savePurchasedCoinUseCase
     }
     
     func updateAmount(_ amount: Double) {
@@ -69,9 +71,10 @@ final class BuyCoinViewModel {
         
         let userID = currentUser.uid
 
-        try await purchasedCoinUseCase.execute(
+        try await savePurchasedCoinUseCase.execute(
             userID: userID,
             coinSymbol: coinSymbol,
+            coinName: coinName,
             amount: cryptoAmountValue
         )
     }

@@ -39,8 +39,8 @@ final class Dependencies {
         GoogleSignInUseCase(repository: googleAuthRepository)
     }()
     
-    private(set) lazy var purchasedCoinUseCase: PurchasedCoinUseCase = {
-        PurchasedCoinUseCase(repository: purchasedCoinRepository)
+    private(set) lazy var savePurchasedCoinUseCase: SavePurchasedCoinUseCase = {
+        SavePurchasedCoinUseCase(purchasedCoinRepository: purchasedCoinRepository)
     }()
     
     // MARK: - View Models
@@ -48,11 +48,12 @@ final class Dependencies {
         GoogleSignInViewModel(googleSignInUseCase: googleSignInUseCase)
     }()
     
-    func makeBuyCoinViewModel(coinSymbol: String, currentPrice: Double) -> BuyCoinViewModel {
+    func makeBuyCoinViewModel(coinSymbol: String, currentPrice: Double, coinName: String) -> BuyCoinViewModel {
         BuyCoinViewModel(
             coinSymbol: coinSymbol,
             currentPrice: currentPrice,
-            purchasedCoinUseCase: purchasedCoinUseCase
+            coinName: coinName,
+            savePurchasedCoinUseCase: savePurchasedCoinUseCase
         )
     }
     

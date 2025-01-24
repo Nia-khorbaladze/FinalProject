@@ -11,17 +11,22 @@ import FirebaseFirestore
 final class PurchasedCoinRepository: PurchasedCoinRepositoryProtocol {
     private let db = Firestore.firestore()
     
-    func savePurchase(userID: String, coinSymbol: String, purchase: Purchase) async throws {
-        let data: [String: Any] = [
+    func savePurchase(userID: String, coinSymbol: String, coinName: String, purchase: Purchase) async throws {
+        let coinData: [String: Any] = [
+            "name": coinName
+        ]
+        
+        let purchaseData: [String: Any] = [
             "amount": purchase.amount,
             "timestamp": Timestamp(date: purchase.timestamp)
         ]
         
-        try await db.collection("Users")
+        let coinRef = db.collection("Users")
             .document(userID)
             .collection("purchasedCoins")
             .document(coinSymbol)
-            .collection("purchases")
-            .addDocument(data: data)
+        try await coinRef.setData(coinData)
+        
+        try await coinRef.collection("purchases").addDocument(data: purchaseData)
     }
 }

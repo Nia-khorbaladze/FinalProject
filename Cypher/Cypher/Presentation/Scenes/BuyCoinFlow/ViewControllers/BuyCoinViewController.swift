@@ -87,10 +87,11 @@ final class BuyCoinViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(coinSymbol: String, currentPrice: Double) {
+    init(coinSymbol: String, currentPrice: Double, coinName: String) {
         self.viewModel = Dependencies.shared.makeBuyCoinViewModel(
             coinSymbol: coinSymbol,
-            currentPrice: currentPrice
+            currentPrice: currentPrice,
+            coinName: coinName
         )
         super.init(nibName: nil, bundle: nil)
     }

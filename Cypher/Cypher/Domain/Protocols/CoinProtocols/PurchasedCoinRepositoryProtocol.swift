@@ -8,5 +8,5 @@
 import Foundation
 
 protocol PurchasedCoinRepositoryProtocol {
-    func savePurchase(userID: String, coinSymbol: String, purchase: Purchase) async throws
+    func savePurchase(userID: String, coinSymbol: String, coinName: String, purchase: Purchase) async throws
 }
