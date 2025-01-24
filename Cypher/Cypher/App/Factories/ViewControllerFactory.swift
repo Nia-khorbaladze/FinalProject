@@ -27,7 +27,13 @@ final class ViewControllerFactory {
     }
     
     func makeSwapPageViewController() -> UINavigationController {
-        let viewModel = SwapViewModel()
+        let networkService = NetworkService()
+        let coreDataService = CoreDataService()
+        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
+        let imageRepository = ImageRepository()
+        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
+
+        let viewModel = SwapViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         let viewController = SwapPageViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }
@@ -39,7 +45,12 @@ final class ViewControllerFactory {
     }
     
     func makeSearchPageViewController() -> UINavigationController {
-        let viewModel = SearchViewModel()
+        let networkService = NetworkService()
+        let coreDataService = CoreDataService()
+        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
+        let imageRepository = ImageRepository()
+        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
+        let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         let viewController = SearchViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }
