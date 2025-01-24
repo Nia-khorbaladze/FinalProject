@@ -22,6 +22,7 @@ public enum Icons: String {
     case buy = "buy"
     case swapCoins = "swapCoins"
     case emptyPortfolio = "emptyPortfolio"
+    case successfulTransaction = "successfulTransaction"
 }
 
 public enum AppColors: String {

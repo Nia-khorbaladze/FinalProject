@@ -13,20 +13,22 @@ final class HomePageViewController: UIViewController {
     private let blurEffectService: BlurEffectService
 
     // MARK: - UI Elements
-    private lazy var homePageTopView: UIHostingController<HomePageTopSectionView> = {
+    private lazy var homePageContentView: UIHostingController<HomePageContentView> = {
         let hostingController = UIHostingController(
-            rootView: HomePageTopSectionView()
-        )
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        hostingController.view.backgroundColor = .clear
-        return hostingController
-    }()
-    
-    private lazy var trendingCoinsView: UIHostingController<CoinsListView> = {
-        let hostingController = UIHostingController(
-            rootView: CoinsListView(
+            rootView: HomePageContentView(
                 viewModel: viewModel,
-                title: "Trending",
+                onReceiveTapped: { [weak self] in
+                    self?.navigateToReceiveView()
+                },
+                onSendTapped: { [weak self] in
+                    self?.navigateToSendView()
+                },
+                onSwapTapped: { [weak self] in
+                    self?.navigateToSwapView()
+                },
+                onBuyTapped: { [weak self] in
+                    self?.navigateToBuyView()
+                },
                 onCoinTapped: { [weak self] coin in
                     guard let self = self else { return }
                     self.navigateToCoinDetails(coinName: coin.name)
@@ -35,9 +37,6 @@ final class HomePageViewController: UIViewController {
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
-
-        viewModel.fetchCoins()
-
         return hostingController
     }()
     
@@ -91,13 +90,9 @@ final class HomePageViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        addChild(homePageTopView)
-        contentView.addSubview(homePageTopView.view)
-        homePageTopView.didMove(toParent: self)
-        
-        addChild(trendingCoinsView)
-        contentView.addSubview(trendingCoinsView.view)
-        trendingCoinsView.didMove(toParent: self)
+        addChild(homePageContentView)
+        contentView.addSubview(homePageContentView.view)
+        homePageContentView.didMove(toParent: self)
         
         addChild(profilePopupButtonView)
         contentView.addSubview(profilePopupButtonView.view)
@@ -127,17 +122,12 @@ final class HomePageViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            homePageTopView.view.topAnchor.constraint(equalTo: profilePopupButtonView.view.bottomAnchor, constant: 20),
-            homePageTopView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            homePageTopView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            homePageContentView.view.topAnchor.constraint(equalTo: profilePopupButtonView.view.bottomAnchor, constant: 15),
+            homePageContentView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            homePageContentView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            homePageContentView.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
-        NSLayoutConstraint.activate([
-            trendingCoinsView.view.topAnchor.constraint(equalTo: homePageTopView.view.bottomAnchor),
-            trendingCoinsView.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            trendingCoinsView.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            trendingCoinsView.view.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor)
-        ])
     }
     
     private func openProfilePopup() {
@@ -161,5 +151,22 @@ final class HomePageViewController: UIViewController {
     private func navigateToCoinDetails(coinName: String) {
         let viewController = ViewControllerFactory().makeDetailsPageViewController(coinName: coinName)
         navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    private func navigateToReceiveView() {
+    
+    }
+
+    private func navigateToSendView() {
+        
+    }
+
+    private func navigateToSwapView() {
+        
+    }
+
+    private func navigateToBuyView() {
+        let selectCoinVC = ViewControllerFactory().makeSelectCoinViewController()
+        self.navigationController?.pushViewController(selectCoinVC, animated: true)
     }
 }
