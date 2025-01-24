@@ -17,7 +17,11 @@ final class SearchViewController: UIViewController {
         let hostingController = UIHostingController(
             rootView: SearchPageView(
                 viewModel: viewModel,
-                onCoinTapped: { _ in print("Tapped") } )
+                onCoinTapped: { [weak self] coin in
+                    guard let self = self else { return }
+                    self.navigateToCoinDetails(coinName: coin.name)
+                }
+            )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
@@ -60,5 +64,10 @@ final class SearchViewController: UIViewController {
             searchView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    private func navigateToCoinDetails(coinName: String) {
+        let viewController = ViewControllerFactory().makeDetailsPageViewController(coinName: coinName)
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
