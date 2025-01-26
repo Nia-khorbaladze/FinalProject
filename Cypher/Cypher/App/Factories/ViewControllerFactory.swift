@@ -39,7 +39,19 @@ final class ViewControllerFactory {
     }
     
     func makePortfolioPageViewController() -> UINavigationController {
-        let viewModel = PortfolioViewModel()
+        let networkService = NetworkService()
+        let coreDataService = CoreDataService()
+        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
+        let imageRepository = ImageRepository()
+        let purchasedCoinRepository = PurchasedCoinRepository()
+        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
+
+        let viewModel = PortfolioViewModel(
+            fetchCoinsUseCase: fetchCoinsUseCase,
+            purchasedCoinRepository: purchasedCoinRepository,
+            imageRepository: imageRepository
+        )
+
         let viewController = PortfolioViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }
