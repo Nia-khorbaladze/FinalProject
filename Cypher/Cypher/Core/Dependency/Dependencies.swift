@@ -30,9 +30,25 @@ final class Dependencies {
         PurchasedCoinRepository()
     }()
     
+    private(set) lazy var favoriteCoinsRepository: FavoriteCoinsRepository = {
+        FavoriteCoinsRepository()
+    }()
+    
     // MARK: - Use Cases
     private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCase = {
         FetchCoinDetailUseCase(repository: coinRepository)
+    }()
+    
+    private(set) lazy var saveFavoriteCoinUseCase: SaveFavoriteCoinUseCase = {
+        SaveFavoriteCoinUseCase(repository: favoriteCoinsRepository)
+    }()
+    
+    private(set) lazy var removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase = {
+        RemoveFavoriteCoinUseCase(repository: favoriteCoinsRepository)
+    }()
+    
+    private(set) lazy var isFavoriteCoinUseCase: IsFavoriteCoinUseCase = {
+        IsFavoriteCoinUseCase(repository: favoriteCoinsRepository)
     }()
     
     private(set) lazy var googleSignInUseCase: GoogleSignInUseCase = {
@@ -54,6 +70,15 @@ final class Dependencies {
             currentPrice: currentPrice,
             coinName: coinName,
             savePurchasedCoinUseCase: savePurchasedCoinUseCase
+        )
+    }
+    
+    func makeDetailsPageViewModel() -> DetailsPageViewModel {
+        DetailsPageViewModel(
+            fetchCoinDetailUseCase: fetchCoinDetailUseCase,
+            saveFavoriteUseCase: saveFavoriteCoinUseCase,
+            removeFavoriteUseCase: removeFavoriteCoinUseCase,
+            isFavoriteUseCase: isFavoriteCoinUseCase
         )
     }
     

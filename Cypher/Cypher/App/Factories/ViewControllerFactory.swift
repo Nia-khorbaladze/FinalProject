@@ -8,6 +8,8 @@
 import UIKit
 
 final class ViewControllerFactory {
+    private let dependencies = Dependencies.shared
+
     func makeHomePageViewController() -> UINavigationController {
         let networkService = NetworkService()
         let coreDataService = CoreDataService()
@@ -68,22 +70,12 @@ final class ViewControllerFactory {
     }
     
     func makeDetailsPageViewController(coinName: String) -> DetailsPageViewController {
-        let dependencies = Dependencies.shared
-        let coinRepository = CoinRepository(
-            networkService: dependencies.networkService,
-            coreDataService: dependencies.coreDataService
-        )
-        let fetchCoinDetailUseCase = FetchCoinDetailUseCase(repository: coinRepository)
-        let viewController = DetailsPageViewController(
-            coinName: coinName,
-            fetchCoinDetailUseCase: fetchCoinDetailUseCase
-        )
-        
+        let viewModel = dependencies.makeDetailsPageViewModel()
+        let viewController = DetailsPageViewController(coinName: coinName, viewModel: viewModel)
         return viewController
     }
-    
+
     func makeSelectCoinViewController() -> SelectCoinViewController {
-        let dependencies = Dependencies.shared
         let fetchCoinsUseCase = FetchCoinsUseCase(
             coinRepository: dependencies.coinRepository,
             imageRepository: ImageRepository()
