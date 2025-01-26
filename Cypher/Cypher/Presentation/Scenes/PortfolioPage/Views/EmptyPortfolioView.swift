@@ -20,7 +20,6 @@ struct EmptyPortfolioView: View {
                         .foregroundStyle(Color(AppColors.white.rawValue))
                     Spacer()
                 }
-                .padding(.top)
                 .padding(.horizontal)
                 
                 Spacer()
