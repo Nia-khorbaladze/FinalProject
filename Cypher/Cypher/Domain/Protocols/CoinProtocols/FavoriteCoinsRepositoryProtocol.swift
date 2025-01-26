@@ -11,4 +11,5 @@ protocol FavoriteCoinsRepositoryProtocol {
     func saveFavorite(userID: String, coinName: String) async throws
     func removeFavorite(userID: String, coinName: String) async throws
     func isFavorite(userID: String, coinName: String) async throws -> Bool
+    func fetchFavorites(userID: String) async throws -> [String]
 }
