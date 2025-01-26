@@ -25,18 +25,14 @@ final class DetailsPageViewController: UIViewController {
     }()
     
     // MARK: - Initializer
-    init(coinName: String, fetchCoinDetailUseCase: FetchCoinDetailUseCase) {
+    init(coinName: String, viewModel: DetailsPageViewModel) {
         self.coinName = coinName
-        self.viewModel = DetailsPageViewModel(fetchCoinDetailUseCase: fetchCoinDetailUseCase)
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    deinit {
-        viewModel.cleanup()
     }
     
     // MARK: - Lifecycle
