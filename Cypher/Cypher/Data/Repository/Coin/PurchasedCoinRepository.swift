@@ -12,21 +12,53 @@ final class PurchasedCoinRepository: PurchasedCoinRepositoryProtocol {
     private let db = Firestore.firestore()
     
     func savePurchase(userID: String, coinSymbol: String, coinName: String, purchase: Purchase) async throws {
-        let coinData: [String: Any] = [
-            "name": coinName
-        ]
-        
-        let purchaseData: [String: Any] = [
-            "amount": purchase.amount,
-            "timestamp": Timestamp(date: purchase.timestamp)
-        ]
-        
         let coinRef = db.collection("Users")
             .document(userID)
             .collection("purchasedCoins")
             .document(coinSymbol)
-        try await coinRef.setData(coinData)
         
-        try await coinRef.collection("purchases").addDocument(data: purchaseData)
+        _ = try await db.runTransaction { transaction, errorPointer in
+            do {
+                let coinSnapshot = try transaction.getDocument(coinRef)
+                
+                if coinSnapshot.exists {
+                    if let currentAmount = coinSnapshot.data()?["totalAmount"] as? Double {
+                        let updatedAmount = currentAmount + purchase.amount
+                        
+                        transaction.updateData([
+                            "totalAmount": updatedAmount,
+                            "lastUpdated": Timestamp(date: Date())
+                        ], forDocument: coinRef)
+                    }
+                } else {
+                    transaction.setData([
+                        "name": coinName,
+                        "totalAmount": purchase.amount,
+                        "lastUpdated": Timestamp(date: Date())
+                    ], forDocument: coinRef)
+                }
+            } catch let error {
+                errorPointer?.pointee = error as NSError
+            }
+            return nil
+        }
+    }
+    
+    func fetchPurchasedCoins(userID: String) async throws -> [PurchasedCoin] {
+        let coinRef = db.collection("Users")
+            .document(userID)
+            .collection("purchasedCoins")
+        
+        let snapshot = try await coinRef.getDocuments()
+        
+        return snapshot.documents.compactMap { document in
+            guard
+                let name = document.data()["name"] as? String,
+                let totalAmount = document.data()["totalAmount"] as? Double
+            else {
+                return nil
+            }
+            return PurchasedCoin(symbol: document.documentID, name: name, totalAmount: totalAmount)
+        }
     }
 }
