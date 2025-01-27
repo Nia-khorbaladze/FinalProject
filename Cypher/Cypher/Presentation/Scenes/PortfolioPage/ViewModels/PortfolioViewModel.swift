@@ -11,7 +11,7 @@ import FirebaseAuth
 
 final class PortfolioViewModel: ObservableObject {
     private let fetchCoinsUseCase: FetchCoinsUseCase
-    private let purchasedCoinRepository: PurchasedCoinRepositoryProtocol
+    private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase
     private let imageRepository: ImageRepositoryProtocol
 
     @Published var portfolioCoins: [PortfolioCoin] = []
@@ -19,9 +19,9 @@ final class PortfolioViewModel: ObservableObject {
     @Published var error: String?
     var cancellables = Set<AnyCancellable>()
 
-    init(fetchCoinsUseCase: FetchCoinsUseCase, purchasedCoinRepository: PurchasedCoinRepositoryProtocol, imageRepository: ImageRepositoryProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCase, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase, imageRepository: ImageRepositoryProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
-        self.purchasedCoinRepository = purchasedCoinRepository
+        self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
         self.imageRepository = imageRepository
     }
 
@@ -37,7 +37,7 @@ final class PortfolioViewModel: ObservableObject {
 
         Task {
             do {
-                let purchasedCoins = try await purchasedCoinRepository.fetchPurchasedCoins(userID: userID)
+                let purchasedCoins = try await fetchPurchasedCoinsUseCase.execute(userID: userID)
                 
                 fetchCoinsUseCase.execute()
                     .receive(on: DispatchQueue.main)

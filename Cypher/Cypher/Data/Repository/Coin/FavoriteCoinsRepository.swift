@@ -40,5 +40,14 @@ final class FavoriteCoinsRepository: FavoriteCoinsRepositoryProtocol {
         let snapshot = try await favoriteRef.getDocument()
         return snapshot.exists
     }
+    
+    func fetchFavorites(userID: String) async throws -> [String] {
+        let favoritesRef = db.collection("Users")
+            .document(userID)
+            .collection("favoriteCoins")
+        
+        let snapshot = try await favoritesRef.getDocuments()
+        return snapshot.documents.compactMap { $0.documentID }
+    }
 }
 

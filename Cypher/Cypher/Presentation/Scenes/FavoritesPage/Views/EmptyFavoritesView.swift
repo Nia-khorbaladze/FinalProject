@@ -1,13 +1,13 @@
 //
-//  EmptyPortfolioView.swift
+//  EmptyFavoritesView.swift
 //  Cypher
 //
-//  Created by Nkhorbaladze on 16.01.25.
+//  Created by Nkhorbaladze on 27.01.25.
 //
 
 import SwiftUI
 
-struct EmptyPortfolioView: View {
+struct EmptyFavoritesView: View {
     var body: some View {
         ZStack {
             Color(AppColors.backgroundColor.rawValue)
@@ -26,7 +26,7 @@ struct EmptyPortfolioView: View {
                     .font(Fonts.semiBold.size(30))
                     .foregroundStyle(Color(AppColors.white.rawValue))
                 
-                Text("You can start buying coins.")
+                Text("Add coins to favorites to get started.")
                     .font(Fonts.regular.size(15))
                     .foregroundStyle(Color(AppColors.lightGrey.rawValue))
                 
@@ -35,3 +35,4 @@ struct EmptyPortfolioView: View {
         }
     }
 }
+
