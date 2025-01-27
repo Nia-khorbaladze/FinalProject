@@ -23,7 +23,19 @@ final class ViewControllerFactory {
     }
     
     func makeFavoritesPageViewController() -> UINavigationController {
-        let viewModel = FavoritesViewModel()
+        let networkService = NetworkService()
+        let coreDataService = CoreDataService()
+        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
+        let imageRepository = ImageRepository()
+        let favoriteCoinsRepository = dependencies.favoriteCoinsRepository
+        let fetchFavoriteCoinsUseCase = FetchFavoritesUseCase(repository: favoriteCoinsRepository)
+        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
+        
+        let viewModel = FavoritesViewModel(
+            fetchCoinsUseCase: fetchCoinsUseCase,
+            fetchFavoritesUseCase: fetchFavoriteCoinsUseCase,
+            imageRepository: imageRepository
+        )
         let viewController = FavoritesPageViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }
@@ -45,12 +57,13 @@ final class ViewControllerFactory {
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
         let imageRepository = ImageRepository()
-        let purchasedCoinRepository = PurchasedCoinRepository()
+        let purchasedCoinRepository = dependencies.purchasedCoinRepository
+        let fetchPurchasedCoinUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
 
         let viewModel = PortfolioViewModel(
             fetchCoinsUseCase: fetchCoinsUseCase,
-            purchasedCoinRepository: purchasedCoinRepository,
+            fetchPurchasedCoinsUseCase: fetchPurchasedCoinUseCase,
             imageRepository: imageRepository
         )
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class FetchFavoritesUseCase: FetchFavoritesUseCaseProtocol {
+final class FetchFavoritesUseCase {
     private let repository: FavoriteCoinsRepositoryProtocol
     
     init(repository: FavoriteCoinsRepositoryProtocol) {
