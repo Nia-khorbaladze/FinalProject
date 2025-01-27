@@ -38,7 +38,7 @@ final class FavoritesViewModel: ObservableObject {
 
         Task {
             do {
-                let favoriteIDs = try await fetchFavoritesUseCase.execute(userID: userID)
+                let favoriteNames = try await fetchFavoritesUseCase.execute(userID: userID)
                 
                 fetchCoinsUseCase.execute()
                     .receive(on: DispatchQueue.main)
@@ -53,7 +53,7 @@ final class FavoritesViewModel: ObservableObject {
                     }, receiveValue: { [weak self] marketData in
                         guard let self = self else { return }
 
-                        let favoriteCoins = favoriteIDs.compactMap { favoriteName in
+                        let favoriteCoins = favoriteNames.compactMap { favoriteName in
                             marketData.first { $0.name.lowercased() == favoriteName.lowercased() }
                                 .map { marketCoin in
                                     FavoriteCoin(
