@@ -43,14 +43,16 @@ final class SwapViewModel: ObservableObject {
     private let getExchangeRateUseCase: GetExchangeRateUseCaseProtocol
     private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase
     private var cancellables: Set<AnyCancellable> = []
+    private let swapCoinsUseCase: SwapCoinsUseCaseProtocol
     
     private var timer: AnyCancellable?
     private var timeInterval: TimeInterval = 0.3
 
-    init(fetchCoinsUseCase: FetchCoinsUseCase, getExchangeRateUseCase: GetExchangeRateUseCaseProtocol, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase) {
+    init(fetchCoinsUseCase: FetchCoinsUseCase, getExchangeRateUseCase: GetExchangeRateUseCaseProtocol, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase, swapCoinsUseCase: SwapCoinsUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.getExchangeRateUseCase = getExchangeRateUseCase
         self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
+        self.swapCoinsUseCase = swapCoinsUseCase
     }
 
     func fetchCoins() {
@@ -97,6 +99,44 @@ final class SwapViewModel: ObservableObject {
             }
         }
         print(purchasedCoins)
+    }
+    
+    func swapCoins() async -> Bool {
+        guard
+            let payCoin = selectedPayCoin,
+            let receiveCoin = selectedReceiveCoin,
+            let payValue = Double(payAmount), payValue > 0,
+            let currentUser = Auth.auth().currentUser
+        else {
+            return false
+        }
+        
+        let userID = currentUser.uid
+        
+        await MainActor.run {
+            isLoading = true
+            error = nil
+        }
+        
+        do {
+            try await swapCoinsUseCase.execute(
+                userID: userID,
+                payCoin: payCoin,
+                receiveCoin: receiveCoin,
+                payAmount: payValue
+            )
+
+            await MainActor.run { [weak self] in
+                self?.isLoading = false
+            }
+            return true
+        } catch {
+            await MainActor.run { [weak self] in
+                self?.error = error.localizedDescription
+                self?.isLoading = false
+            }
+            return false
+        }
     }
 
     private func startDebounceTimer() {

@@ -12,7 +12,7 @@ import Combine
 final class SwapPageViewController: UIViewController {
     private let viewModel: SwapViewModel
     private var cancellables = Set<AnyCancellable>()
-
+    
     // MARK: - UI Elements
     private lazy var swapCoinsView: UIHostingController<SwapCoinsView> = {
         let hostingController = UIHostingController(
@@ -28,7 +28,9 @@ final class SwapPageViewController: UIViewController {
             rootView: PrimaryButton(
                 title: "Swap",
                 isActive: viewModel.isButtonActive,
-                action: { }
+                action: { [weak self] in
+                    self?.handleSwapAction()
+                }
             )
         )
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -92,9 +94,30 @@ final class SwapPageViewController: UIViewController {
                 self.swapButton.rootView = PrimaryButton(
                     title: "Swap",
                     isActive: isActive,
-                    action: { }
+                    action: isActive ? { self.handleSwapAction() } : {}
                 )
             }
             .store(in: &cancellables)
+    }
+    
+    private func handleSwapAction() {
+        Task {
+            let success = await viewModel.swapCoins()
+            
+            await MainActor.run { [weak self] in
+                if success {
+                    let successVC = SuccessfulTransactionViewController()
+                    self?.navigationController?.pushViewController(successVC, animated: true)
+                } else {
+                    self?.showError("Please try again later.")
+                }
+            }
+        }
+    }
+    
+    private func showError(_ message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
