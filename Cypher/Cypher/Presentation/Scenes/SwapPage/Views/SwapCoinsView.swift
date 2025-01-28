@@ -27,7 +27,8 @@ struct SwapCoinsView: View {
                     label: "You Pay",
                     selectedCoin: $viewModel.selectedPayCoin,
                     amount: $viewModel.payAmount,
-                    showCoinList: $showCoinListForPay
+                    showCoinList: $showCoinListForPay,
+                    purchasedCoins: viewModel.purchasedCoins
                 )
                 
                 Button(action: {
@@ -45,7 +46,8 @@ struct SwapCoinsView: View {
                     label: "You Receive",
                     selectedCoin: $viewModel.selectedReceiveCoin,
                     amount: $viewModel.receiveAmount,
-                    showCoinList: $showCoinListForReceive
+                    showCoinList: $showCoinListForReceive,
+                    purchasedCoins: viewModel.purchasedCoins
                 )
             }
             .padding()

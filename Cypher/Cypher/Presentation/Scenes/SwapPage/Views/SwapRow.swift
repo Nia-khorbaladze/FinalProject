@@ -12,7 +12,8 @@ struct SwapRow: View {
     @Binding var selectedCoin: CoinResponse?
     @Binding var amount: String
     @Binding var showCoinList: Bool
-    
+    var purchasedCoins: [PurchasedCoin]
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 8) {
@@ -67,10 +68,18 @@ struct SwapRow: View {
                     .cornerRadius(20)
                 }
                 
-                Text("\(selectedCoin?.currentPrice ?? 0.00, specifier: "%.2f") \(selectedCoin?.symbol ?? "SOL")")
-                    .font(Fonts.semiBold.size(13))
-                    .foregroundStyle(Color(AppColors.lightGrey.rawValue))
-                    .padding(.top, 5)
+                if let selectedCoin = selectedCoin {
+                    let ownedAmount = purchasedCoins.first { $0.symbol == selectedCoin.symbol.uppercased() }?.totalAmount ?? 0.0
+                    Text("\(ownedAmount, specifier: "%.8f") \(selectedCoin.symbol.uppercased())")
+                        .font(Fonts.semiBold.size(13))
+                        .foregroundStyle(Color(AppColors.lightGrey.rawValue))
+                        .padding(.top, 5)
+                } else {
+                    Text("")
+                        .font(Fonts.semiBold.size(13))
+                        .foregroundStyle(Color(AppColors.lightGrey.rawValue))
+                        .padding(.top, 5)
+                }
             }
         }
         .padding(.horizontal)

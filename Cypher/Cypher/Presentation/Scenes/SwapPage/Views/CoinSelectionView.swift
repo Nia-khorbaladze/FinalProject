@@ -43,6 +43,7 @@ struct CoinSelectionView: View {
                 }
                 .onAppear {
                     viewModel.fetchCoins()
+                    viewModel.fetchPurchasedCoins()
                 }
             }
             .toolbar {

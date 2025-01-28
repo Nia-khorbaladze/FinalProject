@@ -7,9 +7,11 @@
 
 import SwiftUI
 import Combine
+import FirebaseAuth
 
-class SwapViewModel: ObservableObject {
+final class SwapViewModel: ObservableObject {
     @Published var coins: [CoinResponse] = []
+    @Published var purchasedCoins: [PurchasedCoin] = []
     @Published var isLoading: Bool = false
     @Published var error: String?
 
@@ -31,14 +33,16 @@ class SwapViewModel: ObservableObject {
 
     private let fetchCoinsUseCase: FetchCoinsUseCase
     private let getExchangeRateUseCase: GetExchangeRateUseCaseProtocol
+    private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase
     private var cancellables: Set<AnyCancellable> = []
     
     private var timer: AnyCancellable?
     private var timeInterval: TimeInterval = 0.3
 
-    init(fetchCoinsUseCase: FetchCoinsUseCase, getExchangeRateUseCase: GetExchangeRateUseCaseProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCase, getExchangeRateUseCase: GetExchangeRateUseCaseProtocol, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.getExchangeRateUseCase = getExchangeRateUseCase
+        self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
     }
 
     func fetchCoins() {
@@ -59,6 +63,32 @@ class SwapViewModel: ObservableObject {
                 self?.coins = coins
             })
             .store(in: &cancellables)
+    }
+
+    func fetchPurchasedCoins() {
+        isLoading = true
+        error = nil
+
+        guard let currentUser = Auth.auth().currentUser else {
+            return
+        }
+        let userID = currentUser.uid
+        
+        Task {
+            do {
+                let purchasedCoins = try await fetchPurchasedCoinsUseCase.execute(userID: userID)
+                await MainActor.run { [weak self] in
+                    self?.purchasedCoins = purchasedCoins
+                    self?.isLoading = false
+                }
+            } catch {
+                await MainActor.run { [weak self] in
+                    self?.error = error.localizedDescription
+                    self?.isLoading = false
+                }
+            }
+        }
+        print(purchasedCoins)
     }
 
     private func startDebounceTimer() {
