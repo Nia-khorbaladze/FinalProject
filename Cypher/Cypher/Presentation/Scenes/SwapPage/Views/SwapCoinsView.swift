@@ -56,6 +56,9 @@ struct SwapCoinsView: View {
             
             Spacer()
         }
+        .onAppear {
+            viewModel.fetchPurchasedCoins()
+        }
         .sheet(isPresented: $showCoinListForPay) {
             CoinSelectionView(
                 viewModel: viewModel,
