@@ -25,7 +25,7 @@ struct SwapCoinsView: View {
             VStack(spacing: 16) {
                 SwapRow(
                     label: "You Pay",
-                    selectedCoin: $selectedPayCoin,
+                    selectedCoin: $viewModel.selectedPayCoin,
                     amount: $viewModel.payAmount,
                     showCoinList: $showCoinListForPay
                 )
@@ -43,7 +43,7 @@ struct SwapCoinsView: View {
                 
                 SwapRow(
                     label: "You Receive",
-                    selectedCoin: $selectedReceiveCoin,
+                    selectedCoin: $viewModel.selectedReceiveCoin,
                     amount: $viewModel.receiveAmount,
                     showCoinList: $showCoinListForReceive
                 )
@@ -57,14 +57,14 @@ struct SwapCoinsView: View {
         .sheet(isPresented: $showCoinListForPay) {
             CoinSelectionView(
                 viewModel: viewModel,
-                selectedCoin: $selectedPayCoin,
+                selectedCoin: $viewModel.selectedPayCoin,
                 isPresented: $showCoinListForPay
             )
         }
         .sheet(isPresented: $showCoinListForReceive) {
             CoinSelectionView(
                 viewModel: viewModel,
-                selectedCoin: $selectedReceiveCoin,
+                selectedCoin: $viewModel.selectedReceiveCoin,
                 isPresented: $showCoinListForReceive
             )
         }

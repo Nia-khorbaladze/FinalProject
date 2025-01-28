@@ -22,7 +22,16 @@ struct SwapRow: View {
                 
                 TextField(
                     "",
-                    text: $amount,
+                    text: Binding(
+                        get: {
+                            amount
+                        },
+                        set: { newValue in
+                            if newValue.isEmpty || Double(newValue) != nil {
+                                amount = newValue
+                            }
+                        }
+                    ),
                     prompt: Text("0")
                         .font(Fonts.semiBold.size(32))
                         .foregroundColor(Color(AppColors.lightGrey.rawValue).opacity(0.5))
@@ -43,12 +52,12 @@ struct SwapRow: View {
                                 .frame(width: 20, height: 20)
                                 .scaledToFit()
                         } else {
-                            Image(systemName: "bitcoinsign.circle")
+                            Image(systemName: "circle")
                                 .resizable()
                                 .frame(width: 20, height: 20)
                         }
                         
-                        Text(selectedCoin?.symbol ?? "BTC")
+                        Text(selectedCoin?.symbol ?? "Select")
                             .font(Fonts.semiBold.size(13))
                             .foregroundColor(Color(AppColors.white.rawValue))
                     }
@@ -58,7 +67,7 @@ struct SwapRow: View {
                     .cornerRadius(20)
                 }
                 
-                Text("\(selectedCoin?.currentPrice ?? 0.00) \(selectedCoin?.symbol ?? "SOL")")
+                Text("\(selectedCoin?.currentPrice ?? 0.00, specifier: "%.2f") \(selectedCoin?.symbol ?? "SOL")")
                     .font(Fonts.semiBold.size(13))
                     .foregroundStyle(Color(AppColors.lightGrey.rawValue))
                     .padding(.top, 5)
