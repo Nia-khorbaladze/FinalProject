@@ -19,7 +19,15 @@ final class SwapViewModel: ObservableObject {
     @Published var receiveAmount: String = "0"
     @Published var payAmount: String = "0" {
         didSet {
-            isButtonActive = (Double(payAmount) ?? 0) > 0
+            if let payValue = Double(payAmount),
+               let selectedCoin = selectedPayCoin,
+               let ownedAmount = purchasedCoins.first(where: { $0.symbol == selectedCoin.symbol.uppercased() })?.totalAmount,
+               payValue > 0,
+               payValue <= ownedAmount {
+                isButtonActive = true
+            } else {
+                isButtonActive = false
+            }
             startDebounceTimer()
         }
     }
