@@ -44,7 +44,7 @@ final class SuccessfulTransactionViewController: UIViewController {
     private lazy var returnToHomeButton: UIHostingController<PrimaryButton> = {
         let hostingController = UIHostingController(
             rootView: PrimaryButton(
-                title: "Return to Home Page",
+                title: "Return",
                 isActive: true,
                 action: { [weak self] in
                     self?.navigateToHomePage()
@@ -67,6 +67,7 @@ final class SuccessfulTransactionViewController: UIViewController {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()
         setupConstraints()
+        self.navigationController?.isNavigationBarHidden = true
     }
     
     private func setupUI() {

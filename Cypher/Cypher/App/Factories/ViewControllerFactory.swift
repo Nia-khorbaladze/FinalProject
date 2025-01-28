@@ -47,7 +47,16 @@ final class ViewControllerFactory {
         let imageRepository = ImageRepository()
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
 
-        let viewModel = SwapViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
+        let exchangeRateRepository = ExchangeRateRepository(networkService: networkService)
+
+        let getExchangeRateUseCase = GetExchangeRateUseCase(repository: exchangeRateRepository)
+        let purchasedCoinRepository = dependencies.purchasedCoinRepository
+        let fetchPurchasedCoinUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
+        
+        let swapCoinsUseCase = SwapCoinsUseCase(getExchangeRateUseCase: getExchangeRateUseCase, repository: purchasedCoinRepository)
+        
+        let viewModel = SwapViewModel(fetchCoinsUseCase: fetchCoinsUseCase, getExchangeRateUseCase: getExchangeRateUseCase, fetchPurchasedCoinsUseCase: fetchPurchasedCoinUseCase, swapCoinsUseCase: swapCoinsUseCase)
+        
         let viewController = SwapPageViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }

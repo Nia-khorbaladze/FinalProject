@@ -25,9 +25,10 @@ struct SwapCoinsView: View {
             VStack(spacing: 16) {
                 SwapRow(
                     label: "You Pay",
-                    selectedCoin: $selectedPayCoin,
+                    selectedCoin: $viewModel.selectedPayCoin,
                     amount: $viewModel.payAmount,
-                    showCoinList: $showCoinListForPay
+                    showCoinList: $showCoinListForPay,
+                    purchasedCoins: viewModel.purchasedCoins
                 )
                 
                 Button(action: {
@@ -43,9 +44,10 @@ struct SwapCoinsView: View {
                 
                 SwapRow(
                     label: "You Receive",
-                    selectedCoin: $selectedReceiveCoin,
+                    selectedCoin: $viewModel.selectedReceiveCoin,
                     amount: $viewModel.receiveAmount,
-                    showCoinList: $showCoinListForReceive
+                    showCoinList: $showCoinListForReceive,
+                    purchasedCoins: viewModel.purchasedCoins
                 )
             }
             .padding()
@@ -54,17 +56,20 @@ struct SwapCoinsView: View {
             
             Spacer()
         }
+        .onAppear {
+            viewModel.fetchPurchasedCoins()
+        }
         .sheet(isPresented: $showCoinListForPay) {
             CoinSelectionView(
                 viewModel: viewModel,
-                selectedCoin: $selectedPayCoin,
+                selectedCoin: $viewModel.selectedPayCoin,
                 isPresented: $showCoinListForPay
             )
         }
         .sheet(isPresented: $showCoinListForReceive) {
             CoinSelectionView(
                 viewModel: viewModel,
-                selectedCoin: $selectedReceiveCoin,
+                selectedCoin: $viewModel.selectedReceiveCoin,
                 isPresented: $showCoinListForReceive
             )
         }

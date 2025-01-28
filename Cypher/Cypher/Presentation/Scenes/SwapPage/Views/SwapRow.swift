@@ -12,7 +12,9 @@ struct SwapRow: View {
     @Binding var selectedCoin: CoinResponse?
     @Binding var amount: String
     @Binding var showCoinList: Bool
-    
+    @FocusState private var isTextFieldFocused: Bool
+    var purchasedCoins: [PurchasedCoin]
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 8) {
@@ -20,13 +22,19 @@ struct SwapRow: View {
                     .font(Fonts.semiBold.size(13))
                     .foregroundColor(Color(AppColors.lightGrey.rawValue))
                 
-                TextField(
-                    "",
-                    text: $amount,
-                    prompt: Text("0")
-                        .font(Fonts.semiBold.size(32))
-                        .foregroundColor(Color(AppColors.lightGrey.rawValue).opacity(0.5))
-                )
+                TextField("", text: Binding(
+                    get: {
+                        isTextFieldFocused ? (amount == "0" ? "" : amount) : (amount.isEmpty ? "0" : amount)
+                    },
+                    set: { newValue in
+                        if newValue.isEmpty {
+                            amount = "0"
+                        } else if Double(newValue) != nil {
+                            amount = newValue.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "^0+(?!$)", with: "", options: .regularExpression)
+                        }
+                    }
+                ))
+                .focused($isTextFieldFocused)
                 .font(Fonts.semiBold.size(32))
                 .keyboardType(.decimalPad)
                 .foregroundColor(Color(AppColors.lightGrey.rawValue))
@@ -43,12 +51,12 @@ struct SwapRow: View {
                                 .frame(width: 20, height: 20)
                                 .scaledToFit()
                         } else {
-                            Image(systemName: "bitcoinsign.circle")
+                            Image(systemName: "circle")
                                 .resizable()
                                 .frame(width: 20, height: 20)
                         }
                         
-                        Text(selectedCoin?.symbol ?? "BTC")
+                        Text(selectedCoin?.symbol ?? "Select")
                             .font(Fonts.semiBold.size(13))
                             .foregroundColor(Color(AppColors.white.rawValue))
                     }
@@ -58,10 +66,18 @@ struct SwapRow: View {
                     .cornerRadius(20)
                 }
                 
-                Text("\(selectedCoin?.currentPrice ?? 0.00) \(selectedCoin?.symbol ?? "SOL")")
-                    .font(Fonts.semiBold.size(13))
-                    .foregroundStyle(Color(AppColors.lightGrey.rawValue))
-                    .padding(.top, 5)
+                if let selectedCoin = selectedCoin {
+                    let ownedAmount = purchasedCoins.first { $0.symbol == selectedCoin.symbol.uppercased() }?.totalAmount ?? 0.0
+                    Text("\(ownedAmount, specifier: "%.8f") \(selectedCoin.symbol.uppercased())")
+                        .font(Fonts.semiBold.size(13))
+                        .foregroundStyle(Color(AppColors.lightGrey.rawValue))
+                        .padding(.top, 5)
+                } else {
+                    Text("")
+                        .font(Fonts.semiBold.size(13))
+                        .foregroundStyle(Color(AppColors.lightGrey.rawValue))
+                        .padding(.top, 5)
+                }
             }
         }
         .padding(.horizontal)
