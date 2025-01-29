@@ -154,7 +154,8 @@ final class HomePageViewController: UIViewController {
     }
     
     private func navigateToReceiveView() {
-    
+        let viewController = ViewControllerFactory().makeReceivePageViewController()
+        navigationController?.pushViewController(viewController, animated: true)
     }
 
     private func navigateToSendView() {
