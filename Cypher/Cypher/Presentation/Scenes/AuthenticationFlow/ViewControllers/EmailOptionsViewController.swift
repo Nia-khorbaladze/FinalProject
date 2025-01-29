@@ -126,7 +126,10 @@ final class EmailOptionsViewController: UIViewController {
     }
     
     private func navigateToSuccessScreen(state: AuthenticationState) {
-        let successAuthViewController = SuccessfulAuthViewController(state: state)
+        let walletAddressUseCase = Dependencies.shared.walletAddressUseCase
+        let successfulAuthViewModel = SuccessfulAuthViewModel(walletAddressUseCase: walletAddressUseCase)
+        
+        let successAuthViewController = SuccessfulAuthViewController(state: state, viewModel: successfulAuthViewModel)
         navigationController?.pushViewController(successAuthViewController, animated: true)
     }
     

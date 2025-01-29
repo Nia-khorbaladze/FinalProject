@@ -34,6 +34,10 @@ final class Dependencies {
         FavoriteCoinsRepository()
     }()
     
+    private(set) lazy var walletAddressRepository: WalletAddressRepository = {
+        WalletAddressRepository()
+    }()
+    
     // MARK: - Use Cases
     private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCase = {
         FetchCoinDetailUseCase(repository: coinRepository)
@@ -57,6 +61,10 @@ final class Dependencies {
     
     private(set) lazy var savePurchasedCoinUseCase: SavePurchasedCoinUseCase = {
         SavePurchasedCoinUseCase(purchasedCoinRepository: purchasedCoinRepository)
+    }()
+    
+    private(set) lazy var walletAddressUseCase: WalletAddressUseCase = {
+        WalletAddressUseCase(repository: walletAddressRepository)
     }()
     
     // MARK: - View Models

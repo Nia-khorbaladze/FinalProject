@@ -10,6 +10,7 @@ import SwiftUI
 
 final class SuccessfulAuthViewController: UIViewController {
     private let state: AuthenticationState
+    private let viewModel: SuccessfulAuthViewModel
     
     // MARK: - UI Elements
     private lazy var authView: UIHostingController<SuccessfulAuthView> = {
@@ -38,8 +39,9 @@ final class SuccessfulAuthViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(state: AuthenticationState) {
+    init(state: AuthenticationState, viewModel: SuccessfulAuthViewModel) {
         self.state = state
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -51,14 +53,26 @@ final class SuccessfulAuthViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: true)
-        setup()
+        
+        Task {
+            await setup()
+        }
     }
     
     // MARK: - UI Setup
-    private func setup() {
+    private func setup() async {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()
         setupConstraints()
+
+        await viewModel.saveWalletAddress { [weak self] result in
+            switch result {
+            case .success:
+                break
+            case .failure:
+                self?.showAlert(title: "Error", message: "Couldn't save wallet addresses.")
+            }
+        }
     }
     
     private func setupUI() {
@@ -78,6 +92,12 @@ final class SuccessfulAuthViewController: UIViewController {
             continueButton.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             continueButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
+    }
+    
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
     private func navigate() {
