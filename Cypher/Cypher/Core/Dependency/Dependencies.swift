@@ -63,8 +63,10 @@ final class Dependencies {
         SavePurchasedCoinUseCase(purchasedCoinRepository: purchasedCoinRepository)
     }()
     
+    private let iconProvider = WalletIconProvider()
+    
     private(set) lazy var walletAddressUseCase: WalletAddressUseCase = {
-        WalletAddressUseCase(repository: walletAddressRepository)
+        WalletAddressUseCase(repository: walletAddressRepository, iconProvider: iconProvider)
     }()
     
     // MARK: - View Models

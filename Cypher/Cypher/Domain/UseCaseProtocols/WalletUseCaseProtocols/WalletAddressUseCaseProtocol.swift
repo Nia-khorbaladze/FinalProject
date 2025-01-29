@@ -8,6 +8,6 @@
 import Foundation
 
 protocol WalletAddressUseCaseProtocol {
-    func getWalletAddresses(for userId: String) async throws -> [String: String]?
+    func getWalletAddresses(for userID: String) async throws -> [WalletData]
     func saveWalletAddresses(for userId: String, addresses: [String: String]) async throws
 }

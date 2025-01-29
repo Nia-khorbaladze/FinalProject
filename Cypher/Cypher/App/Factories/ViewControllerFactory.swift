@@ -105,4 +105,14 @@ final class ViewControllerFactory {
         let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         return SelectCoinViewController(viewModel: viewModel)
     }
+    
+    func makeReceivePageViewController() -> ReceivePageViewController {
+        let WalletAddressRepository = WalletAddressRepository()
+        let iconProvider = WalletIconProvider()
+        let walletAddressUseCase = WalletAddressUseCase(repository: WalletAddressRepository, iconProvider: iconProvider)
+        let walletViewModel = WalletViewModel(walletAddressUseCase: walletAddressUseCase)
+        let viewController = ReceivePageViewController(viewModel: walletViewModel)
+        return viewController
+    }
+
 }
