@@ -11,6 +11,7 @@ import FirebaseAuth
 
 final class DetailsPageViewModel: ObservableObject {
     private let fetchCoinDetailUseCase: FetchCoinDetailUseCase
+    private let fetchPriceChangeUseCase: FetchCoinPriceChangeUseCase
     private let saveFavoriteUseCase: SaveFavoriteCoinUseCase
     private let removeFavoriteUseCase: RemoveFavoriteCoinUseCase
     private let isFavoriteUseCase: IsFavoriteCoinUseCase
@@ -20,9 +21,11 @@ final class DetailsPageViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var error: String?
     @Published var isFavorited: Bool = false
+    @Published var priceHistory: [String: [Double]] = [:]
     
-    init(fetchCoinDetailUseCase: FetchCoinDetailUseCase, saveFavoriteUseCase: SaveFavoriteCoinUseCase, removeFavoriteUseCase: RemoveFavoriteCoinUseCase, isFavoriteUseCase: IsFavoriteCoinUseCase) {
+    init(fetchCoinDetailUseCase: FetchCoinDetailUseCase, fetchPriceChangeUseCase: FetchCoinPriceChangeUseCase, saveFavoriteUseCase: SaveFavoriteCoinUseCase, removeFavoriteUseCase: RemoveFavoriteCoinUseCase, isFavoriteUseCase: IsFavoriteCoinUseCase) {
         self.fetchCoinDetailUseCase = fetchCoinDetailUseCase
+        self.fetchPriceChangeUseCase = fetchPriceChangeUseCase
         self.saveFavoriteUseCase = saveFavoriteUseCase
         self.removeFavoriteUseCase = removeFavoriteUseCase
         self.isFavoriteUseCase = isFavoriteUseCase
@@ -30,13 +33,13 @@ final class DetailsPageViewModel: ObservableObject {
     
     func fetchCoinDetails(coinName: String) {
         isLoading = true
-
+        
         fetchCoinDetailUseCase.execute(name: coinName)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self = self else { return }
                 self.isLoading = false
-
+                
                 switch completion {
                 case .failure(let error):
                     self.error = error.localizedDescription
@@ -46,10 +49,31 @@ final class DetailsPageViewModel: ObservableObject {
             } receiveValue: { [weak self] coinDetail in
                 guard let self = self else { return }
                 self.coinDetail = coinDetail
-                self.checkIfFavorite(coinName: coinName) 
+                self.checkIfFavorite(coinName: coinName)
+                self.fetchPriceHistory(for: coinDetail.id)
             }
             .store(in: &cancellables)
     }
+    
+    func fetchPriceHistory(for coinID: String) {
+        fetchPriceChangeUseCase.execute(for: coinID)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                if case .failure(let error) = completion {
+                    self?.error = error.localizedDescription
+                }
+            }, receiveValue: { [weak self] history in
+                self?.priceHistory = [
+                    "1D": Array(history.prefix(24)),
+                    "1W": Array(history.prefix(7)),
+                    "1M": Array(history.prefix(30)),
+                    "1Y": Array(history.prefix(365)),
+                    "ALL": history
+                ]
+            })
+            .store(in: &cancellables)
+    }
+    
     
     func checkIfFavorite(coinName: String) {
         guard let currentUser = Auth.auth().currentUser else {
