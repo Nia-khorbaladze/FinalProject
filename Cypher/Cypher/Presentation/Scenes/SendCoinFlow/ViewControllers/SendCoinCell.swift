@@ -1,14 +1,14 @@
 //
-//  AddressCell.swift
+//  SendCoinCell.swift
 //  Cypher
 //
-//  Created by Nkhorbaladze on 29.01.25.
+//  Created by Nkhorbaladze on 30.01.25.
 //
 
 import UIKit
 
-final class AddressCell: UITableViewCell {
-    static let identifier = "AddressCell"
+final class SendCoinCell: UITableViewCell {
+    static let identifier = "SendCoinCell"
     
     // MARK: - UI Elements
     private lazy var containerView: UIView = {
@@ -49,7 +49,7 @@ final class AddressCell: UITableViewCell {
         return label
     }()
     
-    private lazy var walletAddress: UILabel = {
+    private lazy var coinAmountLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Fonts.medium.uiFont(size: 13)
@@ -59,14 +59,6 @@ final class AddressCell: UITableViewCell {
         label.numberOfLines = 1
         
         return label
-    }()
-    
-    private lazy var copyButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: Icons.copy.rawValue), for: .normal)
-        
-        return button
     }()
     
     private lazy var separatorView: UIView = {
@@ -95,12 +87,9 @@ final class AddressCell: UITableViewCell {
         containerView.addSubview(coinIconContainer)
         coinIconContainer.addSubview(coinIcon)
         containerView.addSubview(coinName)
-        containerView.addSubview(walletAddress)
-        containerView.addSubview(copyButton)
+        containerView.addSubview(coinAmountLabel)
         contentView.addSubview(separatorView)
-        
-        copyButton.addTarget(self, action: #selector(copyToClipboard), for: .touchUpInside)
-        
+                
         NSLayoutConstraint.activate([
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
@@ -120,15 +109,10 @@ final class AddressCell: UITableViewCell {
             coinName.leadingAnchor.constraint(equalTo: coinIconContainer.trailingAnchor, constant: 12),
             coinName.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
             
-            walletAddress.leadingAnchor.constraint(equalTo: coinIconContainer.trailingAnchor, constant: 12),
-            walletAddress.topAnchor.constraint(equalTo: coinName.bottomAnchor, constant: 2),
-            walletAddress.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
-            walletAddress.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -110),
-            
-            copyButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
-            copyButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            copyButton.widthAnchor.constraint(equalToConstant: 18),
-            copyButton.heightAnchor.constraint(equalToConstant: 18),
+            coinAmountLabel.leadingAnchor.constraint(equalTo: coinIconContainer.trailingAnchor, constant: 12),
+            coinAmountLabel.topAnchor.constraint(equalTo: coinName.bottomAnchor, constant: 2),
+            coinAmountLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
+            coinAmountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -110),
             
             separatorView.topAnchor.constraint(equalTo: containerView.bottomAnchor),
             separatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -137,19 +121,15 @@ final class AddressCell: UITableViewCell {
         ])
     }
     
-    @objc private func copyToClipboard() {
-        UIPasteboard.general.string = walletAddress.text
-    }
-    
     // MARK: - Configure Cell
-    func configureCell(image: UIImage?, name: String, address: String) {
+    func configureCell(image: UIImage?, name: String, amount: String) {
         if let image = image {
             coinIcon.image = image
         } else {
             coinIcon.image = UIImage(systemName: "circle")
         }
         coinName.text = name
-        walletAddress.text = address
+        coinAmountLabel.text = amount
     }
 
 }

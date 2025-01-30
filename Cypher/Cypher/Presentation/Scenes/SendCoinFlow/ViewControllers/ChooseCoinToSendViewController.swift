@@ -1,21 +1,18 @@
 //
-//  ReceivePageViewController.swift
+//  ChooseCoinToSendViewController.swift
 //  Cypher
 //
-//  Created by Nkhorbaladze on 29.01.25.
+//  Created by Nkhorbaladze on 30.01.25.
 //
 
 import UIKit
 
-final class ReceivePageViewController: UIViewController {
-    private let viewModel: WalletViewModel
-    private var walletData: [WalletData] = []
+final class ChooseCoinToSendViewController: UIViewController {
     
-    // MARK: - UI Elements
-    private lazy var coinsTableView: UITableView = {
+    private lazy var purchasedCoinsTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(AddressCell.self, forCellReuseIdentifier: AddressCell.identifier)
+        tableView.register(SendCoinCell.self, forCellReuseIdentifier: SendCoinCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .clear
@@ -49,31 +46,21 @@ final class ReceivePageViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor(named: AppColors.white.rawValue)
         label.font = Fonts.medium.uiFont(size: 18)
-        label.text = "Receive"
+        label.text = "Select Coin"
         
         return label
     }()
-    
-    init(viewModel: WalletViewModel) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
         setupConstraints()
-        loadWalletData()
     }
     
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         view.addSubview(headerView)
-        view.addSubview(coinsTableView)
+        view.addSubview(purchasedCoinsTableView)
         headerView.addSubview(closeButton)
         headerView.addSubview(headerTitle)
         
@@ -92,27 +79,11 @@ final class ReceivePageViewController: UIViewController {
             headerTitle.centerXAnchor.constraint(equalTo: headerView.centerXAnchor),
             headerTitle.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
             
-            coinsTableView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 13),
-            coinsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            coinsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            coinsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            purchasedCoinsTableView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 13),
+            purchasedCoinsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            purchasedCoinsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            purchasedCoinsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-    
-    private func loadWalletData() {
-        viewModel.walletAddresses = { [weak self] wallets in
-            print("Received wallet data: \(wallets)")
-            self?.walletData = wallets
-            self?.coinsTableView.reloadData()
-        }
-        
-        viewModel.errorMessage = { [weak self] errorMessage in
-            let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self?.present(alert, animated: true)
-        }
-        
-        viewModel.fetchWalletData()
     }
     
     private func navigateBack() {
@@ -121,23 +92,14 @@ final class ReceivePageViewController: UIViewController {
 }
 
 // MARK: - Extensions
-extension ReceivePageViewController: UITableViewDelegate, UITableViewDataSource {
+extension ChooseCoinToSendViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return walletData.count
+        <#code#>
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: AddressCell.identifier, for: indexPath) as? AddressCell else {
-            return UITableViewCell()
-        }
-        
-        let walletItem = walletData[indexPath.row]
-        cell.configureCell(image: walletItem.iconImage, name: walletItem.coin, address: walletItem.address)
-        
-        return cell
+        <#code#>
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
-    }
+    
 }

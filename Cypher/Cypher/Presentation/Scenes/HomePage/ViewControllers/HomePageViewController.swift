@@ -159,7 +159,8 @@ final class HomePageViewController: UIViewController {
     }
 
     private func navigateToSendView() {
-        
+        let viewController = ViewControllerFactory().makeChooseCoinToSendViewController()
+        navigationController?.pushViewController(viewController, animated: true)
     }
 
     private func navigateToSwapView() {

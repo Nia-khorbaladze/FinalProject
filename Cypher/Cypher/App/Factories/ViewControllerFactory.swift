@@ -117,4 +117,9 @@ final class ViewControllerFactory {
         return viewController
     }
 
+    func makeChooseCoinToSendViewController() -> ChooseCoinToSendViewController {
+        let viewController = ChooseCoinToSendViewController()
+        
+        return viewController
+    }
 }
