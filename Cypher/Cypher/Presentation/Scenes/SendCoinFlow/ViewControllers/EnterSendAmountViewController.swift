@@ -126,6 +126,9 @@ final class EnterSendAmountViewController: UIViewController {
         button.backgroundColor = UIColor(named: AppColors.darkGrey.rawValue)
         button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.handleMaxButtonTap()
+        }), for: .touchUpInside)
         
         return button
     }()
@@ -292,6 +295,11 @@ final class EnterSendAmountViewController: UIViewController {
         view.endEditing(true)
     }
     
+    private func handleMaxButtonTap() {
+        guard let maxAmount = Double(viewModel.getAvailableAmount()) else { return }
+        viewModel.updateAmount(maxAmount)
+        amountField.text = viewModel.formatAmount()
+    }
 }
 
 // MARK: - Extensions
