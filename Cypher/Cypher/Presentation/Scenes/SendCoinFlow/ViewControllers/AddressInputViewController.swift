@@ -15,7 +15,9 @@ final class AddressInputViewController: UIViewController {
             updateNextButton()
         }
     }
+    private var buttonBottomConstraint: NSLayoutConstraint!
     
+    // MARK: - UI Elements
     private lazy var headerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -87,6 +89,7 @@ final class AddressInputViewController: UIViewController {
         return hostingController
     }()
     
+    // MARK: - Initializers
     init(coinSymbol: String) {
         self.coinSymbol = coinSymbol
         super.init(nibName: nil, bundle: nil)
@@ -96,11 +99,21 @@ final class AddressInputViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    // MARK: - UISetup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()
@@ -146,14 +159,16 @@ final class AddressInputViewController: UIViewController {
             bottomLine.bottomAnchor.constraint(equalTo: addressInputField.bottomAnchor, constant: 5)
         ])
         
+        buttonBottomConstraint = nextButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         NSLayoutConstraint.activate([
-            nextButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            buttonBottomConstraint,
             nextButton.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             nextButton.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             nextButton.view.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
+    // MARK: - Functions
     private func navigateBack() {
         navigationController?.popViewController(animated: true)
     }
@@ -164,6 +179,30 @@ final class AddressInputViewController: UIViewController {
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
+        }
+        
+        let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
+        let keyboardTop = keyboardFrameInView.minY
+        let safeAreaBottom = view.safeAreaLayoutGuide.layoutFrame.maxY
+        let offset = safeAreaBottom - keyboardTop
+        
+        buttonBottomConstraint.constant = -(offset + 20)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        buttonBottomConstraint.constant = -20
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
     
     private func updateNextButton() {

@@ -191,26 +191,26 @@ final class EnterSendAmountViewController: UIViewController {
         ])
         
         availableContainerBottomConstraint = availableContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5)
+        
+        NSLayoutConstraint.activate([
+            availableContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            availableContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            availableContainerBottomConstraint,
+            availableContainer.heightAnchor.constraint(equalToConstant: 60),
             
-            NSLayoutConstraint.activate([
-                availableContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-                availableContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-                availableContainerBottomConstraint,
-                availableContainer.heightAnchor.constraint(equalToConstant: 60),
-                
-                availableToSendLabel.topAnchor.constraint(equalTo: availableContainer.topAnchor),
-                availableToSendLabel.leadingAnchor.constraint(equalTo: availableContainer.leadingAnchor),
-                
-                availableCoins.topAnchor.constraint(equalTo: availableToSendLabel.bottomAnchor, constant: 5),
-                availableCoins.leadingAnchor.constraint(equalTo: availableContainer.leadingAnchor),
-                
-                maxButton.trailingAnchor.constraint(equalTo: availableContainer.trailingAnchor),
-                maxButton.topAnchor.constraint(equalTo: availableToSendLabel.topAnchor),
-                maxButton.widthAnchor.constraint(equalToConstant: 60),
-                maxButton.heightAnchor.constraint(equalToConstant: 40),
-                
-                bottomLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                bottomLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            availableToSendLabel.topAnchor.constraint(equalTo: availableContainer.topAnchor),
+            availableToSendLabel.leadingAnchor.constraint(equalTo: availableContainer.leadingAnchor),
+            
+            availableCoins.topAnchor.constraint(equalTo: availableToSendLabel.bottomAnchor, constant: 5),
+            availableCoins.leadingAnchor.constraint(equalTo: availableContainer.leadingAnchor),
+            
+            maxButton.trailingAnchor.constraint(equalTo: availableContainer.trailingAnchor),
+            maxButton.topAnchor.constraint(equalTo: availableToSendLabel.topAnchor),
+            maxButton.widthAnchor.constraint(equalToConstant: 60),
+            maxButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            bottomLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomLine.bottomAnchor.constraint(equalTo: availableContainer.topAnchor, constant: -10),
             bottomLine.heightAnchor.constraint(equalToConstant: 1)
         ])
