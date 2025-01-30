@@ -12,17 +12,17 @@ import FirebaseAuth
 final class PortfolioViewModel: ObservableObject {
     private let fetchCoinsUseCase: FetchCoinsUseCase
     private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase
-    private let imageRepository: ImageRepositoryProtocol
+    private let fetchImagesUseCase: ImageUseCaseProtocol
 
     @Published var portfolioCoins: [PortfolioCoin] = []
     @Published var isLoading: Bool = false
     @Published var error: String?
     var cancellables = Set<AnyCancellable>()
 
-    init(fetchCoinsUseCase: FetchCoinsUseCase, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase, imageRepository: ImageRepositoryProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCase, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase, fetchImagesUseCase: ImageUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
-        self.imageRepository = imageRepository
+        self.fetchImagesUseCase = fetchImagesUseCase
     }
 
     func fetchPortfolio() {
@@ -73,21 +73,20 @@ final class PortfolioViewModel: ObservableObject {
                     })
                     .store(in: &self.cancellables)
             } catch {
-                self.error = error.localizedDescription
+                await MainActor.run { [weak self] in
+                    self?.error = error.localizedDescription
+                    self?.isLoading = false
+                }
             }
         }
     }
     
     private func fetchImages(for coins: [PortfolioCoin]) {
-        for (index, coin) in coins.enumerated() {
-            guard let imageURLString = coin.imageURL, let imageURL = URL(string: imageURLString) else { continue }
-            
-            imageRepository.fetchImage(from: imageURL)
-                .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] image in
-                    self?.portfolioCoins[index].image = image
-                })
-                .store(in: &cancellables)
-        }
+        fetchImagesUseCase.execute(for: coins)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] updatedCoins in
+                self?.portfolioCoins = updatedCoins
+            }
+            .store(in: &self.cancellables)
     }
 }

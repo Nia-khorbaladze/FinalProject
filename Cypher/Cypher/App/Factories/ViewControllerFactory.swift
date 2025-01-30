@@ -66,6 +66,7 @@ final class ViewControllerFactory {
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
         let imageRepository = ImageRepository()
+        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
         let purchasedCoinRepository = dependencies.purchasedCoinRepository
         let fetchPurchasedCoinUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
@@ -73,7 +74,7 @@ final class ViewControllerFactory {
         let viewModel = PortfolioViewModel(
             fetchCoinsUseCase: fetchCoinsUseCase,
             fetchPurchasedCoinsUseCase: fetchPurchasedCoinUseCase,
-            imageRepository: imageRepository
+            fetchImagesUseCase: fetchImagesUseCase
         )
 
         let viewController = PortfolioViewController(viewModel: viewModel)
