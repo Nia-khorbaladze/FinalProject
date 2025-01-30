@@ -56,6 +56,7 @@ final class SendCoinCell: UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         view.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        
         return view
     }()
     
@@ -83,18 +84,17 @@ final class SendCoinCell: UITableViewCell {
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
-            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
             
             coinIcon.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
             coinIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             coinIcon.widthAnchor.constraint(equalToConstant: 40),
             coinIcon.heightAnchor.constraint(equalToConstant: 40),
+            
             coinName.leadingAnchor.constraint(equalTo: coinIcon.trailingAnchor, constant: 12),
             coinName.topAnchor.constraint(equalTo: coinIcon.topAnchor),
             
             coinAmountLabel.leadingAnchor.constraint(equalTo: coinIcon.trailingAnchor, constant: 12),
-            coinAmountLabel.topAnchor.constraint(equalTo: coinName.bottomAnchor, constant: 2),
-            coinAmountLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -17),
+            coinAmountLabel.topAnchor.constraint(equalTo: coinName.bottomAnchor, constant: 3),
             coinAmountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -110),
             
             separatorView.topAnchor.constraint(equalTo: containerView.bottomAnchor),

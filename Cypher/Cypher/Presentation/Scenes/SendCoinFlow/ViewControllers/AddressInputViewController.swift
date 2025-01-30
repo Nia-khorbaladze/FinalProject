@@ -6,9 +6,15 @@
 //
 
 import UIKit
+import SwiftUI
 
 final class AddressInputViewController: UIViewController {
     private let coinSymbol: String
+    private var isNextButtonActive = false {
+        didSet {
+            updateNextButton()
+        }
+    }
     
     private lazy var headerView: UIView = {
         let view = UIView()
@@ -47,6 +53,7 @@ final class AddressInputViewController: UIViewController {
         textField.textColor = UIColor(named: AppColors.white.rawValue)
         textField.backgroundColor = .clear
         textField.borderStyle = .none
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         
         if let placeholder = textField.placeholder {
             textField.attributedPlaceholder = NSAttributedString(
@@ -67,6 +74,19 @@ final class AddressInputViewController: UIViewController {
         return view
     }()
     
+    private lazy var nextButton: UIHostingController<PrimaryButton> = {
+        let hostingController = UIHostingController(
+            rootView: PrimaryButton(
+                title: "Buy",
+                isActive: isNextButtonActive,
+                action: { }
+            )
+        )
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.view.backgroundColor = .clear
+        return hostingController
+    }()
+    
     init(coinSymbol: String) {
         self.coinSymbol = coinSymbol
         super.init(nibName: nil, bundle: nil)
@@ -85,6 +105,9 @@ final class AddressInputViewController: UIViewController {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()
         setupConstraints()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupUI() {
@@ -93,6 +116,10 @@ final class AddressInputViewController: UIViewController {
         headerView.addSubview(headerTitle)
         view.addSubview(addressInputField)
         view.addSubview(bottomLine)
+        
+        addChild(nextButton)
+        view.addSubview(nextButton.view)
+        nextButton.didMove(toParent: self)
     }
     
     private func setupConstraints() {
@@ -118,8 +145,40 @@ final class AddressInputViewController: UIViewController {
             bottomLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomLine.bottomAnchor.constraint(equalTo: addressInputField.bottomAnchor, constant: 5)
         ])
+        
+        NSLayoutConstraint.activate([
+            nextButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            nextButton.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            nextButton.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            nextButton.view.heightAnchor.constraint(equalToConstant: 50)
+        ])
     }
+    
     private func navigateBack() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        isNextButtonActive = !(textField.text?.isEmpty ?? true)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    private func updateNextButton() {
+        nextButton.rootView = PrimaryButton(
+            title: "Next",
+            isActive: isNextButtonActive,
+            action: { [weak self] in
+                self?.navigateToAmountInputPage()
+            }
+        )
+    }
+    
+    private func navigateToAmountInputPage() {
+        let viewModel = EnterSendAmountViewModel()
+        let viewController = EnterSendAmountViewController(coinSymbol: coinSymbol, walletAddress: addressInputField.text ?? "", viewModel: viewModel)
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
