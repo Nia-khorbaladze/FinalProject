@@ -12,6 +12,7 @@ final class EnterSendAmountViewController: UIViewController {
     private let walletAddress: String
     private let viewModel: EnterSendAmountViewModel
     private var availableContainerBottomConstraint: NSLayoutConstraint!
+    private var isErrorMessageVisible: Bool = false
     
     // MARK: - UI Elements
     private lazy var headerView: UIView = {
@@ -51,6 +52,9 @@ final class EnterSendAmountViewController: UIViewController {
         button.setTitleColor(UIColor(named: AppColors.lightGrey.rawValue), for: .normal)
         button.isEnabled = false
         button.titleLabel?.font = Fonts.semiBold.uiFont(size: 18)
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.navigateToSummaryPage()
+        }), for: .touchUpInside)
         
         return button
     }()
@@ -142,6 +146,16 @@ final class EnterSendAmountViewController: UIViewController {
         return view
     }()
     
+    private lazy var errorMessage: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Insufficient funds"
+        label.font = Fonts.bold.uiFont(size: 18)
+        label.textColor = UIColor(named: AppColors.red.rawValue)
+        
+        return label
+    }()
+    
     // MARK: - Initializers
     init(coinSymbol: String, walletAddress: String, viewModel: EnterSendAmountViewModel) {
         self.coinSymbol = coinSymbol
@@ -166,8 +180,8 @@ final class EnterSendAmountViewController: UIViewController {
         updateUI()
         
         viewModel.onAmountUpdate = { [weak self] in
-                self?.updateUI()
-            }
+            self?.updateUI()
+        }
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -255,17 +269,48 @@ final class EnterSendAmountViewController: UIViewController {
 
     }
     
+    private func addErrorMessageToView() {
+        if errorMessage.superview == nil {
+            view.addSubview(errorMessage)
+            NSLayoutConstraint.activate([
+                errorMessage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                errorMessage.topAnchor.constraint(equalTo: amountField.bottomAnchor, constant: 10)
+            ])
+        }
+    }
+    
     // MARK: - Functions
     private func navigateBack() {
         navigationController?.popViewController(animated: true)
     }
     
     private func updateUI() {
-        let isAmountValid = viewModel.amount > 0
+        guard let maxAmount = Double(viewModel.getAvailableAmount()) else { return }
+        let isAmountValid = viewModel.amount > 0 && viewModel.amount <= maxAmount
+        
         nextButton.isEnabled = isAmountValid
-        nextButton.setTitleColor(isAmountValid ? UIColor(named: AppColors.accent.rawValue) : UIColor(named: AppColors.lightGrey.rawValue), for: .normal)
+        nextButton.setTitleColor(
+            isAmountValid ? UIColor(named: AppColors.accent.rawValue) : UIColor(named: AppColors.lightGrey.rawValue),
+            for: .normal
+        )
         
         availableCoins.text = "\(viewModel.getAvailableAmount()) \(coinSymbol)"
+        
+        if !(viewModel.amount <= maxAmount) {
+            if !isErrorMessageVisible {
+                addErrorMessageToView()
+                isErrorMessageVisible = true
+            }
+        } else {
+            if isErrorMessageVisible {
+                removeErrorMessageFromView()
+                isErrorMessageVisible = false
+            }
+        }
+    }
+    
+    private func removeErrorMessageFromView() {
+        errorMessage.removeFromSuperview()
     }
     
     @objc private func keyboardWillShow(notification: NSNotification) {
@@ -299,6 +344,11 @@ final class EnterSendAmountViewController: UIViewController {
         guard let maxAmount = Double(viewModel.getAvailableAmount()) else { return }
         viewModel.updateAmount(maxAmount)
         amountField.text = viewModel.formatAmount()
+    }
+    
+    private func navigateToSummaryPage() {
+        let viewController = SummaryViewController()
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
 
