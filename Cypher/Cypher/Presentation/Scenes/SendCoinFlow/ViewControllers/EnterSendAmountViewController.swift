@@ -262,7 +262,7 @@ final class EnterSendAmountViewController: UIViewController {
         nextButton.isEnabled = isAmountValid
         nextButton.setTitleColor(isAmountValid ? UIColor(named: AppColors.accent.rawValue) : UIColor(named: AppColors.lightGrey.rawValue), for: .normal)
         
-        availableCoins.text = "\(viewModel.formatAmount()) \(coinSymbol)"
+        availableCoins.text = "\(viewModel.getAvailableAmount()) \(coinSymbol)"
     }
     
     @objc private func keyboardWillShow(notification: NSNotification) {

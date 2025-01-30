@@ -16,6 +16,7 @@ final class AddressInputViewController: UIViewController {
         }
     }
     private var buttonBottomConstraint: NSLayoutConstraint!
+    private let availableAmount: Double
     
     // MARK: - UI Elements
     private lazy var headerView: UIView = {
@@ -90,8 +91,9 @@ final class AddressInputViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(coinSymbol: String) {
+    init(coinSymbol: String, availableAmount: Double) {
         self.coinSymbol = coinSymbol
+        self.availableAmount = availableAmount
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -216,8 +218,17 @@ final class AddressInputViewController: UIViewController {
     }
     
     private func navigateToAmountInputPage() {
-        let viewModel = EnterSendAmountViewModel()
-        let viewController = EnterSendAmountViewController(coinSymbol: coinSymbol, walletAddress: addressInputField.text ?? "", viewModel: viewModel)
-        navigationController?.pushViewController(viewController, animated: true)
+        guard let walletAddress = addressInputField.text, !walletAddress.isEmpty else {
+            return
+        }
+        
+        let viewModel = EnterSendAmountViewModel(availableAmount: availableAmount)
+        let enterAmountVC = EnterSendAmountViewController(
+            coinSymbol: coinSymbol,
+            walletAddress: walletAddress,
+            viewModel: viewModel
+        )
+        
+        navigationController?.pushViewController(enterAmountVC, animated: true)
     }
 }
