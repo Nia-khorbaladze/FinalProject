@@ -27,6 +27,7 @@ final class ViewControllerFactory {
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
         let imageRepository = ImageRepository()
+        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
         let favoriteCoinsRepository = dependencies.favoriteCoinsRepository
         let fetchFavoriteCoinsUseCase = FetchFavoritesUseCase(repository: favoriteCoinsRepository)
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
@@ -34,7 +35,7 @@ final class ViewControllerFactory {
         let viewModel = FavoritesViewModel(
             fetchCoinsUseCase: fetchCoinsUseCase,
             fetchFavoritesUseCase: fetchFavoriteCoinsUseCase,
-            imageRepository: imageRepository
+            fetchImagesUseCase: fetchImagesUseCase
         )
         let viewController = FavoritesPageViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
