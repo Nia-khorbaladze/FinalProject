@@ -64,9 +64,32 @@ final class EnterSendAmountViewController: UIViewController {
         textfield.textAlignment = .center
         textfield.tintColor = .clear
         textfield.delegate = self
-        textfield.text = "0"
+
+        textfield.placeholder = "0.00"
+        
+        textfield.attributedPlaceholder = NSAttributedString(
+            string: "0.00",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor(named: AppColors.lightGrey.rawValue)!]
+        )
         
         return textfield
+    }()
+    
+    private lazy var symbolLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Fonts.bold.uiFont(size: 48)
+        label.textColor = UIColor(named: AppColors.white.rawValue)
+        label.text = "\(coinSymbol)"
+        
+        return label
+    }()
+    
+    private lazy var amountInputContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
     }()
     
     private lazy var availableContainer: UIView = {
@@ -139,6 +162,10 @@ final class EnterSendAmountViewController: UIViewController {
         setup()
         updateUI()
         
+        viewModel.onAmountUpdate = { [weak self] in
+                self?.updateUI()
+            }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -158,7 +185,9 @@ final class EnterSendAmountViewController: UIViewController {
         headerView.addSubview(backButton)
         headerView.addSubview(headerTitle)
         headerView.addSubview(nextButton)
-        view.addSubview(amountField)
+        view.addSubview(amountInputContainer)
+        amountInputContainer.addSubview(amountField)
+        amountInputContainer.addSubview(symbolLabel)
         view.addSubview(availableContainer)
         availableContainer.addSubview(availableToSendLabel)
         availableContainer.addSubview(availableCoins)
@@ -184,10 +213,16 @@ final class EnterSendAmountViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            amountField.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 40),
-            amountField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            amountField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            amountField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            amountInputContainer.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 40),
+            amountInputContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            amountField.topAnchor.constraint(equalTo: amountInputContainer.topAnchor),
+            amountField.leadingAnchor.constraint(equalTo: amountInputContainer.leadingAnchor),
+            amountField.bottomAnchor.constraint(equalTo: amountInputContainer.bottomAnchor),
+            amountField.trailingAnchor.constraint(equalTo: symbolLabel.leadingAnchor, constant: -5),
+            symbolLabel.topAnchor.constraint(equalTo: amountInputContainer.topAnchor),
+            symbolLabel.bottomAnchor.constraint(equalTo: amountInputContainer.bottomAnchor),
+            symbolLabel.trailingAnchor.constraint(equalTo: amountInputContainer.trailingAnchor)
         ])
         
         availableContainerBottomConstraint = availableContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5)
@@ -223,7 +258,11 @@ final class EnterSendAmountViewController: UIViewController {
     }
     
     private func updateUI() {
-
+        let isAmountValid = viewModel.amount > 0
+        nextButton.isEnabled = isAmountValid
+        nextButton.setTitleColor(isAmountValid ? UIColor(named: AppColors.accent.rawValue) : UIColor(named: AppColors.lightGrey.rawValue), for: .normal)
+        
+        availableCoins.text = "\(viewModel.formatAmount()) \(coinSymbol)"
     }
     
     @objc private func keyboardWillShow(notification: NSNotification) {
@@ -257,7 +296,35 @@ final class EnterSendAmountViewController: UIViewController {
 
 // MARK: - Extensions
 extension EnterSendAmountViewController: UITextFieldDelegate {
-
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if string.isEmpty {
+            return true
+        }
+        
+        let allowedCharacters = CharacterSet(charactersIn: "0123456789.")
+        let characterSet = CharacterSet(charactersIn: string)
+        let isNumber = allowedCharacters.isSuperset(of: characterSet)
+        
+        if isNumber {
+            if let text = textField.text,
+               let textRange = Range(range, in: text) {
+                let updatedText = text.replacingCharacters(in: textRange, with: string)
+                
+                let decimalCount = updatedText.components(separatedBy: ".").count - 1
+                if decimalCount > 1 {
+                    return false
+                }
+                
+                if let amount = Double(updatedText) {
+                    viewModel.updateAmount(amount)
+                }
+                
+                textField.text = updatedText
+            }
+        }
+        
+        return false
+    }
 }
 
 
