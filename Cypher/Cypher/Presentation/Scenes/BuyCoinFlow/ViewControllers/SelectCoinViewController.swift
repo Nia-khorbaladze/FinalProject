@@ -20,7 +20,8 @@ final class SelectCoinViewController: UIViewController {
                     let buyVC = BuyCoinViewController(
                         coinSymbol: coin.symbol.uppercased(),
                         currentPrice: coin.currentPrice,
-                        coinName: coin.name
+                        coinName: coin.name,
+                        imageURL: coin.imageURL
                     )
                     self?.navigationController?.pushViewController(buyVC, animated: true)
                 },

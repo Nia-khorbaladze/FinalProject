@@ -82,11 +82,12 @@ final class Dependencies {
         GoogleSignInViewModel(googleSignInUseCase: googleSignInUseCase)
     }()
     
-    func makeBuyCoinViewModel(coinSymbol: String, currentPrice: Double, coinName: String) -> BuyCoinViewModel {
+    func makeBuyCoinViewModel(coinSymbol: String, currentPrice: Double, imageURL: String, coinName: String) -> BuyCoinViewModel {
         BuyCoinViewModel(
             coinSymbol: coinSymbol,
             currentPrice: currentPrice,
             coinName: coinName,
+            imageURL: imageURL,
             savePurchasedCoinUseCase: savePurchasedCoinUseCase
         )
     }

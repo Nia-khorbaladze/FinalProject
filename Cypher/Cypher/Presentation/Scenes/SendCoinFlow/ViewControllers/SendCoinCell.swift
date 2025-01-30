@@ -54,7 +54,7 @@ final class SendCoinCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Fonts.medium.uiFont(size: 13)
         label.textColor = UIColor(named: AppColors.lightGrey.rawValue)
-        label.textAlignment = .right
+        label.textAlignment = .left
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
         

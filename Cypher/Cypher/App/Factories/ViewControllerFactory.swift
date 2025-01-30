@@ -118,7 +118,12 @@ final class ViewControllerFactory {
     }
 
     func makeChooseCoinToSendViewController() -> ChooseCoinToSendViewController {
-        let viewController = ChooseCoinToSendViewController()
+        let imageRepository = ImageRepository()
+        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
+        let purchasedCoinRepository = dependencies.purchasedCoinRepository
+        let fetchPurchasedCoinsUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
+        let viewModel = ChooseCoinViewModel(fetchPurchasedCoinsUseCase: fetchPurchasedCoinsUseCase, fetchImagesUseCase: fetchImagesUseCase)
+        let viewController = ChooseCoinToSendViewController(viewModel: viewModel)
         
         return viewController
     }

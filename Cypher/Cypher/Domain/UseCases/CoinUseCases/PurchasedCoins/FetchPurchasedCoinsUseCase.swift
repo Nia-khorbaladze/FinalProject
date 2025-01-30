@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class FetchPurchasedCoinsUseCase {
+final class FetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol {
     private let purchasedCoinRepository: PurchasedCoinRepositoryProtocol
 
     init(purchasedCoinRepository: PurchasedCoinRepositoryProtocol) {
