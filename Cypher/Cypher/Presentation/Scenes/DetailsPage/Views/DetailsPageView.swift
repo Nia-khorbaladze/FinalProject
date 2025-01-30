@@ -58,7 +58,7 @@ struct DetailsPageView: View {
                             PercentageChangeView(percentageChange: coinDetail.priceChangePercentage24h)
                         }
                         
-                        ChartView()
+                        ChartView(viewModel: viewModel) 
                         CoinInfoView(coinDetail: coinDetail)
                     }
                 }
@@ -70,4 +70,5 @@ struct DetailsPageView: View {
         }
     }
 }
+
 

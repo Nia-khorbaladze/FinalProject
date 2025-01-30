@@ -38,6 +38,10 @@ final class Dependencies {
         WalletAddressRepository()
     }()
     
+    private(set) lazy var historyRepository: HistoryRepository = {
+        HistoryRepository(networkService: networkService)
+    }()
+    
     // MARK: - Use Cases
     private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCase = {
         FetchCoinDetailUseCase(repository: coinRepository)
@@ -69,6 +73,10 @@ final class Dependencies {
         WalletAddressUseCase(repository: walletAddressRepository, iconProvider: iconProvider)
     }()
     
+    private(set) lazy var fetchPriceChangeUseCase = {
+        FetchCoinPriceChangeUseCase(repository: historyRepository)
+    }()
+    
     // MARK: - View Models
     private(set) lazy var googleSignInViewModel: GoogleSignInViewModel = {
         GoogleSignInViewModel(googleSignInUseCase: googleSignInUseCase)
@@ -86,6 +94,7 @@ final class Dependencies {
     func makeDetailsPageViewModel() -> DetailsPageViewModel {
         DetailsPageViewModel(
             fetchCoinDetailUseCase: fetchCoinDetailUseCase,
+            fetchPriceChangeUseCase: fetchPriceChangeUseCase,
             saveFavoriteUseCase: saveFavoriteCoinUseCase,
             removeFavoriteUseCase: removeFavoriteCoinUseCase,
             isFavoriteUseCase: isFavoriteCoinUseCase
