@@ -130,7 +130,7 @@ extension ReceivePageViewController: UITableViewDelegate, UITableViewDataSource 
         guard let cell = tableView.dequeueReusableCell(withIdentifier: AddressCell.identifier, for: indexPath) as? AddressCell else {
             return UITableViewCell()
         }
-        
+        cell.selectionStyle = .none
         let walletItem = walletData[indexPath.row]
         cell.configureCell(image: walletItem.iconImage, name: walletItem.coin, address: walletItem.address)
         

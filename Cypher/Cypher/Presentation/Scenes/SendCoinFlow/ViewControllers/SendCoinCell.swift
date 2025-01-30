@@ -20,16 +20,6 @@ final class SendCoinCell: UITableViewCell {
         return view
     }()
 
-    private lazy var coinIconContainer: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
-        view.layer.cornerRadius = 20
-        view.clipsToBounds = true
-        
-        return view
-    }()
-    
     private lazy var coinIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -43,7 +33,7 @@ final class SendCoinCell: UITableViewCell {
     private lazy var coinName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Fonts.medium.uiFont(size: 16)
+        label.font = Fonts.medium.uiFont(size: 18)
         label.textColor = UIColor(named: AppColors.white.rawValue)
         
         return label
@@ -84,8 +74,7 @@ final class SendCoinCell: UITableViewCell {
         contentView.backgroundColor = .clear
         backgroundColor = .clear
         contentView.addSubview(containerView)
-        containerView.addSubview(coinIconContainer)
-        coinIconContainer.addSubview(coinIcon)
+        contentView.addSubview(coinIcon)
         containerView.addSubview(coinName)
         containerView.addSubview(coinAmountLabel)
         contentView.addSubview(separatorView)
@@ -96,22 +85,16 @@ final class SendCoinCell: UITableViewCell {
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
             
-            coinIconContainer.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
-            coinIconContainer.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            coinIconContainer.widthAnchor.constraint(equalToConstant: 40),
-            coinIconContainer.heightAnchor.constraint(equalToConstant: 40),
+            coinIcon.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            coinIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            coinIcon.widthAnchor.constraint(equalToConstant: 40),
+            coinIcon.heightAnchor.constraint(equalToConstant: 40),
+            coinName.leadingAnchor.constraint(equalTo: coinIcon.trailingAnchor, constant: 12),
+            coinName.topAnchor.constraint(equalTo: coinIcon.topAnchor),
             
-            coinIcon.centerXAnchor.constraint(equalTo: coinIconContainer.centerXAnchor),
-            coinIcon.centerYAnchor.constraint(equalTo: coinIconContainer.centerYAnchor),
-            coinIcon.widthAnchor.constraint(equalToConstant: 24),
-            coinIcon.heightAnchor.constraint(equalToConstant: 24),
-            
-            coinName.leadingAnchor.constraint(equalTo: coinIconContainer.trailingAnchor, constant: 12),
-            coinName.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
-            
-            coinAmountLabel.leadingAnchor.constraint(equalTo: coinIconContainer.trailingAnchor, constant: 12),
+            coinAmountLabel.leadingAnchor.constraint(equalTo: coinIcon.trailingAnchor, constant: 12),
             coinAmountLabel.topAnchor.constraint(equalTo: coinName.bottomAnchor, constant: 2),
-            coinAmountLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
+            coinAmountLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -17),
             coinAmountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -110),
             
             separatorView.topAnchor.constraint(equalTo: containerView.bottomAnchor),

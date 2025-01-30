@@ -122,10 +122,15 @@ extension ChooseCoinToSendViewController: UITableViewDelegate, UITableViewDataSo
             return UITableViewCell()
         }
         
+        cell.selectionStyle = .none
         let coin = coins[indexPath.row]
         cell.configureCell(image: coin.image, name: coin.name, amount: "\(coin.totalAmount)")
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
     }
 }
 

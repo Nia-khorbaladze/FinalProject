@@ -19,16 +19,6 @@ final class AddressCell: UITableViewCell {
         
         return view
     }()
-
-    private lazy var coinIconContainer: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
-        view.layer.cornerRadius = 20
-        view.clipsToBounds = true
-        
-        return view
-    }()
     
     private lazy var coinIcon: UIImageView = {
         let imageView = UIImageView()
@@ -43,7 +33,7 @@ final class AddressCell: UITableViewCell {
     private lazy var coinName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Fonts.medium.uiFont(size: 16)
+        label.font = Fonts.medium.uiFont(size: 18)
         label.textColor = UIColor(named: AppColors.white.rawValue)
         
         return label
@@ -54,7 +44,7 @@ final class AddressCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Fonts.medium.uiFont(size: 13)
         label.textColor = UIColor(named: AppColors.lightGrey.rawValue)
-        label.textAlignment = .right
+        label.textAlignment = .left
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
         
@@ -92,8 +82,7 @@ final class AddressCell: UITableViewCell {
         contentView.backgroundColor = .clear
         backgroundColor = .clear
         contentView.addSubview(containerView)
-        containerView.addSubview(coinIconContainer)
-        coinIconContainer.addSubview(coinIcon)
+        contentView.addSubview(coinIcon)
         containerView.addSubview(coinName)
         containerView.addSubview(walletAddress)
         containerView.addSubview(copyButton)
@@ -107,22 +96,17 @@ final class AddressCell: UITableViewCell {
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
             
-            coinIconContainer.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
-            coinIconContainer.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            coinIconContainer.widthAnchor.constraint(equalToConstant: 40),
-            coinIconContainer.heightAnchor.constraint(equalToConstant: 40),
+            coinIcon.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            coinIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            coinIcon.widthAnchor.constraint(equalToConstant: 40),
+            coinIcon.heightAnchor.constraint(equalToConstant: 40),
             
-            coinIcon.centerXAnchor.constraint(equalTo: coinIconContainer.centerXAnchor),
-            coinIcon.centerYAnchor.constraint(equalTo: coinIconContainer.centerYAnchor),
-            coinIcon.widthAnchor.constraint(equalToConstant: 24),
-            coinIcon.heightAnchor.constraint(equalToConstant: 24),
+            coinName.leadingAnchor.constraint(equalTo: coinIcon.trailingAnchor, constant: 12),
+            coinName.topAnchor.constraint(equalTo: coinIcon.topAnchor),
             
-            coinName.leadingAnchor.constraint(equalTo: coinIconContainer.trailingAnchor, constant: 12),
-            coinName.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
-            
-            walletAddress.leadingAnchor.constraint(equalTo: coinIconContainer.trailingAnchor, constant: 12),
+            walletAddress.leadingAnchor.constraint(equalTo: coinIcon.trailingAnchor, constant: 12),
             walletAddress.topAnchor.constraint(equalTo: coinName.bottomAnchor, constant: 2),
-            walletAddress.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
+            walletAddress.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -17),
             walletAddress.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -110),
             
             copyButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
