@@ -11,7 +11,9 @@ import SwiftUI
 final class ProfilePopupViewController: UIViewController {
     private let blurEffectService: BlurEffectService
     private let viewModel: ProfilePopupViewModel
+    weak var delegate: ProfilePopupViewControllerDelegate?
     
+    // MARK: - UI Elements
     private lazy var logoutButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -66,6 +68,7 @@ final class ProfilePopupViewController: UIViewController {
                 title: "Edit Profile",
                 isActive: true,
                 action: { [weak self] in
+                    self?.navigateToManageProfile()
                 }
             )
         )
@@ -74,6 +77,7 @@ final class ProfilePopupViewController: UIViewController {
         return hostingController
     }()
     
+    // MARK: - Initializers
     init(blurEffectService: BlurEffectService = BlurEffectService(), viewModel: ProfilePopupViewModel) {
         self.blurEffectService = blurEffectService
         self.viewModel = viewModel
@@ -84,9 +88,11 @@ final class ProfilePopupViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     override func viewDidLayoutSubviews() {
@@ -96,6 +102,7 @@ final class ProfilePopupViewController: UIViewController {
         profileCicle.clipsToBounds = true
     }
     
+    // MARK: - UI Setup
     func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         setupUI()
@@ -137,6 +144,7 @@ final class ProfilePopupViewController: UIViewController {
         ])
     }
     
+    // MARK: - Functions
     private func closeButtonTapped() {
         blurEffectService.removeBlurEffect()
         dismiss(animated: true)
@@ -171,6 +179,13 @@ final class ProfilePopupViewController: UIViewController {
         alertController.addAction(UIAlertAction(title: "OK", style: .default))
         present(alertController, animated: true)
     }
+    
+    private func navigateToManageProfile() {
+        blurEffectService.removeBlurEffect()
+        dismiss(animated: true) { [weak self] in
+            self?.delegate?.didTapEditProfile() 
+        }
+    }
 }
 
 // MARK: - Extensions
@@ -178,4 +193,9 @@ extension ProfilePopupViewController: UISheetPresentationControllerDelegate {
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         blurEffectService.removeBlurEffect()
     }
+}
+
+// MARK: - Protocols
+protocol ProfilePopupViewControllerDelegate: AnyObject {
+    func didTapEditProfile()
 }
