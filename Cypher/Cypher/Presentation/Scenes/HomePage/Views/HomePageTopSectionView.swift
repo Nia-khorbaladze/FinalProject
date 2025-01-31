@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HomePageTopSectionView: View {
+    @ObservedObject var viewModel: HomePageViewModel
     var onReceiveTapped: (() -> Void)?
     var onSendTapped: (() -> Void)?
     var onSwapTapped: (() -> Void)?
@@ -15,14 +16,14 @@ struct HomePageTopSectionView: View {
     
     var body: some View {
         VStack(spacing: 5) {
-            Text("$0.00")
+            Text("$\(viewModel.totalPortfolioValue, specifier: "%.2f")")
                 .font(Fonts.bold.size(48))
                 .foregroundStyle(Color(AppColors.white.rawValue))
-            
+
             HStack(spacing: 8) {
-                AmountChangeView(amountChange: nil)
+                AmountChangeView(amountChange: viewModel.totalPriceChange)
                 
-                PercentageChangeView(percentageChange: nil)
+                PercentageChangeView(percentageChange: viewModel.totalPercentageChange)
             }
             
             HStack {
@@ -44,6 +45,9 @@ struct HomePageTopSectionView: View {
             }
             .padding(.horizontal, 12)
             .padding(.top, 40)
+        }
+        .onAppear {
+            viewModel.fetchPortfolio()
         }
         .background(Color.clear)
     }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomePageContentView: View {
-    @ObservedObject var viewModel: CoinViewModel
+    @StateObject var viewModel: HomePageViewModel
     var onReceiveTapped: (() -> Void)?
     var onSendTapped: (() -> Void)?
     var onSwapTapped: (() -> Void)?
@@ -19,6 +19,7 @@ struct HomePageContentView: View {
         ScrollView {
             VStack(spacing: 20) {
                 HomePageTopSectionView(
+                    viewModel: viewModel,
                     onReceiveTapped: onReceiveTapped,
                     onSendTapped: onSendTapped,
                     onSwapTapped: onSwapTapped,

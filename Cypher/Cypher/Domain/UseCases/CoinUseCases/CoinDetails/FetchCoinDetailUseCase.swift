@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class FetchCoinDetailUseCase {
+final class FetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol {
     private let repository: CoinRepositoryProtocol
 
     init(repository: CoinRepositoryProtocol) {

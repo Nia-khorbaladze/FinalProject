@@ -9,14 +9,14 @@ import UIKit
 import SwiftUI
 
 final class HomePageViewController: UIViewController {
-    private let viewModel: CoinViewModel
+    private let viewModel: HomePageViewModel
     private let blurEffectService: BlurEffectService
 
     // MARK: - UI Elements
     private lazy var homePageContentView: UIHostingController<HomePageContentView> = {
         let hostingController = UIHostingController(
             rootView: HomePageContentView(
-                viewModel: viewModel,
+                viewModel: self.viewModel,
                 onReceiveTapped: { [weak self] in
                     self?.navigateToReceiveView()
                 },
@@ -62,7 +62,7 @@ final class HomePageViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(viewModel: CoinViewModel, blurEffectService: BlurEffectService = BlurEffectService()) {
+    init(viewModel: HomePageViewModel, blurEffectService: BlurEffectService = BlurEffectService()) {
         self.viewModel = viewModel
         self.blurEffectService = blurEffectService
         super.init(nibName: nil, bundle: nil)
