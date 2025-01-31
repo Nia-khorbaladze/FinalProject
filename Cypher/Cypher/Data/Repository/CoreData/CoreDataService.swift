@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 final class CoreDataService: CoreDataServiceProtocol {
     private let context = PersistenceController.shared.container.viewContext
@@ -90,5 +91,45 @@ final class CoreDataService: CoreDataServiceProtocol {
                 }
             }
         }
+    }
+    
+    func saveImage(_ image: UIImage, forKey key: String) {
+        context.perform {
+            let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", key)
+            
+            let cachedEntity: NSManagedObject
+            if let existingEntity = try? self.context.fetch(fetchRequest).first {
+                cachedEntity = existingEntity
+            } else {
+                let entityDescription = NSEntityDescription.entity(forEntityName: "CachedResponse", in: self.context)!
+                cachedEntity = NSManagedObject(entity: entityDescription, insertInto: self.context)
+                cachedEntity.setValue(key, forKey: "id")
+            }
+            
+            if let imageData = image.pngData() {
+                cachedEntity.setValue(imageData, forKey: "imageData")
+                cachedEntity.setValue(Date(), forKey: "timestamp")
+            }
+            
+            do {
+                try self.context.save()
+            } catch {
+                print("Error saving image: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func fetchImage(forKey key: String) -> UIImage? {
+        let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", key)
+        
+        guard let cachedEntity = try? context.fetch(fetchRequest).first,
+              let imageData = cachedEntity.value(forKey: "imageData") as? Data,
+              let image = UIImage(data: imageData) else {
+            return nil
+        }
+        
+        return image
     }
 }

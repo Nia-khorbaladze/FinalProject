@@ -51,7 +51,7 @@ final class FavoriteCoinsRepository: FavoriteCoinsRepositoryProtocol {
 
     func isFavorite(userID: String, coinName: String) async throws -> Bool {
         let key = "favoriteCoins"
-        let (cachedFavorites, timestamp) = coreDataService.fetchResponse(forKey: key, as: [String].self)
+        let (cachedFavorites, _) = coreDataService.fetchResponse(forKey: key, as: [String].self)
 
         if let cachedFavorites = cachedFavorites {
             let isFavorite = cachedFavorites.contains(coinName)
@@ -72,7 +72,7 @@ final class FavoriteCoinsRepository: FavoriteCoinsRepositoryProtocol {
         coreDataService.cleanupExpiredCache(forKey: key, expiration: cacheTimeout)
 
         if !fetchFromFirebase {
-            let (cachedFavorites, timestamp) = coreDataService.fetchResponse(forKey: key, as: [String].self)
+            let (cachedFavorites, _) = coreDataService.fetchResponse(forKey: key, as: [String].self)
             
             if let cachedFavorites = cachedFavorites {
                 return cachedFavorites

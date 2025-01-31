@@ -14,7 +14,7 @@ final class ViewControllerFactory {
         let networkService = NetworkService()
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository()
+        let imageRepository = ImageRepository(coreDataService: coreDataService)
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
         let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         let viewController = HomePageViewController(viewModel: viewModel)
@@ -26,7 +26,7 @@ final class ViewControllerFactory {
         let networkService = NetworkService()
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository()
+        let imageRepository = ImageRepository(coreDataService: coreDataService)
         let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
         let favoriteCoinsRepository = dependencies.favoriteCoinsRepository
         let fetchFavoriteCoinsUseCase = FetchFavoritesUseCase(repository: favoriteCoinsRepository)
@@ -45,7 +45,7 @@ final class ViewControllerFactory {
         let networkService = NetworkService()
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository()
+        let imageRepository = ImageRepository(coreDataService: coreDataService)
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
 
         let exchangeRateRepository = ExchangeRateRepository(networkService: networkService)
@@ -66,7 +66,7 @@ final class ViewControllerFactory {
         let networkService = NetworkService()
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository()
+        let imageRepository = ImageRepository(coreDataService: coreDataService)
         let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
         let purchasedCoinRepository = dependencies.purchasedCoinRepository
         let fetchPurchasedCoinUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
@@ -86,7 +86,7 @@ final class ViewControllerFactory {
         let networkService = NetworkService()
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository()
+        let imageRepository = ImageRepository(coreDataService: coreDataService)
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
         let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         let viewController = SearchViewController(viewModel: viewModel)
@@ -100,9 +100,10 @@ final class ViewControllerFactory {
     }
 
     func makeSelectCoinViewController() -> SelectCoinViewController {
+        let coreDataService = CoreDataService()
         let fetchCoinsUseCase = FetchCoinsUseCase(
             coinRepository: dependencies.coinRepository,
-            imageRepository: ImageRepository()
+            imageRepository: ImageRepository(coreDataService: coreDataService)
         )
         let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
         return SelectCoinViewController(viewModel: viewModel)
@@ -118,7 +119,8 @@ final class ViewControllerFactory {
     }
 
     func makeChooseCoinToSendViewController() -> ChooseCoinToSendViewController {
-        let imageRepository = ImageRepository()
+        let coreDataService = CoreDataService()
+        let imageRepository = ImageRepository(coreDataService: coreDataService)
         let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
         let purchasedCoinRepository = dependencies.purchasedCoinRepository
         let fetchPurchasedCoinsUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
