@@ -27,6 +27,7 @@ final class ViewControllerFactory {
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
         let imageRepository = ImageRepository()
+        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
         let favoriteCoinsRepository = dependencies.favoriteCoinsRepository
         let fetchFavoriteCoinsUseCase = FetchFavoritesUseCase(repository: favoriteCoinsRepository)
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
@@ -34,7 +35,7 @@ final class ViewControllerFactory {
         let viewModel = FavoritesViewModel(
             fetchCoinsUseCase: fetchCoinsUseCase,
             fetchFavoritesUseCase: fetchFavoriteCoinsUseCase,
-            imageRepository: imageRepository
+            fetchImagesUseCase: fetchImagesUseCase
         )
         let viewController = FavoritesPageViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
@@ -66,6 +67,7 @@ final class ViewControllerFactory {
         let coreDataService = CoreDataService()
         let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
         let imageRepository = ImageRepository()
+        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
         let purchasedCoinRepository = dependencies.purchasedCoinRepository
         let fetchPurchasedCoinUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
         let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
@@ -73,7 +75,7 @@ final class ViewControllerFactory {
         let viewModel = PortfolioViewModel(
             fetchCoinsUseCase: fetchCoinsUseCase,
             fetchPurchasedCoinsUseCase: fetchPurchasedCoinUseCase,
-            imageRepository: imageRepository
+            fetchImagesUseCase: fetchImagesUseCase
         )
 
         let viewController = PortfolioViewController(viewModel: viewModel)
@@ -115,4 +117,14 @@ final class ViewControllerFactory {
         return viewController
     }
 
+    func makeChooseCoinToSendViewController() -> ChooseCoinToSendViewController {
+        let imageRepository = ImageRepository()
+        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
+        let purchasedCoinRepository = dependencies.purchasedCoinRepository
+        let fetchPurchasedCoinsUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
+        let viewModel = ChooseCoinViewModel(fetchPurchasedCoinsUseCase: fetchPurchasedCoinsUseCase, fetchImagesUseCase: fetchImagesUseCase)
+        let viewController = ChooseCoinToSendViewController(viewModel: viewModel)
+        
+        return viewController
+    }
 }

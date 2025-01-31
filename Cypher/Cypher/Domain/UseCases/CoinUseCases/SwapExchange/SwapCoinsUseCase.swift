@@ -43,14 +43,16 @@ final class SwapCoinsUseCase: SwapCoinsUseCaseProtocol {
             coinSymbol: payCoin.symbol.uppercased(),
             coinName: payCoin.name,
             purchase: Purchase(amount: -payAmount,
-            timestamp: Date())
+            timestamp: Date()),
+            imageURL: payCoin.imageURL
         )
         try await repository.savePurchase(
             userID: userID,
             coinSymbol: receiveCoin.symbol.uppercased(),
             coinName: receiveCoin.name,
             purchase: Purchase(amount: receiveValue,
-            timestamp: Date())
+            timestamp: Date()),
+            imageURL: payCoin.imageURL
         )
     }
 }

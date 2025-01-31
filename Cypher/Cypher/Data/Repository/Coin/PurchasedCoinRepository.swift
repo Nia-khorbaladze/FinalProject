@@ -11,7 +11,7 @@ import FirebaseFirestore
 final class PurchasedCoinRepository: PurchasedCoinRepositoryProtocol {
     private let db = Firestore.firestore()
     
-    func savePurchase(userID: String, coinSymbol: String, coinName: String, purchase: Purchase) async throws {
+    func savePurchase(userID: String, coinSymbol: String, coinName: String, purchase: Purchase, imageURL: String) async throws {
         let coinRef = db.collection("Users")
             .document(userID)
             .collection("purchasedCoins")
@@ -34,6 +34,7 @@ final class PurchasedCoinRepository: PurchasedCoinRepositoryProtocol {
                     transaction.setData([
                         "name": coinName,
                         "totalAmount": purchase.amount,
+                        "imageURL": imageURL,
                         "lastUpdated": Timestamp(date: Date())
                     ], forDocument: coinRef)
                 }
@@ -58,7 +59,10 @@ final class PurchasedCoinRepository: PurchasedCoinRepositoryProtocol {
             else {
                 return nil
             }
-            return PurchasedCoin(symbol: document.documentID, name: name, totalAmount: totalAmount)
+            
+            let imageURL = document.data()["imageURL"] as? String 
+            
+            return PurchasedCoin(symbol: document.documentID, name: name, totalAmount: totalAmount, imageURL: imageURL)
         }
     }
 }

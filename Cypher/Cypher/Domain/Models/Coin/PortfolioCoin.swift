@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct PortfolioCoin: Identifiable {
+struct PortfolioCoin: Identifiable, ImageModel {
     let id: String
     let symbol: String
     let name: String

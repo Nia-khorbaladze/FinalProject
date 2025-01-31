@@ -8,11 +8,11 @@
 import Foundation
 import UIKit
 
-struct FavoriteCoin {
+struct FavoriteCoin: ImageModel {
     let id: String
     let name: String
-    let imageURL: String
     var image: UIImage?
+    var imageURL: String?
     let currentPrice: Double
     let changePercentage24h: Double
     let symbol: String

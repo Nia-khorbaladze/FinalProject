@@ -12,4 +12,5 @@ struct PurchasedCoin: Identifiable {
     let symbol: String
     let name: String
     let totalAmount: Double
+    let imageURL: String?
 }

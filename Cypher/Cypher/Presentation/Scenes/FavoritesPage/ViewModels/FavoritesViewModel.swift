@@ -13,17 +13,17 @@ import UIKit
 final class FavoritesViewModel: ObservableObject {
     private let fetchCoinsUseCase: FetchCoinsUseCase
     private let fetchFavoritesUseCase: FetchFavoritesUseCase
-    private let imageRepository: ImageRepositoryProtocol
+    private let fetchImagesUseCase: ImageUseCaseProtocol
     
     @Published var favoriteCoins: [FavoriteCoin] = []
     @Published var isLoading: Bool = false
     @Published var error: String?
     var cancellables = Set<AnyCancellable>()
     
-    init(fetchCoinsUseCase: FetchCoinsUseCase, fetchFavoritesUseCase: FetchFavoritesUseCase, imageRepository: ImageRepositoryProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCase, fetchFavoritesUseCase: FetchFavoritesUseCase, fetchImagesUseCase: ImageUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.fetchFavoritesUseCase = fetchFavoritesUseCase
-        self.imageRepository = imageRepository
+        self.fetchImagesUseCase = fetchImagesUseCase
     }
     
     func fetchFavorites() {
@@ -72,23 +72,22 @@ final class FavoritesViewModel: ObservableObject {
                     })
                     .store(in: &self.cancellables)
             } catch {
-                self.error = error.localizedDescription
-                self.isLoading = false
+                await MainActor.run { [weak self] in
+                    self?.error = error.localizedDescription
+                    self?.isLoading = false
+                }
             }
         }
     }
-
     
     private func fetchImages(for coins: [FavoriteCoin]) {
-        for (index, coin) in coins.enumerated() {
-            guard let imageURL = URL(string: coin.imageURL) else { continue }
-            imageRepository.fetchImage(from: imageURL)
-                .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] image in
-                    self?.favoriteCoins[index].image = image
-                })
-                .store(in: &cancellables)
-        }
+        fetchImagesUseCase.execute(for: coins)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] updatedCoins in
+                self?.favoriteCoins = updatedCoins
+            }
+            .store(in: &self.cancellables)
     }
 }
+
 
