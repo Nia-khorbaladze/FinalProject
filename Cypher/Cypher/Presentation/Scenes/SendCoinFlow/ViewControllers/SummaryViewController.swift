@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 final class SummaryViewController: UIViewController {
     // MARK: - UI Elements
@@ -58,6 +59,92 @@ final class SummaryViewController: UIViewController {
         return view
     }()
     
+    private lazy var sendAmountLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Fonts.bold.uiFont(size: 48)
+        label.textColor = UIColor(named: AppColors.white.rawValue)
+        label.text = "0.02 SOL"
+        
+        return label
+    }()
+    
+    private lazy var infoContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(named: AppColors.greyBlue.rawValue)
+        view.heightAnchor.constraint(equalToConstant: 120).isActive = true
+        view.layer.cornerRadius = 20
+
+        return view
+    }()
+    
+    private lazy var separator: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
+        view.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        
+        return view
+    }()
+    
+    private lazy var toLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "To"
+        label.textColor = UIColor(named: AppColors.lightGrey.rawValue)
+        label.font = Fonts.medium.uiFont(size: 18)
+        
+        return label
+    }()
+    
+    private lazy var networkLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Network"
+        label.textColor = UIColor(named: AppColors.lightGrey.rawValue)
+        label.font = Fonts.medium.uiFont(size: 18)
+        
+        return label
+    }()
+    
+    private lazy var walletAddress: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "36w83374bejbhfde"
+        label.textColor = UIColor(named: AppColors.white.rawValue)
+        label.font = Fonts.medium.uiFont(size: 18)
+        label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingMiddle
+        
+        return label
+    }()
+    
+    private lazy var networkNameLabel: UILabel =  {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Solana"
+        label.textColor = UIColor(named: AppColors.white.rawValue)
+        label.font = Fonts.medium.uiFont(size: 18)
+        
+        return label
+    }()
+    
+    private lazy var sendButton: UIHostingController<PrimaryButton> = {
+        let hostingController = UIHostingController(
+            rootView: PrimaryButton(
+                title: "Send",
+                isActive: true,
+                action: { [weak self] in
+
+                }
+            )
+        )
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.view.backgroundColor = .clear
+        return hostingController
+    }()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,6 +164,17 @@ final class SummaryViewController: UIViewController {
         headerView.addSubview(headerTitle)
         view.addSubview(circleView)
         circleView.addSubview(sendImageView)
+        view.addSubview(sendAmountLabel)
+        view.addSubview(infoContainer)
+        infoContainer.addSubview(separator)
+        infoContainer.addSubview(toLabel)
+        infoContainer.addSubview(networkLabel)
+        infoContainer.addSubview(walletAddress)
+        infoContainer.addSubview(networkNameLabel)
+        
+        addChild(sendButton)
+        view.addSubview(sendButton.view)
+        sendButton.didMove(toParent: self)
     }
     
     private func setupConstraints() {
@@ -96,10 +194,45 @@ final class SummaryViewController: UIViewController {
         NSLayoutConstraint.activate([
             circleView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 20),
             circleView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
             sendImageView.centerYAnchor.constraint(equalTo: circleView.centerYAnchor),
             sendImageView.centerXAnchor.constraint(equalTo: circleView.centerXAnchor),
             sendImageView.widthAnchor.constraint(equalTo: circleView.widthAnchor, multiplier: 0.6),
             sendImageView.heightAnchor.constraint(equalTo: circleView.heightAnchor, multiplier: 0.6)
+        ])
+        
+        NSLayoutConstraint.activate([
+            sendAmountLabel.topAnchor.constraint(equalTo: circleView.bottomAnchor, constant: 50),
+            sendAmountLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            infoContainer.topAnchor.constraint(equalTo: sendAmountLabel.bottomAnchor, constant: 40),
+            infoContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            infoContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
+            
+            separator.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor),
+            separator.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor),
+            separator.centerYAnchor.constraint(equalTo: infoContainer.centerYAnchor),
+            
+            toLabel.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor, constant: 15),
+            toLabel.topAnchor.constraint(equalTo: infoContainer.topAnchor, constant: 15),
+            toLabel.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: -15),
+            walletAddress.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor, constant: -15),
+            walletAddress.topAnchor.constraint(equalTo: infoContainer.topAnchor, constant: 15),
+            walletAddress.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: -15),
+            
+            networkLabel.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor, constant: 15),
+            networkLabel.bottomAnchor.constraint(equalTo: infoContainer.bottomAnchor, constant: -15),
+            networkLabel.topAnchor.constraint(equalTo: separator.bottomAnchor, constant: 15),
+            networkNameLabel.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor, constant: -15),
+            networkNameLabel.bottomAnchor.constraint(equalTo: infoContainer.bottomAnchor, constant: -15),
+            networkNameLabel.topAnchor.constraint(equalTo: separator.bottomAnchor, constant: 15)
+        ])
+        
+        NSLayoutConstraint.activate([
+            sendButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            sendButton.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            sendButton.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            sendButton.view.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
