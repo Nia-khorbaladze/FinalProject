@@ -15,6 +15,6 @@ final class FetchFavoritesUseCase {
     }
     
     func execute(userID: String) async throws -> [String] {
-        try await repository.fetchFavorites(userID: userID)
+        try await repository.fetchFavorites(userID: userID, fetchFromFirebase: false)
     }
 }

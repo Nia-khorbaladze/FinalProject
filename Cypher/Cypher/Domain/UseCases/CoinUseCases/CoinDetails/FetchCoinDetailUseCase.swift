@@ -16,16 +16,6 @@ final class FetchCoinDetailUseCase {
     }
 
     func execute(name: String) -> AnyPublisher<CoinDetailModel, NetworkError> {
-        if let cachedCoin = repository.getCoinDetail(name: name) {
-            return Just(cachedCoin)
-                .setFailureType(to: NetworkError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return repository.fetchCoinDetail(name: name) 
-                .handleEvents(receiveOutput: { coinDetail in
-                    self.repository.saveCoinDetail(coinDetail)
-                })
-                .eraseToAnyPublisher()
-        }
+        return repository.fetchCoinDetail(name: name)
     }
 }

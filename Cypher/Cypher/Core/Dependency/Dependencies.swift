@@ -27,11 +27,11 @@ final class Dependencies {
     }()
 
     private(set) lazy var purchasedCoinRepository: PurchasedCoinRepositoryProtocol = {
-        PurchasedCoinRepository()
+        PurchasedCoinRepository(coreDataService: coreDataService)
     }()
     
     private(set) lazy var favoriteCoinsRepository: FavoriteCoinsRepository = {
-        FavoriteCoinsRepository()
+        FavoriteCoinsRepository(coreDataService: coreDataService)
     }()
     
     private(set) lazy var walletAddressRepository: WalletAddressRepository = {

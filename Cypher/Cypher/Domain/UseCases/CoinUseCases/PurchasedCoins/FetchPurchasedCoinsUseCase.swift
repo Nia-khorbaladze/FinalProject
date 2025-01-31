@@ -15,7 +15,7 @@ final class FetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol {
     }
 
     func execute(userID: String) async throws -> [PurchasedCoin] {
-        return try await purchasedCoinRepository.fetchPurchasedCoins(userID: userID)
+        return try await purchasedCoinRepository.fetchPurchasedCoins(userID: userID, fetchFromFirebase: false)
     }
 }
 

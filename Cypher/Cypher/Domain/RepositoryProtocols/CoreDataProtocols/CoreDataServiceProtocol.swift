@@ -6,9 +6,13 @@
 //
 
 import Foundation
+import UIKit
 
 protocol CoreDataServiceProtocol {
-    func saveCoinDetail(_ coin: CoinDetailModel)
-    func fetchCoinDetail(by name: String) -> CoinDetailModel?
-    func cleanupExpiredCoinDetails()
+    func saveResponse<T: Codable>(_ object: T, forKey key: String)
+    func fetchResponse<T: Codable>(forKey key: String, as type: T.Type) -> (object: T?, timestamp: Date?)
+    func cleanupExpiredCache(forKey key: String, expiration: TimeInterval)
+    func deleteCache(forKey key: String)
+    func saveImage(_ image: UIImage, forKey key: String)
+    func fetchImage(forKey key: String) -> UIImage?
 }

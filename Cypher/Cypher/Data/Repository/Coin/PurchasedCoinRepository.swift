@@ -10,6 +10,12 @@ import FirebaseFirestore
 
 final class PurchasedCoinRepository: PurchasedCoinRepositoryProtocol {
     private let db = Firestore.firestore()
+    private let coreDataService: CoreDataServiceProtocol
+    private let cacheTimeout: TimeInterval = 300
+    
+    init(coreDataService: CoreDataServiceProtocol) {
+        self.coreDataService = coreDataService
+    }
     
     func savePurchase(userID: String, coinSymbol: String, coinName: String, purchase: Purchase, imageURL: String) async throws {
         let coinRef = db.collection("Users")
@@ -43,16 +49,34 @@ final class PurchasedCoinRepository: PurchasedCoinRepositoryProtocol {
             }
             return nil
         }
+        
+        let key = "purchasedCoins"
+        coreDataService.deleteCache(forKey: key)
+        
+        let updatedPurchasedCoins = try await fetchPurchasedCoins(userID: userID, fetchFromFirebase: true)
+        coreDataService.saveResponse(updatedPurchasedCoins, forKey: key)
     }
     
-    func fetchPurchasedCoins(userID: String) async throws -> [PurchasedCoin] {
+    func fetchPurchasedCoins(userID: String, fetchFromFirebase: Bool = false) async throws -> [PurchasedCoin] {
+        let key = "purchasedCoins"
+        
+        coreDataService.cleanupExpiredCache(forKey: key, expiration: cacheTimeout)
+
+        if !fetchFromFirebase {
+            let (cachedPurchasedCoins, _) = coreDataService.fetchResponse(forKey: key, as: [PurchasedCoin].self)
+            
+            if let cachedPurchasedCoins = cachedPurchasedCoins {
+                return cachedPurchasedCoins
+            }
+        }
+        
         let coinRef = db.collection("Users")
             .document(userID)
             .collection("purchasedCoins")
         
         let snapshot = try await coinRef.getDocuments()
         
-        return snapshot.documents.compactMap { document in
+        let purchasedCoins = snapshot.documents.compactMap { document -> PurchasedCoin? in
             guard
                 let name = document.data()["name"] as? String,
                 let totalAmount = document.data()["totalAmount"] as? Double
@@ -60,9 +84,11 @@ final class PurchasedCoinRepository: PurchasedCoinRepositoryProtocol {
                 return nil
             }
             
-            let imageURL = document.data()["imageURL"] as? String 
-            
+            let imageURL = document.data()["imageURL"] as? String
             return PurchasedCoin(symbol: document.documentID, name: name, totalAmount: totalAmount, imageURL: imageURL)
         }
+        
+        coreDataService.saveResponse(purchasedCoins, forKey: key)
+        return purchasedCoins
     }
 }

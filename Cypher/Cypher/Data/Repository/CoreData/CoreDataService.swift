@@ -7,88 +7,129 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 final class CoreDataService: CoreDataServiceProtocol {
     private let context = PersistenceController.shared.container.viewContext
-
-    func saveCoinDetail(_ coin: CoinDetailModel) {
-        let fetchRequest: NSFetchRequest<CoinDetail> = CoinDetail.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "name == %@", coin.name)
+    
+    func saveResponse<T: Codable>(_ object: T, forKey key: String) {
+        context.perform {
+            let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", key)
+            
+            let cachedEntity: NSManagedObject
+            if let existingEntity = try? self.context.fetch(fetchRequest).first {
+                cachedEntity = existingEntity
+            } else {
+                let entityDescription = NSEntityDescription.entity(forEntityName: "CachedResponse", in: self.context)!
+                cachedEntity = NSManagedObject(entity: entityDescription, insertInto: self.context)
+                cachedEntity.setValue(key, forKey: "id")
+            }
+            
+            if let jsonData = try? JSONEncoder().encode(object),
+               let jsonString = String(data: jsonData, encoding: .utf8) {
+                cachedEntity.setValue(jsonString, forKey: "json")
+                cachedEntity.setValue(Date(), forKey: "timestamp")
+            }
+            
+            do {
+                try self.context.save()
+            } catch {
+                print("Error saving response: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func fetchResponse<T: Codable>(forKey key: String, as type: T.Type) -> (object: T?, timestamp: Date?) {
+        let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", key)
         
-        if let existingCoin = try? context.fetch(fetchRequest).first {
-            existingCoin.currentPrice = coin.currentPrice
-            existingCoin.marketCap = coin.marketCap
-            existingCoin.totalSupply = coin.totalSupply ?? 0.0
-            existingCoin.circulatingSupply = coin.circulatingSupply ?? 0.0
-            existingCoin.maxSupply = coin.maxSupply ?? 0.0
-            existingCoin.coinDescription = coin.description.en
-            existingCoin.id = coin.id
-            existingCoin.symbol = coin.symbol
-            existingCoin.name = coin.name
-            existingCoin.lastUpdated = Date()
-            existingCoin.priceChange24h = coin.priceChange24h
-            existingCoin.priceChangePercentage24h = coin.priceChangePercentage24h
-        } else {
-            let newCoin = CoinDetail(context: context)
-            newCoin.id = coin.id
-            newCoin.symbol = coin.symbol
-            newCoin.name = coin.name
-            newCoin.currentPrice = coin.currentPrice
-            newCoin.marketCap = coin.marketCap
-            newCoin.totalSupply = coin.totalSupply ?? 0.0
-            newCoin.circulatingSupply = coin.circulatingSupply ?? 0.0
-            newCoin.maxSupply = coin.maxSupply ?? 0.0
-            newCoin.coinDescription = coin.description.en
-            newCoin.lastUpdated = Date()
-            newCoin.priceChange24h = coin.priceChange24h
-            newCoin.priceChangePercentage24h = coin.priceChangePercentage24h
+        guard let cachedEntity = try? context.fetch(fetchRequest).first,
+              let jsonString = cachedEntity.value(forKey: "json") as? String,
+              let jsonData = jsonString.data(using: .utf8),
+              let decodedObject = try? JSONDecoder().decode(type, from: jsonData) else {
+            return (nil, nil)
         }
         
-        try? context.save()
+        let timestamp = cachedEntity.value(forKey: "timestamp") as? Date
+        return (decodedObject, timestamp)
     }
-
-    func fetchCoinDetail(by name: String) -> CoinDetailModel? {
-        let fetchRequest: NSFetchRequest<CoinDetail> = CoinDetail.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "name == %@", name)
-        
-        guard let coin = try? context.fetch(fetchRequest).first else { return nil }
-        
-        let marketData = CoinDetailModel.MarketData(
-            currentPrice: CoinDetailModel.PriceData(usd: coin.currentPrice),
-            marketCap: CoinDetailModel.PriceData(usd: coin.marketCap),
-            totalSupply: coin.totalSupply,
-            circulatingSupply: coin.circulatingSupply,
-            maxSupply: coin.maxSupply,
-            priceChange24h: coin.priceChange24h,
-            priceChangePercentage24h: coin.priceChangePercentage24h
-        )
-        
-        let description = CoinDetailModel.Description(en: coin.coinDescription)
-        
-        var model = CoinDetailModel(
-            id: coin.id ?? "",
-            symbol: coin.symbol ?? "",
-            name: coin.name ?? "",
-            description: description,
-            marketData: marketData
-        )
-        
-        model.lastUpdated = coin.lastUpdated
-        return model
-    }
-
-    func cleanupExpiredCoinDetails() {
-        let fetchRequest: NSFetchRequest<CoinDetail> = CoinDetail.fetchRequest()
-        
-        if let coins = try? context.fetch(fetchRequest) {
-            for coin in coins {
-                if let lastUpdated = coin.lastUpdated,
-                   Date().timeIntervalSince(lastUpdated) > 300 {
-                    context.delete(coin) 
+    
+    func cleanupExpiredCache(forKey key: String, expiration: TimeInterval = 300) {
+        let backgroundContext = PersistenceController.shared.container.newBackgroundContext()
+        backgroundContext.perform {
+            let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", key)  
+            
+            if let cachedItems = try? backgroundContext.fetch(fetchRequest) {
+                for item in cachedItems {
+                    if let timestamp = item.value(forKey: "timestamp") as? Date,
+                       Date().timeIntervalSince(timestamp) > expiration {
+                        backgroundContext.delete(item)
+                    }
+                }
+                do {
+                    try backgroundContext.save()
+                } catch {
+                    print("Error cleaning up expired cache: \(error.localizedDescription)")
                 }
             }
-            try? context.save()
         }
     }
+    
+    func deleteCache(forKey key: String) {
+        context.perform {
+            let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", key)
+            
+            if let cachedEntity = try? self.context.fetch(fetchRequest).first {
+                self.context.delete(cachedEntity)
+                do {
+                    try self.context.save()
+                } catch {
+                    print("Error deleting cache for key \(key): \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    func saveImage(_ image: UIImage, forKey key: String) {
+        context.perform {
+            let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", key)
+            
+            let cachedEntity: NSManagedObject
+            if let existingEntity = try? self.context.fetch(fetchRequest).first {
+                cachedEntity = existingEntity
+            } else {
+                let entityDescription = NSEntityDescription.entity(forEntityName: "CachedResponse", in: self.context)!
+                cachedEntity = NSManagedObject(entity: entityDescription, insertInto: self.context)
+                cachedEntity.setValue(key, forKey: "id")
+            }
+            
+            if let imageData = image.pngData() {
+                cachedEntity.setValue(imageData, forKey: "imageData")
+                cachedEntity.setValue(Date(), forKey: "timestamp")
+            }
+            
+            do {
+                try self.context.save()
+            } catch {
+                print("Error saving image: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func fetchImage(forKey key: String) -> UIImage? {
+        let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", key)
+        
+        guard let cachedEntity = try? context.fetch(fetchRequest).first,
+              let imageData = cachedEntity.value(forKey: "imageData") as? Data,
+              let image = UIImage(data: imageData) else {
+            return nil
+        }
+        
+        return image
+    }
 }
-

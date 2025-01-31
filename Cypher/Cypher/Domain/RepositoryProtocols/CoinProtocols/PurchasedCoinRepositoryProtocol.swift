@@ -9,5 +9,5 @@ import Foundation
 
 protocol PurchasedCoinRepositoryProtocol {
     func savePurchase(userID: String, coinSymbol: String, coinName: String, purchase: Purchase, imageURL: String) async throws
-    func fetchPurchasedCoins(userID: String) async throws -> [PurchasedCoin]
+    func fetchPurchasedCoins(userID: String, fetchFromFirebase: Bool) async throws -> [PurchasedCoin] 
 }
