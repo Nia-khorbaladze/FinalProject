@@ -19,42 +19,54 @@ final class CoinRepository: CoinRepositoryProtocol {
     }
 
     func fetchCoins() -> AnyPublisher<[CoinResponse], NetworkError> {
+        let cacheKey = "coinsList"
+
+        coreDataService.cleanupExpiredCache(expiration: cacheTimeout)
+
+        let (cachedCoins, timestamp) = coreDataService.fetchResponse(forKey: cacheKey, as: [CoinResponse].self)
+        
+        if let cachedCoins = cachedCoins,
+           let timestamp = timestamp,
+           Date().timeIntervalSince(timestamp) < cacheTimeout {
+            return Just(cachedCoins)
+                .setFailureType(to: NetworkError.self)
+                .eraseToAnyPublisher()
+        }
+
         guard let url = URL(string: "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1") else {
             return Fail(error: NetworkError.invalidResponse).eraseToAnyPublisher()
         }
+
         return networkService.request(url: url, method: "GET", headers: nil, body: nil, decoder: JSONDecoder())
+            .handleEvents(receiveOutput: { coins in
+                self.coreDataService.saveResponse(coins, forKey: cacheKey)
+            })
+            .eraseToAnyPublisher()
     }
     
     func fetchCoinDetail(name: String) -> AnyPublisher<CoinDetailModel, NetworkError> {
         let lowercaseName = name.lowercased()
+
+        coreDataService.cleanupExpiredCache(expiration: cacheTimeout)
+
+        let (cachedCoin, timestamp) = coreDataService.fetchResponse(forKey: lowercaseName, as: CoinDetailModel.self)
         
-        cleanupExpiredCoinDetails()
-        
-        guard let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(lowercaseName)") else {
-            return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()
-        }
-        
-        if let cachedCoin = coreDataService.fetchCoinDetail(by: lowercaseName),
-           let lastUpdated = cachedCoin.lastUpdated,
-           Date().timeIntervalSince(lastUpdated) < cacheTimeout {
+        if let cachedCoin = cachedCoin,
+           let timestamp = timestamp,
+           Date().timeIntervalSince(timestamp) < cacheTimeout {
             return Just(cachedCoin)
                 .setFailureType(to: NetworkError.self)
                 .eraseToAnyPublisher()
         }
-        
+
+        guard let url = URL(string: "https://api.coingecko.com/api/v3/coins/\(lowercaseName)") else {
+            return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()
+        }
+
         return networkService.request(url: url, method: "GET", headers: nil, body: nil, decoder: JSONDecoder())
+            .handleEvents(receiveOutput: { coin in
+                self.coreDataService.saveResponse(coin, forKey: lowercaseName)
+            })
             .eraseToAnyPublisher()
-    }
-    
-    func saveCoinDetail(_ coin: CoinDetailModel) {
-        coreDataService.saveCoinDetail(coin)
-    }
-    
-    func getCoinDetail(name: String) -> CoinDetailModel? {
-        return coreDataService.fetchCoinDetail(by: name)
-    }
-    
-    func cleanupExpiredCoinDetails() {
-        coreDataService.cleanupExpiredCoinDetails()
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct CoinResponse: Identifiable, Decodable {
+struct CoinResponse: Identifiable, Codable {
     let id: String
     let symbol: String
     let name: String

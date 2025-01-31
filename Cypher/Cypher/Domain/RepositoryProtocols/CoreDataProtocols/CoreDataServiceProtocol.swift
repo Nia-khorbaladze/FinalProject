@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CoreDataServiceProtocol {
-    func saveCoinDetail(_ coin: CoinDetailModel)
-    func fetchCoinDetail(by name: String) -> CoinDetailModel?
-    func cleanupExpiredCoinDetails()
+    func saveResponse<T: Codable>(_ object: T, forKey key: String)
+    func fetchResponse<T: Codable>(forKey key: String, as type: T.Type) -> (object: T?, timestamp: Date?)
+    func cleanupExpiredCache(expiration: TimeInterval)
 }
