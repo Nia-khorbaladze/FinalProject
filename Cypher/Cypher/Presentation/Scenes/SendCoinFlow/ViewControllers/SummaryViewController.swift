@@ -13,6 +13,9 @@ final class SummaryViewController: UIViewController {
     private let sendAmount: String
     private let walletAddressString: String
     private let coinSymbol: String
+    private let imageURL: String
+    private let viewModel: SummaryViewModel
+
     // MARK: - UI Elements
     private lazy var headerView: UIView = {
         let view = UIView()
@@ -125,7 +128,7 @@ final class SummaryViewController: UIViewController {
                 title: "Send",
                 isActive: true,
                 action: { [weak self] in
-
+                    self?.handleSendTapped()
                 }
             )
         )
@@ -134,11 +137,13 @@ final class SummaryViewController: UIViewController {
         return hostingController
     }()
     // MARK: - Initializers
-    init(coinName: String, sendAmount: String, walletAddressString: String, coinSymbol: String) {
+    init(viewModel: SummaryViewModel, coinName: String, sendAmount: String, walletAddressString: String, coinSymbol: String, imageURL: String) {
+        self.viewModel = viewModel
         self.coinName = coinName
         self.sendAmount = sendAmount
         self.walletAddressString = walletAddressString
         self.coinSymbol = coinSymbol
+        self.imageURL = imageURL
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -242,6 +247,27 @@ final class SummaryViewController: UIViewController {
         
         circleView.layer.cornerRadius = circleView.frame.width / 2
         circleView.clipsToBounds = true
+    }
+    
+    private func handleSendTapped() {
+        Task {
+            do {
+                try await viewModel.sendCoins()
+                DispatchQueue.main.async { [weak self] in
+                    self?.navigationController?.pushViewController(SuccessfulTransactionViewController(), animated: true)
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.showErrorAlert(error: error)
+                }
+            }
+        }
+    }
+    
+    private func showErrorAlert(error: Error) {
+        let alert = UIAlertController(title: "Error", message: "Couldn't transfer coins. Please try again later.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
     private func createLabel(text: String, textColor: UIColor) -> UILabel {

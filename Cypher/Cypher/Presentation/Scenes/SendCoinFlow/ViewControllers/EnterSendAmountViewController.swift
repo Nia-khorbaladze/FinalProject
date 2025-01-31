@@ -11,6 +11,7 @@ final class EnterSendAmountViewController: UIViewController {
     private let coinSymbol: String
     private let walletAddress: String
     private let coinName: String
+    private let imageURL: String
     private let viewModel: EnterSendAmountViewModel
     private var availableContainerBottomConstraint: NSLayoutConstraint!
     private var isErrorMessageVisible: Bool = false
@@ -158,10 +159,11 @@ final class EnterSendAmountViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(coinSymbol: String, walletAddress: String, coinName: String, viewModel: EnterSendAmountViewModel) {
+    init(coinSymbol: String, walletAddress: String, coinName: String, imageURL: String, viewModel: EnterSendAmountViewModel) {
         self.coinSymbol = coinSymbol
         self.walletAddress = walletAddress
         self.coinName = coinName
+        self.imageURL = imageURL
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -349,7 +351,25 @@ final class EnterSendAmountViewController: UIViewController {
     }
     
     private func navigateToSummaryPage() {
-        let viewController = SummaryViewController(coinName: coinName, sendAmount: String(viewModel.amount), walletAddressString: walletAddress, coinSymbol: coinSymbol)
+        let saveCoinsUseCase = Dependencies.shared.savePurchasedCoinUseCase
+        
+        let viewModel = SummaryViewModel(
+            saveCoinsUseCase: saveCoinsUseCase,
+            amount: viewModel.amount,
+            coinSymbol: coinSymbol,
+            coinName: coinName,
+            imageURL: imageURL
+        )
+        
+        let viewController = SummaryViewController(
+            viewModel: viewModel,
+            coinName: coinName,
+            sendAmount: String(viewModel.amount),
+            walletAddressString: walletAddress,
+            coinSymbol: coinSymbol,
+            imageURL: imageURL
+        )
+        
         navigationController?.pushViewController(viewController, animated: true)
     }
 }

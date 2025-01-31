@@ -18,6 +18,7 @@ final class AddressInputViewController: UIViewController {
     }
     private var buttonBottomConstraint: NSLayoutConstraint!
     private let availableAmount: Double
+    private let imageURL: String
     
     // MARK: - UI Elements
     private lazy var headerView: UIView = {
@@ -92,10 +93,11 @@ final class AddressInputViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(coinSymbol: String, coinName: String, availableAmount: Double) {
+    init(coinSymbol: String, coinName: String, availableAmount: Double, imageURL: String) {
         self.coinSymbol = coinSymbol
         self.coinName = coinName
         self.availableAmount = availableAmount
+        self.imageURL = imageURL
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -229,6 +231,7 @@ final class AddressInputViewController: UIViewController {
             coinSymbol: coinSymbol,
             walletAddress: walletAddress,
             coinName: coinName,
+            imageURL: imageURL,
             viewModel: viewModel
         )
         
