@@ -54,10 +54,11 @@ final class CoreDataService: CoreDataServiceProtocol {
         return (decodedObject, timestamp)
     }
     
-    func cleanupExpiredCache(expiration: TimeInterval = 300) {
+    func cleanupExpiredCache(forKey key: String, expiration: TimeInterval = 300) {
         let backgroundContext = PersistenceController.shared.container.newBackgroundContext()
         backgroundContext.perform {
             let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", key)  
             
             if let cachedItems = try? backgroundContext.fetch(fetchRequest) {
                 for item in cachedItems {

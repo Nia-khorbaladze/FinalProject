@@ -21,7 +21,7 @@ final class CoinRepository: CoinRepositoryProtocol {
     func fetchCoins() -> AnyPublisher<[CoinResponse], NetworkError> {
         let cacheKey = "coinsList"
 
-        coreDataService.cleanupExpiredCache(expiration: cacheTimeout)
+        coreDataService.cleanupExpiredCache(forKey: cacheKey, expiration: cacheTimeout)
 
         let (cachedCoins, timestamp) = coreDataService.fetchResponse(forKey: cacheKey, as: [CoinResponse].self)
         
@@ -47,7 +47,7 @@ final class CoinRepository: CoinRepositoryProtocol {
     func fetchCoinDetail(name: String) -> AnyPublisher<CoinDetailModel, NetworkError> {
         let lowercaseName = name.lowercased()
 
-        coreDataService.cleanupExpiredCache(expiration: cacheTimeout)
+        coreDataService.cleanupExpiredCache(forKey: lowercaseName, expiration: cacheTimeout)
 
         let (cachedCoin, timestamp) = coreDataService.fetchResponse(forKey: lowercaseName, as: CoinDetailModel.self)
         

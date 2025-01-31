@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct PurchasedCoin: Identifiable {
-    let id = UUID()
+struct PurchasedCoin: Identifiable, Codable {
+    var id = UUID()
     let symbol: String
     let name: String
     let totalAmount: Double
