@@ -74,4 +74,20 @@ final class CoreDataService: CoreDataServiceProtocol {
             }
         }
     }
+    
+    func deleteCache(forKey key: String) {
+        context.perform {
+            let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "CachedResponse")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", key)
+            
+            if let cachedEntity = try? self.context.fetch(fetchRequest).first {
+                self.context.delete(cachedEntity)
+                do {
+                    try self.context.save()
+                } catch {
+                    print("Error deleting cache for key \(key): \(error.localizedDescription)")
+                }
+            }
+        }
+    }
 }
