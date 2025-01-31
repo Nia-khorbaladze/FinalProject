@@ -10,6 +10,7 @@ import UIKit
 final class EnterSendAmountViewController: UIViewController {
     private let coinSymbol: String
     private let walletAddress: String
+    private let coinName: String
     private let viewModel: EnterSendAmountViewModel
     private var availableContainerBottomConstraint: NSLayoutConstraint!
     private var isErrorMessageVisible: Bool = false
@@ -157,9 +158,10 @@ final class EnterSendAmountViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(coinSymbol: String, walletAddress: String, viewModel: EnterSendAmountViewModel) {
+    init(coinSymbol: String, walletAddress: String, coinName: String, viewModel: EnterSendAmountViewModel) {
         self.coinSymbol = coinSymbol
         self.walletAddress = walletAddress
+        self.coinName = coinName
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -347,7 +349,7 @@ final class EnterSendAmountViewController: UIViewController {
     }
     
     private func navigateToSummaryPage() {
-        let viewController = SummaryViewController()
+        let viewController = SummaryViewController(coinName: coinName, sendAmount: String(viewModel.amount), walletAddressString: walletAddress, coinSymbol: coinSymbol)
         navigationController?.pushViewController(viewController, animated: true)
     }
 }

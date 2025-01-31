@@ -10,6 +10,7 @@ import SwiftUI
 
 final class AddressInputViewController: UIViewController {
     private let coinSymbol: String
+    private let coinName: String
     private var isNextButtonActive = false {
         didSet {
             updateNextButton()
@@ -91,8 +92,9 @@ final class AddressInputViewController: UIViewController {
     }()
     
     // MARK: - Initializers
-    init(coinSymbol: String, availableAmount: Double) {
+    init(coinSymbol: String, coinName: String, availableAmount: Double) {
         self.coinSymbol = coinSymbol
+        self.coinName = coinName
         self.availableAmount = availableAmount
         super.init(nibName: nil, bundle: nil)
     }
@@ -226,6 +228,7 @@ final class AddressInputViewController: UIViewController {
         let enterAmountVC = EnterSendAmountViewController(
             coinSymbol: coinSymbol,
             walletAddress: walletAddress,
+            coinName: coinName,
             viewModel: viewModel
         )
         

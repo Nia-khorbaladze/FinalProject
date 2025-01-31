@@ -9,6 +9,10 @@ import UIKit
 import SwiftUI
 
 final class SummaryViewController: UIViewController {
+    private let coinName: String
+    private let sendAmount: String
+    private let walletAddressString: String
+    private let coinSymbol: String
     // MARK: - UI Elements
     private lazy var headerView: UIView = {
         let view = UIView()
@@ -24,7 +28,7 @@ final class SummaryViewController: UIViewController {
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         button.tintColor = UIColor(named: AppColors.white.rawValue)
         button.addAction(UIAction(handler: { [weak self] _ in
-            
+            self?.navigateBack()
         }), for: .touchUpInside)
         
         return button
@@ -64,7 +68,7 @@ final class SummaryViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Fonts.bold.uiFont(size: 48)
         label.textColor = UIColor(named: AppColors.white.rawValue)
-        label.text = "0.02 SOL"
+        label.text = "\(sendAmount) \(coinSymbol)"
         
         return label
     }()
@@ -88,30 +92,20 @@ final class SummaryViewController: UIViewController {
         return view
     }()
     
-    private lazy var toLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "To"
-        label.textColor = UIColor(named: AppColors.lightGrey.rawValue)
-        label.font = Fonts.medium.uiFont(size: 18)
-        
-        return label
-    }()
+    private lazy var toLabel: UILabel = createLabel(
+        text: "To",
+        textColor: UIColor(named: AppColors.lightGrey.rawValue) ?? .gray
+    )
     
-    private lazy var networkLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Network"
-        label.textColor = UIColor(named: AppColors.lightGrey.rawValue)
-        label.font = Fonts.medium.uiFont(size: 18)
-        
-        return label
-    }()
+    private lazy var networkLabel: UILabel = createLabel(
+        text: "Network",
+        textColor: UIColor(named: AppColors.lightGrey.rawValue) ?? .gray
+    )
     
     private lazy var walletAddress: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "36w83374bejbhfde"
+        label.text = "\(walletAddressString)"
         label.textColor = UIColor(named: AppColors.white.rawValue)
         label.font = Fonts.medium.uiFont(size: 18)
         label.numberOfLines = 1
@@ -120,15 +114,10 @@ final class SummaryViewController: UIViewController {
         return label
     }()
     
-    private lazy var networkNameLabel: UILabel =  {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Solana"
-        label.textColor = UIColor(named: AppColors.white.rawValue)
-        label.font = Fonts.medium.uiFont(size: 18)
-        
-        return label
-    }()
+    private lazy var networkNameLabel: UILabel = createLabel(
+        text: "\(coinName)",
+        textColor: UIColor(named: AppColors.white.rawValue) ?? .white
+    )
     
     private lazy var sendButton: UIHostingController<PrimaryButton> = {
         let hostingController = UIHostingController(
@@ -144,6 +133,18 @@ final class SummaryViewController: UIViewController {
         hostingController.view.backgroundColor = .clear
         return hostingController
     }()
+    // MARK: - Initializers
+    init(coinName: String, sendAmount: String, walletAddressString: String, coinSymbol: String) {
+        self.coinName = coinName
+        self.sendAmount = sendAmount
+        self.walletAddressString = walletAddressString
+        self.coinSymbol = coinSymbol
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -241,5 +242,19 @@ final class SummaryViewController: UIViewController {
         
         circleView.layer.cornerRadius = circleView.frame.width / 2
         circleView.clipsToBounds = true
+    }
+    
+    private func createLabel(text: String, textColor: UIColor) -> UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = text
+        label.textColor = textColor
+        label.font = Fonts.medium.uiFont(size: 18)
+        
+        return label
+    }
+    
+    private func navigateBack() {
+        navigationController?.popViewController(animated: true)
     }
 }

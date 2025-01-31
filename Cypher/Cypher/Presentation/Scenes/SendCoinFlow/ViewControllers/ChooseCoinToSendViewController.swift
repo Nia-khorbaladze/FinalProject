@@ -139,7 +139,8 @@ extension ChooseCoinToSendViewController: UITableViewDelegate, UITableViewDataSo
         let coin = coins[indexPath.row]
         let addressInputVC = AddressInputViewController(
                 coinSymbol: coin.symbol,
-                availableAmount: coin.totalAmount 
+                coinName: coin.name,
+                availableAmount: coin.totalAmount
             )
         navigationController?.pushViewController(addressInputVC, animated: true)
     }
