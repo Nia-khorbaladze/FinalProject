@@ -139,7 +139,7 @@ final class HomePageViewController: UIViewController {
         if let sheet = profilePopupVC.sheetPresentationController {
             sheet.detents = [
                 .custom { context in
-                    return 200
+                    return 300
                 }
             ]
             sheet.preferredCornerRadius = 40
