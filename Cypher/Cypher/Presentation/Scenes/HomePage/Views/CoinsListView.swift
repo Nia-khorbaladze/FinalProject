@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CoinsListView: View {
-    @ObservedObject var viewModel: CoinViewModel
+    @ObservedObject var viewModel: HomePageViewModel
     let title: String?
     let showTitle: Bool
     let onCoinTapped: (CoinResponse) -> Void
