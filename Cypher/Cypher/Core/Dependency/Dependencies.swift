@@ -84,6 +84,15 @@ final class Dependencies {
     private(set) lazy var fetchPriceChangeUseCase = {
         FetchCoinPriceChangeUseCase(repository: historyRepository)
     }()
+
+    private(set) lazy var logoutUseCase: LogoutUseCase = {
+        LogoutUseCase()
+    }()
+
+    private(set) lazy var getUsernameUseCase: GetUsernameUseCase = {
+        GetUsernameUseCase(usernameRepository: usernameRepository)
+    }()
+
     
     // MARK: - View Models
     private(set) lazy var googleSignInViewModel: GoogleSignInViewModel = {
@@ -112,6 +121,13 @@ final class Dependencies {
     
     func makeCreateUsernameViewModel() -> CreateUsernameViewModel {
         return CreateUsernameViewModel(saveUsernameUseCase: saveUsernameUseCase)
+    }
+    
+    func makeProfilePopupViewModel() -> ProfilePopupViewModel {
+        return ProfilePopupViewModel(
+            logoutUseCase: logoutUseCase,
+            getUsernameUseCase: getUsernameUseCase
+        )
     }
     
     private init() {

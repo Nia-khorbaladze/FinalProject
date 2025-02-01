@@ -133,7 +133,8 @@ final class HomePageViewController: UIViewController {
     // MARK: - Functions
     private func openProfilePopup() {
         blurEffectService.addBlurEffect(to: view)
-        let profilePopupVC = ProfilePopupViewController(blurEffectService: blurEffectService, viewModel: ProfilePopupViewModel())
+        let profilePopupVC = ProfilePopupViewController(blurEffectService: blurEffectService, viewModel: Dependencies.shared.makeProfilePopupViewModel())
+
         profilePopupVC.delegate = self
         
         let profilePopupNavigationVC = UINavigationController(rootViewController: profilePopupVC)

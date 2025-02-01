@@ -93,6 +93,10 @@ final class ProfilePopupViewController: UIViewController {
         super.viewDidLoad()
         setup()
         navigationController?.setNavigationBarHidden(true, animated: true)
+        
+        Task {
+            await fetchUsername()
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -184,6 +188,18 @@ final class ProfilePopupViewController: UIViewController {
         blurEffectService.removeBlurEffect()
         dismiss(animated: true) { [weak self] in
             self?.delegate?.didTapEditProfile() 
+        }
+    }
+    
+    private func fetchUsername() async {
+        do {
+            if let username = try await viewModel.getUsername() {
+                DispatchQueue.main.async {
+                    self.userLabel.text = username
+                }
+            }
+        } catch {
+            print("Failed to fetch username: \(error.localizedDescription)")
         }
     }
 }
