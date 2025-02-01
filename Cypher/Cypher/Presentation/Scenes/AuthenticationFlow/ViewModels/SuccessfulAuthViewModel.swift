@@ -9,9 +9,9 @@ import Foundation
 import FirebaseAuth
 
 final class SuccessfulAuthViewModel {
-    private let walletAddressUseCase: WalletAddressUseCaseProtocol
+    private let walletAddressUseCase: SaveWalletAddressUseCaseProtocol
     
-    init(walletAddressUseCase: WalletAddressUseCaseProtocol) {
+    init(walletAddressUseCase: SaveWalletAddressUseCaseProtocol) {
         self.walletAddressUseCase = walletAddressUseCase
     }
     

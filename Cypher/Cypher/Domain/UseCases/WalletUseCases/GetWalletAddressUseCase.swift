@@ -1,13 +1,13 @@
 //
-//  WalletAddressUseCase.swift
+//  GetWalletAddressUseCase.swift
 //  Cypher
 //
-//  Created by Nkhorbaladze on 29.01.25.
+//  Created by Nkhorbaladze on 01.02.25.
 //
 
 import Foundation
 
-final class WalletAddressUseCase: WalletAddressUseCaseProtocol {
+final class GetWalletAddressUseCase: GetWalletAddressUseCaseProtocol {
     private let repository: WalletAddressRepositoryProtocol
     private let iconProvider: WalletIconProvider
 
@@ -22,9 +22,5 @@ final class WalletAddressUseCase: WalletAddressUseCaseProtocol {
         return walletAddresses.map { coin, address in
             WalletData(coin: coin, address: address, iconImage: iconProvider.fetchIcon(for: coin))
         }
-    }
-
-    func saveWalletAddresses(for userID: String, addresses: [String: String]) async throws {
-        try await repository.saveWalletAddresses(for: userID, addresses: addresses)
     }
 }

@@ -117,7 +117,7 @@ final class ViewControllerFactory {
     func makeReceivePageViewController() -> ReceivePageViewController {
         let WalletAddressRepository = WalletAddressRepository()
         let iconProvider = WalletIconProvider()
-        let walletAddressUseCase = WalletAddressUseCase(repository: WalletAddressRepository, iconProvider: iconProvider)
+        let walletAddressUseCase = GetWalletAddressUseCase(repository: WalletAddressRepository, iconProvider: iconProvider)
         let walletViewModel = WalletViewModel(walletAddressUseCase: walletAddressUseCase)
         let viewController = ReceivePageViewController(viewModel: walletViewModel)
         return viewController

@@ -131,7 +131,7 @@ final class EmailOptionsViewController: UIViewController {
                 case .success(let user):
                     let state: AuthenticationState = user.isNewUser ? .register : .login
                     self?.navigateToSuccessScreen(state: state)
-                case .failure(let error):
+                case .failure(_):
                     self?.showErrorAlert()
                 }
             }
@@ -139,7 +139,7 @@ final class EmailOptionsViewController: UIViewController {
     }
     
     private func navigateToSuccessScreen(state: AuthenticationState) {
-        let walletAddressUseCase = Dependencies.shared.walletAddressUseCase
+        let walletAddressUseCase = Dependencies.shared.saveWalletAddressUseCase
         let successfulAuthViewModel = SuccessfulAuthViewModel(walletAddressUseCase: walletAddressUseCase)
         
         let successAuthViewController = SuccessfulAuthViewController(state: state, viewModel: successfulAuthViewModel)

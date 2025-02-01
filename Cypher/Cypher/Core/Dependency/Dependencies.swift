@@ -77,8 +77,12 @@ final class Dependencies {
     
     private let iconProvider = WalletIconProvider()
     
-    private(set) lazy var walletAddressUseCase: WalletAddressUseCase = {
-        WalletAddressUseCase(repository: walletAddressRepository, iconProvider: iconProvider)
+    private(set) lazy var getWalletAddressUseCase: GetWalletAddressUseCase = {
+        GetWalletAddressUseCase(repository: walletAddressRepository, iconProvider: iconProvider)
+    }()
+
+    private(set) lazy var saveWalletAddressUseCase: SaveWalletAddressUseCase = {
+        SaveWalletAddressUseCase(repository: walletAddressRepository)
     }()
     
     private(set) lazy var fetchPriceChangeUseCase = {

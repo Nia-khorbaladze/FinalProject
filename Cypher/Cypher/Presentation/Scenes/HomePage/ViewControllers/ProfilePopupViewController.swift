@@ -161,7 +161,7 @@ final class ProfilePopupViewController: UIViewController {
                 switch result {
                 case .success:
                     self?.handleSuccessfulLogout()
-                case .failure(let error):
+                case .failure(_):
                     self?.showErrorAlert(message: "Logout Failed. Try again later.")
                 }
             }

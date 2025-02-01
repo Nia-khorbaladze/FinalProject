@@ -69,7 +69,7 @@ final class SuccessfulAuthViewController: UIViewController {
             switch result {
             case .success:
                 break
-            case .failure(let error):
+            case .failure(_):
                 self?.showErrorAlert()
             }
         }
