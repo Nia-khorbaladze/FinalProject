@@ -130,7 +130,8 @@ final class EmailOptionsViewController: UIViewController {
                 switch result {
                 case .success(let user):
                     let state: AuthenticationState = user.isNewUser ? .register : .login
-                    self?.navigateToSuccessScreen(state: state)
+                    self?.delegate?.didAuthenticateSuccessfully(state: state)
+                    self?.dismiss(animated: true)
                 case .failure(_):
                     self?.showErrorAlert()
                 }
@@ -151,4 +152,5 @@ extension EmailOptionsViewController: UISheetPresentationControllerDelegate {
         blurEffectService.removeBlurEffect()
     }
 }
+
 

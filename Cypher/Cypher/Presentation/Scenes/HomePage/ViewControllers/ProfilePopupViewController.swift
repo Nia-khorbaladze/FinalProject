@@ -199,8 +199,3 @@ extension ProfilePopupViewController: UISheetPresentationControllerDelegate {
         blurEffectService.removeBlurEffect()
     }
 }
-
-// MARK: - Protocols
-protocol ProfilePopupViewControllerDelegate: AnyObject {
-    func didTapEditProfile()
-}

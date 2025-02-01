@@ -140,6 +140,12 @@ extension AddWalletViewController: EmailOptionsViewControllerDelegate {
         let credentialsInputVC = CredentialsInputViewController(state: state)
         navigationController?.pushViewController(credentialsInputVC, animated: true)
     }
+
+    func didAuthenticateSuccessfully(state: AuthenticationState) {
+        let successfulAuthViewModel = Dependencies.shared.makeSuccessfulAuthViewModel()
+        let successAuthViewController = SuccessfulAuthViewController(state: state, viewModel: successfulAuthViewModel)
+        navigationController?.pushViewController(successAuthViewController, animated: true)
+    }
 }
 
 extension AddWalletViewController: UISheetPresentationControllerDelegate {

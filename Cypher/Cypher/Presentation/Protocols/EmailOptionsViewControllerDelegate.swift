@@ -8,4 +8,5 @@ import Foundation
 
 protocol EmailOptionsViewControllerDelegate: AnyObject {
     func didTapEnterEmailManually()
+    func didAuthenticateSuccessfully(state: AuthenticationState)
 }
