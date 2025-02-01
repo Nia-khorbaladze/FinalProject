@@ -37,8 +37,8 @@ The project follows **Clean Architecture/MVVM**, divided into:
 
 ## 🚀Future Improvements
 - Real blockchain transactions.
-- Dark mode.
-- Improved animations.
+- Change language functionality.
+- Push notifications on coin price changes.
 
 ## 📜 License
 MIT License - See LICENSE for details.
