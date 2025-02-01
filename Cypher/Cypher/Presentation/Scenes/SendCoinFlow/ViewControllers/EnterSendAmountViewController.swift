@@ -15,6 +15,7 @@ final class EnterSendAmountViewController: UIViewController {
     private let viewModel: EnterSendAmountViewModel
     private var availableContainerBottomConstraint: NSLayoutConstraint!
     private var isErrorMessageVisible: Bool = false
+    private var keyboardHandler: KeyboardHandler?
     
     // MARK: - UI Elements
     private lazy var headerView: HeaderView = {
@@ -151,11 +152,6 @@ final class EnterSendAmountViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -166,8 +162,7 @@ final class EnterSendAmountViewController: UIViewController {
             self?.updateUI()
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        keyboardHandler = KeyboardHandler(view: view, bottomConstraint: availableContainerBottomConstraint)
     }
     
     // MARK: - UI Setup
@@ -288,29 +283,6 @@ final class EnterSendAmountViewController: UIViewController {
         errorMessage.removeFromSuperview()
     }
     
-    @objc private func keyboardWillShow(notification: NSNotification) {
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
-            return
-        }
-        
-        let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
-        let keyboardTop = keyboardFrameInView.minY
-        let safeAreaBottom = view.safeAreaLayoutGuide.layoutFrame.maxY
-        let offset = safeAreaBottom - keyboardTop
-        
-        availableContainerBottomConstraint.constant = -offset
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    @objc private func keyboardWillHide(notification: NSNotification) {
-        availableContainerBottomConstraint.constant = -5
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -351,31 +323,33 @@ extension EnterSendAmountViewController: UITextFieldDelegate {
         if string.isEmpty {
             return true
         }
-        
-        let allowedCharacters = CharacterSet(charactersIn: "0123456789.")
+
+        let allowedCharacters = CharacterSet(charactersIn: "0123456789.,")
         let characterSet = CharacterSet(charactersIn: string)
-        let isNumber = allowedCharacters.isSuperset(of: characterSet)
-        
-        if isNumber {
-            if let text = textField.text,
-               let textRange = Range(range, in: text) {
-                let updatedText = text.replacingCharacters(in: textRange, with: string)
+        let isValidCharacter = allowedCharacters.isSuperset(of: characterSet)
+
+        if isValidCharacter {
+            var updatedString = string
+
+            if updatedString == "," {
+                updatedString = "."
+            }
+
+            if let text = textField.text, let textRange = Range(range, in: text) {
+                var updatedText = text.replacingCharacters(in: textRange, with: updatedString)
                 
                 let decimalCount = updatedText.components(separatedBy: ".").count - 1
                 if decimalCount > 1 {
                     return false
                 }
-                
+
                 if let amount = Double(updatedText) {
                     viewModel.updateAmount(amount)
                 }
-                
+
                 textField.text = updatedText
             }
         }
-        
         return false
     }
 }
-
-
