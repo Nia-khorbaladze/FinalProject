@@ -27,7 +27,8 @@ struct SearchableCoinsListView: View {
                     .frame(maxWidth: .infinity, minHeight: 400)
                 
                 if viewModel.isLoading {
-                    ProgressView()
+                    SkeletonLoadingView()
+                        .padding(.top, 16)
                 } else if let error = viewModel.error {
                     Text(error)
                         .foregroundColor(.red)

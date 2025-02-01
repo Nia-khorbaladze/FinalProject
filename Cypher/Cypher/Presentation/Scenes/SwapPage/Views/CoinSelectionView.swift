@@ -30,9 +30,8 @@ struct CoinSelectionView: View {
 
                 ScrollView {
                     if viewModel.isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.vertical)
+                        SkeletonLoadingView()
+                            .padding(.top, 16)
                     } else if let error = viewModel.error {
                         Text(error)
                             .foregroundColor(.red)

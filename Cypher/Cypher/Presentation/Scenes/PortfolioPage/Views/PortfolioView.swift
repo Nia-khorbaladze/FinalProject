@@ -26,7 +26,8 @@ struct PortfolioView: View {
                 .padding(.horizontal)
 
                 if viewModel.isLoading {
-                    ProgressView()
+                    SkeletonLoadingView()
+                        .padding(.top, 16)
                 } else if viewModel.portfolioCoins.isEmpty {
                     EmptyPortfolioView()
                 } else {
