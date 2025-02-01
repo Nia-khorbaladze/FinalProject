@@ -38,16 +38,29 @@ final class EmailOptionsViewController: UIViewController {
     }()
     
     private lazy var continueWithGoogleButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Continue with Google", for: .normal)
-        button.backgroundColor = UIColor(hexString: "343434")
-        button.setTitleColor(UIColor(named: AppColors.white.rawValue), for: .normal)
-        button.layer.cornerRadius = 25
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addAction(UIAction(handler: { [weak self] _ in
-            self?.continueWithGoogleTapped()
-        }), for: .touchUpInside)
+        var configuration = UIButton.Configuration.filled()
         
+        configuration.title = "Continue with Google"
+        configuration.titleAlignment = .center
+        
+        if let googleLogo = UIImage(named: Icons.google.rawValue) {
+            let resizedLogo = googleLogo.resized(to: CGSize(width: 20, height: 20))
+            configuration.image = resizedLogo
+            configuration.imagePadding = 8
+            configuration.imagePlacement = .leading
+        }
+        
+        configuration.baseBackgroundColor = UIColor(hexString: "343434")
+        configuration.baseForegroundColor = UIColor(named: AppColors.white.rawValue)
+        configuration.cornerStyle = .fixed
+        configuration.buttonSize = .large
+        
+        let button = UIButton(configuration: configuration, primaryAction: UIAction(handler: { [weak self] _ in
+            self?.continueWithGoogleTapped()
+        }))
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 25
         return button
     }()
 
