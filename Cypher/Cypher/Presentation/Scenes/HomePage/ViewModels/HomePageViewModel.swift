@@ -11,7 +11,7 @@ import FirebaseAuth
 
 final class HomePageViewModel: ObservableObject {
     
-    private let fetchCoinsUseCase: FetchCoinsUseCase
+    private let fetchCoinsUseCase: FetchCoinsUseCaseProtocol
     private let purchasedCoinUseCase: FetchPurchasedCoinsUseCaseProtocol
     private let fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol
     
@@ -27,10 +27,15 @@ final class HomePageViewModel: ObservableObject {
     
     private var cancellables: Set<AnyCancellable> = []
     
-    init(fetchCoinsUseCase: FetchCoinsUseCase, purchasedCoinUseCase: FetchPurchasedCoinsUseCaseProtocol, fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol, purchasedCoinUseCase: FetchPurchasedCoinsUseCaseProtocol, fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.purchasedCoinUseCase = purchasedCoinUseCase
         self.fetchCoinDetailUseCase = fetchCoinDetailUseCase
+    }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
     }
     
     func fetchPortfolio() {
@@ -43,7 +48,9 @@ final class HomePageViewModel: ObservableObject {
         
         let userID = currentUser.uid
         
-        Task {
+        Task { [weak self] in
+            guard let self = self else { return }
+            
             do {
                 let purchasedCoins = try await purchasedCoinUseCase.execute(userID: userID)
                 self.portfolioCoins = purchasedCoins
@@ -61,16 +68,15 @@ final class HomePageViewModel: ObservableObject {
                 Publishers.MergeMany(coinDetailsPublisher)
                     .collect()
                     .receive(on: DispatchQueue.main)
-                    .sink(receiveCompletion: { [weak self] completion in
+                    .sink(receiveCompletion: { completion in
                         switch completion {
                         case .finished:
-                            self?.isLoading = false
+                            self.isLoading = false
                         case .failure(let networkError):
-                            self?.error = networkError.localizedDescription
-                            self?.isLoading = false
+                            self.error = networkError.localizedDescription
+                            self.isLoading = false
                         }
-                    }, receiveValue: { [weak self] coinDetails in
-                        guard let self = self else { return }
+                    }, receiveValue: { coinDetails in
                         
                         var totalValue: Double = 0.0
                         var totalPriceChange: Double = 0.0
@@ -115,12 +121,13 @@ final class HomePageViewModel: ObservableObject {
         fetchCoinsUseCase.execute()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
                 switch completion {
                 case .finished:
-                    self?.isLoading = false
+                    self.isLoading = false
                 case .failure(let networkError):
-                    self?.isLoading = false
-                    self?.error = networkError.localizedDescription
+                    self.isLoading = false
+                    self.error = networkError.localizedDescription
                 }
             }, receiveValue: { [weak self] coins in
                 self?.coins = coins

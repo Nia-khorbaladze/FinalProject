@@ -130,26 +130,19 @@ final class EmailOptionsViewController: UIViewController {
                 switch result {
                 case .success(let user):
                     let state: AuthenticationState = user.isNewUser ? .register : .login
-                    self?.navigateToSuccessScreen(state: state)
-                case .failure(let error):
-                    self?.showErrorAlert(error: error)
+                    self?.delegate?.didAuthenticateSuccessfully(state: state)
+                    self?.dismiss(animated: true)
+                case .failure(_):
+                    self?.showErrorAlert()
                 }
             }
         }
     }
     
     private func navigateToSuccessScreen(state: AuthenticationState) {
-        let walletAddressUseCase = Dependencies.shared.walletAddressUseCase
-        let successfulAuthViewModel = SuccessfulAuthViewModel(walletAddressUseCase: walletAddressUseCase)
-        
+        let successfulAuthViewModel = Dependencies.shared.makeSuccessfulAuthViewModel()
         let successAuthViewController = SuccessfulAuthViewController(state: state, viewModel: successfulAuthViewModel)
         navigationController?.pushViewController(successAuthViewController, animated: true)
-    }
-    
-    private func showErrorAlert(error: Error) {
-        let alert = UIAlertController(title: "Error", message: "Something went wrong. Try again later.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
     }
 }
 
@@ -159,4 +152,5 @@ extension EmailOptionsViewController: UISheetPresentationControllerDelegate {
         blurEffectService.removeBlurEffect()
     }
 }
+
 

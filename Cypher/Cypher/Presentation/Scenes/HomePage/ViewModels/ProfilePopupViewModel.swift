@@ -9,16 +9,21 @@ import Foundation
 import FirebaseAuth
 
 final class ProfilePopupViewModel {
-    let logoutUseCase: LogoutUseCase
+    let logoutUseCase: LogoutUseCaseProtocol
     let getUsernameUseCase: GetUsernameUseCaseProtocol
+    let clearCacheUseCase: ClearCacheUseCaseProtocol
     
-    init(logoutUseCase: LogoutUseCase, getUsernameUseCase: GetUsernameUseCaseProtocol) {
+    init(logoutUseCase: LogoutUseCaseProtocol, getUsernameUseCase: GetUsernameUseCaseProtocol, clearCacheUseCase: ClearCacheUseCaseProtocol) {
         self.logoutUseCase = logoutUseCase
         self.getUsernameUseCase = getUsernameUseCase
+        self.clearCacheUseCase = clearCacheUseCase
     }
     
     func logout(completion: @escaping (Result<Void, Error>) -> Void) {
         logoutUseCase.execute { result in
+            if case .success = result {
+                self.clearCacheUseCase.execute() 
+            }
             completion(result)
         }
     }

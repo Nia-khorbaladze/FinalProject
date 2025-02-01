@@ -10,17 +10,22 @@ import FirebaseAuth
 import Combine
 
 final class WalletViewModel {
-    private let walletAddressUseCase: WalletAddressUseCaseProtocol
+    private let walletAddressUseCase: GetWalletAddressUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
     var walletAddresses: (([WalletData]) -> Void)?
     var isLoading: ((Bool) -> Void)?
-    var errorMessage: ((String) -> Void)?
+    var errorMessage: ((Error) -> Void)?
 
-    init(walletAddressUseCase: WalletAddressUseCaseProtocol) {
+    init(walletAddressUseCase: GetWalletAddressUseCaseProtocol) {
         self.walletAddressUseCase = walletAddressUseCase
     }
 
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
+    
     func fetchWalletData() {
         isLoading?(true)
         
@@ -30,17 +35,19 @@ final class WalletViewModel {
         
         let userID = currentUser.uid
         
-        Task {
+        Task { [weak self] in
+            guard let self = self else { return }
+            
             do {
                 let addresses = try await walletAddressUseCase.getWalletAddresses(for: userID)
-                await MainActor.run { [weak self] in
-                    self?.walletAddresses?(addresses)
-                    self?.isLoading?(false)
+                await MainActor.run {
+                    self.walletAddresses?(addresses)
+                    self.isLoading?(false)
                 }
             } catch {
-                await MainActor.run { [weak self] in
-                    self?.errorMessage?(error.localizedDescription)
-                    self?.isLoading?(false)
+                await MainActor.run { 
+                    self.errorMessage?(error)
+                    self.isLoading?(false)
                 }
             }
         }

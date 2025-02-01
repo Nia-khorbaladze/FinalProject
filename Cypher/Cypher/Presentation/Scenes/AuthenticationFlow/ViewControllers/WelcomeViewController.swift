@@ -236,7 +236,9 @@ final class WelcomeViewController: UIViewController {
         createWalletButton.rootView = PrimaryButton(
             title: "Create a new wallet",
             isActive: viewModel.isCreateWalletButtonActive,
-            action: { self.CreateWalletButtonTapped() }
+            action: { [weak self] in
+                self?.CreateWalletButtonTapped()
+            }
         )
     }
     

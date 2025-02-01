@@ -23,6 +23,11 @@ final class ChooseCoinViewModel {
     private var sendableCoins: [SendableCoin] = []
     var didUpdateCoins: (([SendableCoin]) -> Void)?
     
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
+    
     func fetchCoins() {
         isLoading?(true)
         
@@ -60,10 +65,11 @@ final class ChooseCoinViewModel {
         fetchImagesUseCase.execute(for: coins)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] updatedCoins in
-                self?.sendableCoins = updatedCoins
-                self?.isLoading?(false)
+                guard let self = self else { return }
+                self.sendableCoins = updatedCoins
+                self.isLoading?(false)
                 
-                self?.didUpdateCoins?(updatedCoins)
+                self.didUpdateCoins?(updatedCoins)
             }
             .store(in: &self.cancellables)
     }

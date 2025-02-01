@@ -18,7 +18,6 @@ struct FavoriteCoinRowView: View {
                     .frame(width: 40, height: 40)
                     .scaledToFit()
                     .foregroundColor(.white)
-                    .background(Circle().fill(Color.gray.opacity(0.3)))
                     .padding(.trailing, 10)
             } else {
                 Image(systemName: "bitcoinsign.circle")

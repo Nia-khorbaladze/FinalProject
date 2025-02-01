@@ -15,4 +15,5 @@ protocol CoreDataServiceProtocol {
     func deleteCache(forKey key: String)
     func saveImage(_ image: UIImage, forKey key: String)
     func fetchImage(forKey key: String) -> UIImage?
+    func clearAllData()
 }

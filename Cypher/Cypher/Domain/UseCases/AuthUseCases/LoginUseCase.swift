@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct LoginUseCase {
-    private let repository: AuthRepository
+struct LoginUseCase: LoginUseCaseProtocol {
+    private let repository: AuthRepositoryProtocol
 
-    init(repository: AuthRepository) {
+    init(repository: AuthRepositoryProtocol) {
         self.repository = repository
     }
 

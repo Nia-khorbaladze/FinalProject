@@ -7,10 +7,10 @@
 
 import Foundation
 
-final class SaveFavoriteCoinUseCase {
-    private let repository: FavoriteCoinsRepository
+final class SaveFavoriteCoinUseCase: SaveFavoriteCoinUseCaseProtocol {
+    private let repository: FavoriteCoinsRepositoryProtocol
 
-    init(repository: FavoriteCoinsRepository) {
+    init(repository: FavoriteCoinsRepositoryProtocol) {
         self.repository = repository
     }
 

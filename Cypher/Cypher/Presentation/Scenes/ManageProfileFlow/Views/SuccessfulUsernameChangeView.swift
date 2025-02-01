@@ -24,7 +24,6 @@ struct SuccessfulUsernameChangeView: View {
                     .font(Fonts.semiBold.size(30))
                     .foregroundStyle(Color(AppColors.white.rawValue))
                 Text("Username saved successfully")
-                
                     .font(Fonts.regular.size(15))
                     .foregroundStyle(Color(AppColors.lightGrey.rawValue))
             }

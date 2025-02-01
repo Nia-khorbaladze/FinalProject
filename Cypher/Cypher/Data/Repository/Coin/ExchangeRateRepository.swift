@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 final class ExchangeRateRepository: ExchangeRateRepositoryProtocol {
-    private let networkService: NetworkService
+    private let networkService: NetworkServiceProtocol
     
-    init(networkService: NetworkService) {
+    init(networkService: NetworkServiceProtocol) {
         self.networkService = networkService
     }
     

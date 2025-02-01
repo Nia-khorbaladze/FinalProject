@@ -72,6 +72,10 @@ final class HomePageViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        blurEffectService.removeBlurEffect()
+    }
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -170,7 +174,9 @@ final class HomePageViewController: UIViewController {
     }
 
     private func navigateToSwapView() {
-        
+        if let tabBarController = self.tabBarController {
+            tabBarController.selectedIndex = 2
+        }
     }
 
     private func navigateToBuyView() {

@@ -161,8 +161,8 @@ final class ProfilePopupViewController: UIViewController {
                 switch result {
                 case .success:
                     self?.handleSuccessfulLogout()
-                case .failure(let error):
-                    self?.handleFailedLogout(error)
+                case .failure(_):
+                    self?.showErrorAlert(message: "Logout Failed. Try again later.")
                 }
             }
             
@@ -171,17 +171,6 @@ final class ProfilePopupViewController: UIViewController {
     
     private func handleSuccessfulLogout() {
         NavigationService.shared.switchToAuth()
-    }
-
-    
-    private func handleFailedLogout(_ error: Error) {
-        let alertController = UIAlertController(
-            title: "Logout Failed",
-            message: error.localizedDescription,
-            preferredStyle: .alert
-        )
-        alertController.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alertController, animated: true)
     }
     
     private func navigateToManageProfile() {
@@ -209,9 +198,4 @@ extension ProfilePopupViewController: UISheetPresentationControllerDelegate {
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         blurEffectService.removeBlurEffect()
     }
-}
-
-// MARK: - Protocols
-protocol ProfilePopupViewControllerDelegate: AnyObject {
-    func didTapEditProfile()
 }

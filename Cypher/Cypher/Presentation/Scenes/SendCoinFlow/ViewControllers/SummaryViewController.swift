@@ -17,34 +17,13 @@ final class SummaryViewController: UIViewController {
     private let viewModel: SummaryViewModel
 
     // MARK: - UI Elements
-    private lazy var headerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: AppColors.darkGrey.rawValue)
-        
-        return view
-    }()
-    
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = UIColor(named: AppColors.white.rawValue)
-        button.addAction(UIAction(handler: { [weak self] _ in
+    private lazy var headerView: HeaderView = {
+        let header = HeaderView(title: "Summary")
+        header.translatesAutoresizingMaskIntoConstraints = false
+        header.onBackButtonTapped = { [weak self] in
             self?.navigateBack()
-        }), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    private lazy var headerTitle: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: AppColors.white.rawValue)
-        label.font = Fonts.medium.uiFont(size: 18)
-        label.text = "Summary"
-        
-        return label
+        }
+        return header
     }()
     
     private lazy var sendImageView: UIImageView = {
@@ -157,6 +136,13 @@ final class SummaryViewController: UIViewController {
         setup()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        circleView.layer.cornerRadius = circleView.frame.width / 2
+        circleView.clipsToBounds = true
+    }
+    
     // MARK: - UI Setup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
@@ -166,8 +152,6 @@ final class SummaryViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(headerView)
-        headerView.addSubview(backButton)
-        headerView.addSubview(headerTitle)
         view.addSubview(circleView)
         circleView.addSubview(sendImageView)
         view.addSubview(sendAmountLabel)
@@ -188,13 +172,7 @@ final class SummaryViewController: UIViewController {
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            backButton.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 13),
-            backButton.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 13),
-            backButton.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -13),
-            
-            headerTitle.centerXAnchor.constraint(equalTo: headerView.centerXAnchor),
-            headerTitle.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+            headerView.heightAnchor.constraint(equalToConstant: 55),
         ])
         
         NSLayoutConstraint.activate([
@@ -242,13 +220,7 @@ final class SummaryViewController: UIViewController {
         ])
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        circleView.layer.cornerRadius = circleView.frame.width / 2
-        circleView.clipsToBounds = true
-    }
-    
+    // MARK: - Functions
     private func handleSendTapped() {
         Task {
             do {
@@ -258,16 +230,10 @@ final class SummaryViewController: UIViewController {
                 }
             } catch {
                 DispatchQueue.main.async { [weak self] in
-                    self?.showErrorAlert(error: error)
+                    self?.showErrorAlert()
                 }
             }
         }
-    }
-    
-    private func showErrorAlert(error: Error) {
-        let alert = UIAlertController(title: "Error", message: "Couldn't transfer coins. Please try again later.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
     }
     
     private func createLabel(text: String, textColor: UIColor) -> UILabel {

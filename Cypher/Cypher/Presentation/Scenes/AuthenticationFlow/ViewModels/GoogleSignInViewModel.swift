@@ -8,9 +8,9 @@
 import Foundation
 
 final class GoogleSignInViewModel: ObservableObject {
-    private let googleSignInUseCase: GoogleSignInUseCase
+    private let googleSignInUseCase: GoogleSignInUseCaseProtocol
 
-    init(googleSignInUseCase: GoogleSignInUseCase) {
+    init(googleSignInUseCase: GoogleSignInUseCaseProtocol) {
         self.googleSignInUseCase = googleSignInUseCase
     }
 

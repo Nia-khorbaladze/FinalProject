@@ -15,36 +15,16 @@ final class EnterSendAmountViewController: UIViewController {
     private let viewModel: EnterSendAmountViewModel
     private var availableContainerBottomConstraint: NSLayoutConstraint!
     private var isErrorMessageVisible: Bool = false
+    private var keyboardHandler: KeyboardHandler?
     
     // MARK: - UI Elements
-    private lazy var headerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: AppColors.darkGrey.rawValue)
-        
-        return view
-    }()
-    
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = UIColor(named: AppColors.white.rawValue)
-        button.addAction(UIAction(handler: { [weak self] _ in
+    private lazy var headerView: HeaderView = {
+        let header = HeaderView(title: "Enter Amount")
+        header.translatesAutoresizingMaskIntoConstraints = false
+        header.onBackButtonTapped = { [weak self] in
             self?.navigateBack()
-        }), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    private lazy var headerTitle: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: AppColors.white.rawValue)
-        label.font = Fonts.medium.uiFont(size: 18)
-        label.text = "Enter Amount"
-        
-        return label
+        }
+        return header
     }()
     
     private lazy var nextButton: UIButton = {
@@ -173,8 +153,8 @@ final class EnterSendAmountViewController: UIViewController {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        keyboardHandler = nil
+        view.gestureRecognizers?.removeAll()
     }
     
     // MARK: - Lifecycle
@@ -187,8 +167,7 @@ final class EnterSendAmountViewController: UIViewController {
             self?.updateUI()
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        keyboardHandler = KeyboardHandler(view: view, bottomConstraint: availableContainerBottomConstraint)
     }
     
     // MARK: - UI Setup
@@ -203,8 +182,6 @@ final class EnterSendAmountViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(headerView)
-        headerView.addSubview(backButton)
-        headerView.addSubview(headerTitle)
         headerView.addSubview(nextButton)
         view.addSubview(amountInputContainer)
         amountInputContainer.addSubview(amountField)
@@ -221,15 +198,9 @@ final class EnterSendAmountViewController: UIViewController {
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            headerView.heightAnchor.constraint(equalToConstant: 55),
             
-            backButton.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 13),
-            backButton.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 13),
-            backButton.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -13),
-            
-            headerTitle.centerXAnchor.constraint(equalTo: headerView.centerXAnchor),
-            headerTitle.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            
-            nextButton.centerYAnchor.constraint(equalTo: headerTitle.centerYAnchor),
+            nextButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
             nextButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -13)
         ])
         
@@ -317,29 +288,6 @@ final class EnterSendAmountViewController: UIViewController {
         errorMessage.removeFromSuperview()
     }
     
-    @objc private func keyboardWillShow(notification: NSNotification) {
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
-            return
-        }
-        
-        let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
-        let keyboardTop = keyboardFrameInView.minY
-        let safeAreaBottom = view.safeAreaLayoutGuide.layoutFrame.maxY
-        let offset = safeAreaBottom - keyboardTop
-        
-        availableContainerBottomConstraint.constant = -offset
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    @objc private func keyboardWillHide(notification: NSNotification) {
-        availableContainerBottomConstraint.constant = -5
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -380,31 +328,33 @@ extension EnterSendAmountViewController: UITextFieldDelegate {
         if string.isEmpty {
             return true
         }
-        
-        let allowedCharacters = CharacterSet(charactersIn: "0123456789.")
+
+        let allowedCharacters = CharacterSet(charactersIn: "0123456789.,")
         let characterSet = CharacterSet(charactersIn: string)
-        let isNumber = allowedCharacters.isSuperset(of: characterSet)
-        
-        if isNumber {
-            if let text = textField.text,
-               let textRange = Range(range, in: text) {
-                let updatedText = text.replacingCharacters(in: textRange, with: string)
+        let isValidCharacter = allowedCharacters.isSuperset(of: characterSet)
+
+        if isValidCharacter {
+            var updatedString = string
+
+            if updatedString == "," {
+                updatedString = "."
+            }
+
+            if let text = textField.text, let textRange = Range(range, in: text) {
+                let updatedText = text.replacingCharacters(in: textRange, with: updatedString)
                 
                 let decimalCount = updatedText.components(separatedBy: ".").count - 1
                 if decimalCount > 1 {
                     return false
                 }
-                
+
                 if let amount = Double(updatedText) {
                     viewModel.updateAmount(amount)
                 }
-                
+
                 textField.text = updatedText
             }
         }
-        
         return false
     }
 }
-
-

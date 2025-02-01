@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct RegisterUseCase {
-    private let repository: AuthRepository
+struct RegisterUseCase: RegisterUseCaseProtocol {
+    private let repository: AuthRepositoryProtocol
 
-    init(repository: AuthRepository) {
+    init(repository: AuthRepositoryProtocol) {
         self.repository = repository
     }
 

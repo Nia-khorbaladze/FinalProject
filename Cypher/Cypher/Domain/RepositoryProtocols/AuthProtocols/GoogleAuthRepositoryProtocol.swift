@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol GoogleAuthRepository {
+protocol GoogleAuthRepositoryProtocol {
     func signIn(completion: @escaping (Result<User, Error>) -> Void)
 }

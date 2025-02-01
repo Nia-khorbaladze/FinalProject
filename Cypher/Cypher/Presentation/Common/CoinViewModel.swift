@@ -10,15 +10,20 @@ import SwiftUI
 import Combine
 
 final class CoinViewModel: ObservableObject {
-    private let fetchCoinsUseCase: FetchCoinsUseCase
+    private let fetchCoinsUseCase: FetchCoinsUseCaseProtocol
     private var cancellables: Set<AnyCancellable> = []
 
     @Published var coins: [CoinResponse] = []
     @Published var isLoading: Bool = false
     @Published var error: String?
 
-    init(fetchCoinsUseCase: FetchCoinsUseCase) {
+    init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
+    }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
     }
 
     func fetchCoins() {

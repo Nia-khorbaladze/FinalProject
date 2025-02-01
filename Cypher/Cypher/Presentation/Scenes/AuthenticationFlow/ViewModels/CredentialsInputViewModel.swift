@@ -8,10 +8,10 @@
 import Foundation
 
 final class CredentialsInputViewModel: ObservableObject {
-    private let loginUseCase: LoginUseCase
-    private let registerUseCase: RegisterUseCase
+    private let loginUseCase: LoginUseCaseProtocol
+    private let registerUseCase: RegisterUseCaseProtocol
     
-    init(loginUseCase: LoginUseCase, registerUseCase: RegisterUseCase) {
+    init(loginUseCase: LoginUseCaseProtocol, registerUseCase: RegisterUseCaseProtocol) {
         self.loginUseCase = loginUseCase
         self.registerUseCase = registerUseCase
     }

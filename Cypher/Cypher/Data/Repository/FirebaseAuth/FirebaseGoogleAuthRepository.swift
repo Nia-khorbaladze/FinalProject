@@ -8,7 +8,7 @@
 import FirebaseAuth
 import GoogleSignIn
 
-final class FirebaseGoogleAuthRepository: GoogleAuthRepository {
+final class FirebaseGoogleAuthRepository: GoogleAuthRepositoryProtocol {
     func signIn(completion: @escaping (Result<User, Error>) -> Void) {
         guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene,
               let presentingVC = windowScene.windows.first?.rootViewController else {
