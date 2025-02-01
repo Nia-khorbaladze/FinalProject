@@ -74,6 +74,10 @@ final class ManageProfileViewController: UIViewController {
         button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
         button.tintColor = UIColor(named: AppColors.white.rawValue)
         button.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.navigateToUsernameCreationPage()
+        }), for: .touchUpInside)
+        
         return button
     }()
     
@@ -156,5 +160,10 @@ final class ManageProfileViewController: UIViewController {
     // MARK: - Functions
     private func navigateBack() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    private func navigateToUsernameCreationPage() {
+        let viewController = CreateUsernameViewController()
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
