@@ -211,7 +211,6 @@ final class CreateUsernameViewController: UIViewController {
     
     private func saveUsername() {
         guard let username = usernameTextField.text, !username.isEmpty else {
-            print("Username is empty!")
             return
         }
         

@@ -20,6 +20,8 @@ final class CredentialsInputViewController: UIViewController {
     private var confirmPasswordError: String?
     
     private let viewModel: CredentialsInputViewModel
+    private var buttonBottomConstraint: NSLayoutConstraint!
+    private var keyboardHandler: KeyboardHandler?
     
     // MARK: - UI Elements
     private lazy var emailField: UIHostingController<InputView> = {
@@ -100,13 +102,6 @@ final class CredentialsInputViewController: UIViewController {
         return button
     }()
     
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.showsVerticalScrollIndicator = true
-        return scrollView
-    }()
-    
     // MARK: - Initializers
     init(state: AuthenticationState) {
         self.state = state
@@ -133,33 +128,32 @@ final class CredentialsInputViewController: UIViewController {
         setupUI()
         setupBackButton()
         setupConstraints()
+        
+        keyboardHandler = KeyboardHandler(view: view, bottomConstraint: buttonBottomConstraint, bottomOffset: 20)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupUI() {
-        view.addSubview(scrollView)
-        
-        scrollView.addSubview(emailField.view)
+        view.addSubview(emailField.view)
         emailField.didMove(toParent: self)
         
-        scrollView.addSubview(passwordField.view)
+        view.addSubview(passwordField.view)
         passwordField.didMove(toParent: self)
         
         if let confirmPasswordField = confirmPasswordField {
-            scrollView.addSubview(confirmPasswordField.view)
+            view.addSubview(confirmPasswordField.view)
             confirmPasswordField.didMove(toParent: self)
         }
         
-        scrollView.addSubview(continueButton.view)
+        view.addSubview(continueButton.view)
         continueButton.didMove(toParent: self)
     }
     
     private func setupConstraints() {
+        buttonBottomConstraint = continueButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
             emailField.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             emailField.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             emailField.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
@@ -168,7 +162,7 @@ final class CredentialsInputViewController: UIViewController {
             passwordField.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             passwordField.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            continueButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            buttonBottomConstraint,
             continueButton.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             continueButton.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             continueButton.view.heightAnchor.constraint(equalToConstant: 50)
@@ -248,6 +242,10 @@ final class CredentialsInputViewController: UIViewController {
         emailField.rootView.errorText = emailError
         passwordField.rootView.errorText = passwordError
         confirmPasswordField?.rootView.errorText = confirmPasswordError
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     private func showErrorAlert(error: Error) {

@@ -10,6 +10,8 @@ import SwiftUI
 
 final class BuyCoinViewController: UIViewController {
     private let viewModel: BuyCoinViewModel
+    private var buttonBottomConstraint: NSLayoutConstraint!
+    private var keyboardHandler: KeyboardHandler?
 
     // MARK: - UI Elements
     private lazy var titleLabel: UILabel = {
@@ -105,9 +107,6 @@ final class BuyCoinViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Setup
@@ -117,9 +116,14 @@ final class BuyCoinViewController: UIViewController {
         setupConstraints()
         setupQuickAmountButtons()
         
+        keyboardHandler = KeyboardHandler(view: view, bottomConstraint: buttonBottomConstraint)
+        
         viewModel.onAmountUpdate = { [weak self] in
             self?.updateUI()
         }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupUI() {
@@ -136,6 +140,7 @@ final class BuyCoinViewController: UIViewController {
     }
     
     private func setupConstraints() {
+        buttonBottomConstraint = buyButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         NSLayoutConstraint.activate([
             backButton.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 20),
             backButton.topAnchor.constraint(equalTo: header.topAnchor, constant: 17),
@@ -160,7 +165,7 @@ final class BuyCoinViewController: UIViewController {
             quickAmountStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             quickAmountStack.heightAnchor.constraint(equalToConstant: 44),
             
-            buyButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            buttonBottomConstraint,
             buyButton.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             buyButton.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             buyButton.view.heightAnchor.constraint(equalToConstant: 50)

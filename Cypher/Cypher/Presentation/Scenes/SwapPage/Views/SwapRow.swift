@@ -27,10 +27,12 @@ struct SwapRow: View {
                         isTextFieldFocused ? (amount == "0" ? "" : amount) : (amount.isEmpty ? "0" : amount)
                     },
                     set: { newValue in
-                        if newValue.isEmpty {
+                        let changedValue = newValue.replacingOccurrences(of: ",", with: ".")
+                        if changedValue.isEmpty {
                             amount = "0"
-                        } else if Double(newValue) != nil {
-                            amount = newValue.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "^0+(?!$)", with: "", options: .regularExpression)
+                        } else if Double(changedValue) != nil {
+                            amount = changedValue.trimmingCharacters(in: .whitespaces)
+                                .replacingOccurrences(of: "^+(?!$)", with: "", options: .regularExpression)
                         }
                     }
                 ))

@@ -25,6 +25,7 @@ public enum Icons: String {
     case successfulTransaction = "successfulTransaction"
     case copy = "copy"
     case successfulChange = "successfulChange"
+    case google = "Google"
 }
 
 public enum AppColors: String {

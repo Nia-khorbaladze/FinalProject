@@ -52,6 +52,9 @@ final class SwapPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - UI Setup
@@ -113,6 +116,10 @@ final class SwapPageViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     private func showError(_ message: String) {

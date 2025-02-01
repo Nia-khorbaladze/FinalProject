@@ -26,7 +26,8 @@ struct FavoriteCoinsView: View {
                 .padding(.horizontal)
 
                 if viewModel.isLoading {
-                    ProgressView()
+                    SkeletonLoadingView()
+                        .padding(.top, 16)
                 } else if viewModel.favoriteCoins.isEmpty {
                     EmptyFavoritesView()
                 } else {

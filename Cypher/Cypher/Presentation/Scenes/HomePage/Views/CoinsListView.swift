@@ -18,8 +18,21 @@ struct CoinsListView: View {
             Color.clear
 
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    if showTitle, let title = title {
+                        Text(title)
+                            .font(Fonts.bold.size(20))
+                            .foregroundStyle(Color(AppColors.white.rawValue))
+                            .padding(.horizontal)
+                            .padding(.top)
+                    }
+                    
+                    ForEach(0..<5, id: \.self) { _ in
+                        SkeletonLoadingView()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .transition(.opacity)
             } else if let error = viewModel.error {
                 Text(error)
                     .foregroundColor(.red)
@@ -40,8 +53,10 @@ struct CoinsListView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
+                .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: viewModel.isLoading)
         .onAppear {
             viewModel.fetchCoins()
         }

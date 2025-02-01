@@ -98,7 +98,6 @@ final class SwapViewModel: ObservableObject {
                 }
             }
         }
-        print(purchasedCoins)
     }
     
     func swapCoins() async -> Bool {

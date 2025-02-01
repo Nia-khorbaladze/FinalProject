@@ -35,10 +35,8 @@ struct DetailsPageView: View {
             .ignoresSafeArea(edges: .top)
             
             if viewModel.isLoading {
-                Spacer()
-                ProgressView()
-                    .padding(.top, 20)
-                Spacer()
+                DetailsSkeletonLoadingView()
+                    .background(Color(AppColors.backgroundColor.rawValue))
             } else if let error = viewModel.error {
                 Spacer()
                 Text(error)
@@ -58,17 +56,12 @@ struct DetailsPageView: View {
                             PercentageChangeView(percentageChange: coinDetail.priceChangePercentage24h)
                         }
                         
-                        ChartView(viewModel: viewModel) 
+                        ChartView(viewModel: viewModel)
                         CoinInfoView(coinDetail: coinDetail)
                     }
                 }
                 .background(Color(AppColors.backgroundColor.rawValue))
-            } else {
-                ProgressView()
-                    .padding(.top, 20)
             }
         }
     }
 }
-
-
