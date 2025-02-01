@@ -30,7 +30,7 @@ The project follows **Clean Architecture/MVVM**, divided into:
 ## 🔧 Installation
 1. Clone the repository:
    ```sh
-   git clone [https://github.com/your-repo.git](https://github.com/Nia-khorbaladze/FinalProject.git)
+   git clone https://github.com/Nia-khorbaladze/FinalProject.git
 2. Open in Xcode.
 3. Install dependencies using Swift Package Manager (SPM).
 4. Run the app.
