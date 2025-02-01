@@ -54,6 +54,12 @@ final class SwapViewModel: ObservableObject {
         self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
         self.swapCoinsUseCase = swapCoinsUseCase
     }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+        timer?.cancel()
+    }
 
     func fetchCoins() {
         isLoading = true

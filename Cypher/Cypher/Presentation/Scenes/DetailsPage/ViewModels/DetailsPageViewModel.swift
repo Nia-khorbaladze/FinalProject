@@ -31,6 +31,11 @@ final class DetailsPageViewModel: ObservableObject {
         self.isFavoriteUseCase = isFavoriteUseCase
     }
     
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
+    
     func fetchCoinDetails(coinName: String) {
         isLoading = true
         

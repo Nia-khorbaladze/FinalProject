@@ -26,6 +26,11 @@ final class FavoritesViewModel: ObservableObject {
         self.fetchImagesUseCase = fetchImagesUseCase
     }
     
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
+    
     func fetchFavorites() {
         isLoading = true
         error = nil

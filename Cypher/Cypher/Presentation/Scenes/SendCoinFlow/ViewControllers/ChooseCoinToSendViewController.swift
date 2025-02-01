@@ -11,6 +11,7 @@ final class ChooseCoinToSendViewController: UIViewController {
     private let viewModel: ChooseCoinViewModel
     private var coins: [SendableCoin] = []
     
+    // MARK: - UI Elements
     private lazy var purchasedCoinsTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -53,6 +54,7 @@ final class ChooseCoinToSendViewController: UIViewController {
         return label
     }()
     
+    // MARK: - Initializers
     init(viewModel: ChooseCoinViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -66,6 +68,7 @@ final class ChooseCoinToSendViewController: UIViewController {
         viewModel.didUpdateCoins = nil
     }
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -73,6 +76,7 @@ final class ChooseCoinToSendViewController: UIViewController {
         loadData()
     }
     
+    // MARK: - UI Setup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         view.addSubview(headerView)

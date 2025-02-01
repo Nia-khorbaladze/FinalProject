@@ -17,6 +17,7 @@ final class AddressInputViewController: UIViewController {
         }
     }
     private var buttonBottomConstraint: NSLayoutConstraint!
+    private var keyboardHandler: KeyboardHandler?
     private let availableAmount: Double
     private let imageURL: String
     
@@ -85,8 +86,8 @@ final class AddressInputViewController: UIViewController {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        keyboardHandler = nil
+        view.gestureRecognizers?.removeAll()
     }
     
     // MARK: - Lifecycle
@@ -94,8 +95,7 @@ final class AddressInputViewController: UIViewController {
         super.viewDidLoad()
         setup()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        keyboardHandler = KeyboardHandler(view: view, bottomConstraint: buttonBottomConstraint)
     }
     
     // MARK: - UISetup
@@ -156,30 +156,6 @@ final class AddressInputViewController: UIViewController {
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
-    }
-    
-    @objc private func keyboardWillShow(notification: NSNotification) {
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
-            return
-        }
-        
-        let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
-        let keyboardTop = keyboardFrameInView.minY
-        let safeAreaBottom = view.safeAreaLayoutGuide.layoutFrame.maxY
-        let offset = safeAreaBottom - keyboardTop
-        
-        buttonBottomConstraint.constant = -(offset + 20)
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    @objc private func keyboardWillHide(notification: NSNotification) {
-        buttonBottomConstraint.constant = -20
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
     }
     
     private func updateNextButton() {

@@ -21,6 +21,11 @@ final class WalletViewModel {
         self.walletAddressUseCase = walletAddressUseCase
     }
 
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
+    
     func fetchWalletData() {
         isLoading?(true)
         

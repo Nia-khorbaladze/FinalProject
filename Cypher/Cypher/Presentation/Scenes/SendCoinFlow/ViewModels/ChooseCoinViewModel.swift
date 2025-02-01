@@ -23,6 +23,11 @@ final class ChooseCoinViewModel {
     private var sendableCoins: [SendableCoin] = []
     var didUpdateCoins: (([SendableCoin]) -> Void)?
     
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
+    
     func fetchCoins() {
         isLoading?(true)
         

@@ -38,8 +38,8 @@ final class CoinRepository: CoinRepositoryProtocol {
         }
 
         return networkService.request(url: url, method: "GET", headers: nil, body: nil, decoder: JSONDecoder())
-            .handleEvents(receiveOutput: { coins in
-                self.coreDataService.saveResponse(coins, forKey: cacheKey)
+            .handleEvents(receiveOutput: { [weak self] coins in
+                self?.coreDataService.saveResponse(coins, forKey: cacheKey)
             })
             .eraseToAnyPublisher()
     }
@@ -64,8 +64,8 @@ final class CoinRepository: CoinRepositoryProtocol {
         }
 
         return networkService.request(url: url, method: "GET", headers: nil, body: nil, decoder: JSONDecoder())
-            .handleEvents(receiveOutput: { coin in
-                self.coreDataService.saveResponse(coin, forKey: lowercaseName)
+            .handleEvents(receiveOutput: { [weak self] coin in
+                self?.coreDataService.saveResponse(coin, forKey: lowercaseName)
             })
             .eraseToAnyPublisher()
     }

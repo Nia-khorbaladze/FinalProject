@@ -24,6 +24,11 @@ final class PortfolioViewModel: ObservableObject {
         self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
         self.fetchImagesUseCase = fetchImagesUseCase
     }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
 
     func fetchPortfolio() {
         isLoading = true

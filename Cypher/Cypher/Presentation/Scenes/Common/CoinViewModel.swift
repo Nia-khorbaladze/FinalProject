@@ -20,6 +20,11 @@ final class CoinViewModel: ObservableObject {
     init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
     }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
 
     func fetchCoins() {
         isLoading = true

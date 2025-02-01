@@ -33,6 +33,11 @@ final class HomePageViewModel: ObservableObject {
         self.fetchCoinDetailUseCase = fetchCoinDetailUseCase
     }
     
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
+    
     func fetchPortfolio() {
         isLoading = true
         error = nil

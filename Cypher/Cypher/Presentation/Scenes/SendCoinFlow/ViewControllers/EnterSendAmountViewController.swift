@@ -152,6 +152,11 @@ final class EnterSendAmountViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        keyboardHandler = nil
+        view.gestureRecognizers?.removeAll()
+    }
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -336,7 +341,7 @@ extension EnterSendAmountViewController: UITextFieldDelegate {
             }
 
             if let text = textField.text, let textRange = Range(range, in: text) {
-                var updatedText = text.replacingCharacters(in: textRange, with: updatedString)
+                let updatedText = text.replacingCharacters(in: textRange, with: updatedString)
                 
                 let decimalCount = updatedText.components(separatedBy: ".").count - 1
                 if decimalCount > 1 {

@@ -85,6 +85,11 @@ final class BuyCoinViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        keyboardHandler = nil
+        view.gestureRecognizers?.removeAll()  
+    }
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()

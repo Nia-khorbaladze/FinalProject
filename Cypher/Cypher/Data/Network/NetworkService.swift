@@ -11,7 +11,7 @@ import Combine
 final class NetworkService: NetworkServiceProtocol {
     private let session: URLSession
 
-    init(session: URLSession = .shared) {
+    init(session: URLSession = URLSession(configuration: .default)) {
         self.session = session
     }
 
