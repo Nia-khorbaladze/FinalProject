@@ -170,7 +170,9 @@ final class HomePageViewController: UIViewController {
     }
 
     private func navigateToSwapView() {
-        
+        if let tabBarController = self.tabBarController {
+            tabBarController.selectedIndex = 2
+        }
     }
 
     private func navigateToBuyView() {

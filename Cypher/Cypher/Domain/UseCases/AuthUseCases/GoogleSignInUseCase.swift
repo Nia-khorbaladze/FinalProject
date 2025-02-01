@@ -8,9 +8,9 @@
 import Foundation
 
 struct GoogleSignInUseCase: GoogleSignInUseCaseProtocol {
-    private let repository: GoogleAuthRepository
+    private let repository: GoogleAuthRepositoryProtocol
 
-    init(repository: GoogleAuthRepository) {
+    init(repository: GoogleAuthRepositoryProtocol) {
         self.repository = repository
     }
 

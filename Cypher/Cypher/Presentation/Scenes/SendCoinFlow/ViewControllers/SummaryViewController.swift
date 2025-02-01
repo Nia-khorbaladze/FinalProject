@@ -136,6 +136,13 @@ final class SummaryViewController: UIViewController {
         setup()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        circleView.layer.cornerRadius = circleView.frame.width / 2
+        circleView.clipsToBounds = true
+    }
+    
     // MARK: - UI Setup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
@@ -213,13 +220,7 @@ final class SummaryViewController: UIViewController {
         ])
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        circleView.layer.cornerRadius = circleView.frame.width / 2
-        circleView.clipsToBounds = true
-    }
-    
+    // MARK: - Functions
     private func handleSendTapped() {
         Task {
             do {

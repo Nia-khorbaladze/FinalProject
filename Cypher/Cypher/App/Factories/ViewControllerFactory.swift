@@ -11,89 +11,48 @@ final class ViewControllerFactory {
     private let dependencies = Dependencies.shared
 
     func makeHomePageViewController() -> UINavigationController {
-        let networkService = NetworkService()
-        let coreDataService = CoreDataService()
-        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository(coreDataService: coreDataService)
-        let purchasedCoinRepository = dependencies.purchasedCoinRepository
-        
-        let purchasedCoinUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
-        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
-        let fetchCoinDetailUseCase = dependencies.fetchCoinDetailUseCase
-        
-        let viewModel = HomePageViewModel(fetchCoinsUseCase: fetchCoinsUseCase, purchasedCoinUseCase: purchasedCoinUseCase, fetchCoinDetailUseCase: fetchCoinDetailUseCase)
+        let viewModel = HomePageViewModel(
+            fetchCoinsUseCase: dependencies.fetchCoinsUseCase,
+            purchasedCoinUseCase: dependencies.fetchPurchasedCoinsUseCase,
+            fetchCoinDetailUseCase: dependencies.fetchCoinDetailUseCase
+        )
         let viewController = HomePageViewController(viewModel: viewModel)
-        
         return UINavigationController(rootViewController: viewController)
     }
     
     func makeFavoritesPageViewController() -> UINavigationController {
-        let networkService = NetworkService()
-        let coreDataService = CoreDataService()
-        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository(coreDataService: coreDataService)
-        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
-        let favoriteCoinsRepository = dependencies.favoriteCoinsRepository
-        let fetchFavoriteCoinsUseCase = FetchFavoritesUseCase(repository: favoriteCoinsRepository)
-        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
-        
         let viewModel = FavoritesViewModel(
-            fetchCoinsUseCase: fetchCoinsUseCase,
-            fetchFavoritesUseCase: fetchFavoriteCoinsUseCase,
-            fetchImagesUseCase: fetchImagesUseCase
+            fetchCoinsUseCase: dependencies.fetchCoinsUseCase,
+            fetchFavoritesUseCase: dependencies.fetchFavoriteCoinsUseCase,
+            fetchImagesUseCase: dependencies.fetchImagesUseCase
         )
         let viewController = FavoritesPageViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }
     
     func makeSwapPageViewController() -> UINavigationController {
-        let networkService = NetworkService()
-        let coreDataService = CoreDataService()
-        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository(coreDataService: coreDataService)
-        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
-
-        let exchangeRateRepository = ExchangeRateRepository(networkService: networkService)
-
-        let getExchangeRateUseCase = GetExchangeRateUseCase(repository: exchangeRateRepository)
-        let purchasedCoinRepository = dependencies.purchasedCoinRepository
-        let fetchPurchasedCoinUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
-        
-        let swapCoinsUseCase = SwapCoinsUseCase(getExchangeRateUseCase: getExchangeRateUseCase, repository: purchasedCoinRepository)
-        
-        let viewModel = SwapViewModel(fetchCoinsUseCase: fetchCoinsUseCase, getExchangeRateUseCase: getExchangeRateUseCase, fetchPurchasedCoinsUseCase: fetchPurchasedCoinUseCase, swapCoinsUseCase: swapCoinsUseCase)
-        
+        let viewModel = SwapViewModel(
+            fetchCoinsUseCase: dependencies.fetchCoinsUseCase,
+            getExchangeRateUseCase: dependencies.getExchangeRateUseCase,
+            fetchPurchasedCoinsUseCase: dependencies.fetchPurchasedCoinsUseCase,
+            swapCoinsUseCase: dependencies.swapCoinsUseCase
+        )
         let viewController = SwapPageViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }
     
     func makePortfolioPageViewController() -> UINavigationController {
-        let networkService = NetworkService()
-        let coreDataService = CoreDataService()
-        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository(coreDataService: coreDataService)
-        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
-        let purchasedCoinRepository = dependencies.purchasedCoinRepository
-        let fetchPurchasedCoinUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
-        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
-
         let viewModel = PortfolioViewModel(
-            fetchCoinsUseCase: fetchCoinsUseCase,
-            fetchPurchasedCoinsUseCase: fetchPurchasedCoinUseCase,
-            fetchImagesUseCase: fetchImagesUseCase
+            fetchCoinsUseCase: dependencies.fetchCoinsUseCase,
+            fetchPurchasedCoinsUseCase: dependencies.fetchPurchasedCoinsUseCase,
+            fetchImagesUseCase: dependencies.fetchImagesUseCase
         )
-
         let viewController = PortfolioViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }
     
     func makeSearchPageViewController() -> UINavigationController {
-        let networkService = NetworkService()
-        let coreDataService = CoreDataService()
-        let coinRepository = CoinRepository(networkService: networkService, coreDataService: coreDataService)
-        let imageRepository = ImageRepository(coreDataService: coreDataService)
-        let fetchCoinsUseCase = FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
-        let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
+        let viewModel = CoinViewModel(fetchCoinsUseCase: dependencies.fetchCoinsUseCase)
         let viewController = SearchViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
     }
@@ -105,33 +64,22 @@ final class ViewControllerFactory {
     }
 
     func makeSelectCoinViewController() -> SelectCoinViewController {
-        let coreDataService = CoreDataService()
-        let fetchCoinsUseCase = FetchCoinsUseCase(
-            coinRepository: dependencies.coinRepository,
-            imageRepository: ImageRepository(coreDataService: coreDataService)
-        )
-        let viewModel = CoinViewModel(fetchCoinsUseCase: fetchCoinsUseCase)
+        let viewModel = CoinViewModel(fetchCoinsUseCase: dependencies.fetchCoinsUseCase)
         return SelectCoinViewController(viewModel: viewModel)
     }
     
     func makeReceivePageViewController() -> ReceivePageViewController {
-        let WalletAddressRepository = WalletAddressRepository()
-        let iconProvider = WalletIconProvider()
-        let walletAddressUseCase = GetWalletAddressUseCase(repository: WalletAddressRepository, iconProvider: iconProvider)
-        let walletViewModel = WalletViewModel(walletAddressUseCase: walletAddressUseCase)
+        let walletViewModel = WalletViewModel(walletAddressUseCase: dependencies.getWalletAddressUseCase)
         let viewController = ReceivePageViewController(viewModel: walletViewModel)
         return viewController
     }
 
     func makeChooseCoinToSendViewController() -> ChooseCoinToSendViewController {
-        let coreDataService = CoreDataService()
-        let imageRepository = ImageRepository(coreDataService: coreDataService)
-        let fetchImagesUseCase = FetchImagesUseCase(imageRepository: imageRepository)
-        let purchasedCoinRepository = dependencies.purchasedCoinRepository
-        let fetchPurchasedCoinsUseCase = FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
-        let viewModel = ChooseCoinViewModel(fetchPurchasedCoinsUseCase: fetchPurchasedCoinsUseCase, fetchImagesUseCase: fetchImagesUseCase)
+        let viewModel = ChooseCoinViewModel(
+            fetchPurchasedCoinsUseCase: dependencies.fetchPurchasedCoinsUseCase,
+            fetchImagesUseCase: dependencies.fetchImagesUseCase
+        )
         let viewController = ChooseCoinToSendViewController(viewModel: viewModel)
-        
         return viewController
     }
 }

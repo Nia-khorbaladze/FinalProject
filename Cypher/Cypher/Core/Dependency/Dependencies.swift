@@ -22,6 +22,10 @@ final class Dependencies {
         )
     }()
     
+    private(set) lazy var imageRepository: ImageRepositoryProtocol = {
+        ImageRepository(coreDataService: coreDataService)
+    }()
+    
     private(set) lazy var googleAuthRepository: FirebaseGoogleAuthRepository = {
         FirebaseGoogleAuthRepository()
     }()
@@ -30,25 +34,56 @@ final class Dependencies {
         PurchasedCoinRepository(coreDataService: coreDataService)
     }()
     
-    private(set) lazy var favoriteCoinsRepository: FavoriteCoinsRepository = {
+    private(set) lazy var favoriteCoinsRepository: FavoriteCoinsRepositoryProtocol = {
         FavoriteCoinsRepository(coreDataService: coreDataService)
     }()
     
-    private(set) lazy var walletAddressRepository: WalletAddressRepository = {
+    private(set) lazy var walletAddressRepository: WalletAddressRepositoryProtocol = {
         WalletAddressRepository()
     }()
     
-    private(set) lazy var historyRepository: HistoryRepository = {
+    private(set) lazy var historyRepository: HistoryRepositoryProtocol = {
         HistoryRepository(networkService: networkService)
     }()
     
-    private(set) lazy var usernameRepository: UsernameRepository = {
+    private(set) lazy var exchangeRepository: ExchangeRateRepositoryProtocol = {
+        ExchangeRateRepository(networkService: networkService)
+    }()
+    
+    private(set) lazy var usernameRepository: UsernameRepositoryProtocol = {
         UsernameRepository()
     }()
     
     // MARK: - Use Cases
+    private(set) lazy var fetchCoinsUseCase: FetchCoinsUseCaseProtocol = {
+        FetchCoinsUseCase(coinRepository: coinRepository, imageRepository: imageRepository)
+    }()
+    
     private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol = {
         FetchCoinDetailUseCase(repository: coinRepository)
+    }()
+    
+    private(set) lazy var fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol = {
+        FetchPurchasedCoinsUseCase(purchasedCoinRepository: purchasedCoinRepository)
+    }()
+    
+    private(set) lazy var fetchFavoriteCoinsUseCase: FetchFavoritesUseCaseProtocol = {
+        FetchFavoritesUseCase(repository: favoriteCoinsRepository)
+    }()
+    
+    private(set) lazy var fetchImagesUseCase: ImageUseCaseProtocol = {
+        FetchImagesUseCase(imageRepository: imageRepository)
+    }()
+    
+    private(set) lazy var getExchangeRateUseCase: GetExchangeRateUseCaseProtocol = {
+        GetExchangeRateUseCase(repository: exchangeRepository)
+    }()
+    
+    private(set) lazy var swapCoinsUseCase: SwapCoinsUseCaseProtocol = {
+        SwapCoinsUseCase(
+            getExchangeRateUseCase: getExchangeRateUseCase,
+            repository: purchasedCoinRepository
+        )
     }()
     
     private(set) lazy var saveFavoriteCoinUseCase: SaveFavoriteCoinUseCaseProtocol = {
@@ -67,7 +102,7 @@ final class Dependencies {
         GoogleSignInUseCase(repository: googleAuthRepository)
     }()
     
-    private(set) lazy var savePurchasedCoinUseCase: SavePurchasedCoinUseCase = {
+    private(set) lazy var savePurchasedCoinUseCase: SavePurchasedCoinUseCaseProtocol = {
         SavePurchasedCoinUseCase(purchasedCoinRepository: purchasedCoinRepository)
     }()
     
@@ -97,7 +132,6 @@ final class Dependencies {
         GetUsernameUseCase(usernameRepository: usernameRepository)
     }()
 
-    
     // MARK: - View Models
     private(set) lazy var googleSignInViewModel: GoogleSignInViewModel = {
         GoogleSignInViewModel(googleSignInUseCase: googleSignInUseCase)
@@ -132,6 +166,10 @@ final class Dependencies {
             logoutUseCase: logoutUseCase,
             getUsernameUseCase: getUsernameUseCase
         )
+    }
+    
+    func makeSuccessfulAuthViewModel() -> SuccessfulAuthViewModel {
+        return SuccessfulAuthViewModel(walletAddressUseCase: saveWalletAddressUseCase)
     }
     
     private init() {

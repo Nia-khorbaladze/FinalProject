@@ -7,7 +7,7 @@
 
 import FirebaseAuth
 
-final class FirebaseAuthRepository: AuthRepository {
+final class FirebaseAuthRepository: AuthRepositoryProtocol {
     func login(email: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {

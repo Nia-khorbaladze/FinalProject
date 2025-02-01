@@ -231,9 +231,7 @@ final class CredentialsInputViewController: UIViewController {
     }
     
     private func navigateToSuccessScreen(for user: User) {
-        let walletAddressUseCase = Dependencies.shared.saveWalletAddressUseCase
-        let successfulAuthViewModel = SuccessfulAuthViewModel(walletAddressUseCase: walletAddressUseCase)
-        
+        let successfulAuthViewModel = Dependencies.shared.makeSuccessfulAuthViewModel()
         let successAuthViewController = SuccessfulAuthViewController(state: self.state, viewModel: successfulAuthViewModel)
         navigationController?.pushViewController(successAuthViewController, animated: true)
     }

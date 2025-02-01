@@ -8,9 +8,9 @@
 import Foundation
 
 final class IsFavoriteCoinUseCase: IsFavoriteCoinUseCaseProtocol {
-    private let repository: FavoriteCoinsRepository
+    private let repository: FavoriteCoinsRepositoryProtocol
 
-    init(repository: FavoriteCoinsRepository) {
+    init(repository: FavoriteCoinsRepositoryProtocol) {
         self.repository = repository
     }
 
