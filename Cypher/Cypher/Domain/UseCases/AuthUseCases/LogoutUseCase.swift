@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseAuth
 
-struct LogoutUseCase {
+struct LogoutUseCase: LogoutUseCaseProtocol {
     func execute(completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             try Auth.auth().signOut()

@@ -9,10 +9,10 @@ import Foundation
 import FirebaseAuth
 
 final class ProfilePopupViewModel {
-    let logoutUseCase: LogoutUseCase
+    let logoutUseCase: LogoutUseCaseProtocol
     let getUsernameUseCase: GetUsernameUseCaseProtocol
     
-    init(logoutUseCase: LogoutUseCase, getUsernameUseCase: GetUsernameUseCaseProtocol) {
+    init(logoutUseCase: LogoutUseCaseProtocol, getUsernameUseCase: GetUsernameUseCaseProtocol) {
         self.logoutUseCase = logoutUseCase
         self.getUsernameUseCase = getUsernameUseCase
     }

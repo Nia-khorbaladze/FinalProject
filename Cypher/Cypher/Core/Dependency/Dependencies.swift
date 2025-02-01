@@ -63,7 +63,7 @@ final class Dependencies {
         IsFavoriteCoinUseCase(repository: favoriteCoinsRepository)
     }()
     
-    private(set) lazy var googleSignInUseCase: GoogleSignInUseCase = {
+    private(set) lazy var googleSignInUseCase: GoogleSignInUseCaseProtocol = {
         GoogleSignInUseCase(repository: googleAuthRepository)
     }()
     
@@ -89,11 +89,11 @@ final class Dependencies {
         FetchCoinPriceChangeUseCase(repository: historyRepository)
     }()
 
-    private(set) lazy var logoutUseCase: LogoutUseCase = {
+    private(set) lazy var logoutUseCase: LogoutUseCaseProtocol = {
         LogoutUseCase()
     }()
 
-    private(set) lazy var getUsernameUseCase: GetUsernameUseCase = {
+    private(set) lazy var getUsernameUseCase: GetUsernameUseCaseProtocol = {
         GetUsernameUseCase(usernameRepository: usernameRepository)
     }()
 

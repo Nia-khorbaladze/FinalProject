@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GoogleSignInUseCase {
+struct GoogleSignInUseCase: GoogleSignInUseCaseProtocol {
     private let repository: GoogleAuthRepository
 
     init(repository: GoogleAuthRepository) {
