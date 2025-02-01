@@ -132,4 +132,23 @@ final class CoreDataService: CoreDataServiceProtocol {
         
         return image
     }
+    
+    func clearAllData() {
+        let persistentContainer = PersistenceController.shared.container
+        let context = persistentContainer.viewContext
+        
+        context.perform {
+            do {
+                for entity in persistentContainer.managedObjectModel.entities {
+                    guard let entityName = entity.name else { continue }
+                    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                    try context.execute(deleteRequest)
+                }
+                try context.save()
+            } catch {
+                print("Failed to clear Core Data: \(error.localizedDescription)")
+            }
+        }
+    }
 }

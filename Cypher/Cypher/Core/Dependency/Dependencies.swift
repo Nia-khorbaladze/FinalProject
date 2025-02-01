@@ -131,6 +131,10 @@ final class Dependencies {
     private(set) lazy var getUsernameUseCase: GetUsernameUseCaseProtocol = {
         GetUsernameUseCase(usernameRepository: usernameRepository)
     }()
+    
+    private(set) lazy var clearCacheUseCase: ClearCacheUseCaseProtocol = {
+        ClearCacheUseCase(coreDataService: coreDataService)
+    }()
 
     // MARK: - View Models
     private(set) lazy var googleSignInViewModel: GoogleSignInViewModel = {
@@ -164,7 +168,8 @@ final class Dependencies {
     func makeProfilePopupViewModel() -> ProfilePopupViewModel {
         return ProfilePopupViewModel(
             logoutUseCase: logoutUseCase,
-            getUsernameUseCase: getUsernameUseCase
+            getUsernameUseCase: getUsernameUseCase,
+            clearCacheUseCase: clearCacheUseCase
         )
     }
     
