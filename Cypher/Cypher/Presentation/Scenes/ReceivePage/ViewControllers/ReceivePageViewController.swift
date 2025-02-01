@@ -101,7 +101,6 @@ final class ReceivePageViewController: UIViewController {
     
     private func loadWalletData() {
         viewModel.walletAddresses = { [weak self] wallets in
-            print("Received wallet data: \(wallets)")
             self?.walletData = wallets
             self?.coinsTableView.reloadData()
         }
