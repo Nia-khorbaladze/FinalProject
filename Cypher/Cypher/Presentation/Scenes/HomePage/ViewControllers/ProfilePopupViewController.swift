@@ -162,7 +162,7 @@ final class ProfilePopupViewController: UIViewController {
                 case .success:
                     self?.handleSuccessfulLogout()
                 case .failure(let error):
-                    self?.handleFailedLogout(error)
+                    self?.showErrorAlert(message: "Logout Failed. Try again later.")
                 }
             }
             
@@ -171,17 +171,6 @@ final class ProfilePopupViewController: UIViewController {
     
     private func handleSuccessfulLogout() {
         NavigationService.shared.switchToAuth()
-    }
-
-    
-    private func handleFailedLogout(_ error: Error) {
-        let alertController = UIAlertController(
-            title: "Logout Failed",
-            message: error.localizedDescription,
-            preferredStyle: .alert
-        )
-        alertController.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alertController, animated: true)
     }
     
     private func navigateToManageProfile() {

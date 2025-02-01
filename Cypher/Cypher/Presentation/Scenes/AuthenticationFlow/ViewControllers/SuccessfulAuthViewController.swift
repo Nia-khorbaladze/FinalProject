@@ -69,8 +69,8 @@ final class SuccessfulAuthViewController: UIViewController {
             switch result {
             case .success:
                 break
-            case .failure:
-                self?.showAlert(title: "Error", message: "Couldn't save wallet addresses.")
+            case .failure(let error):
+                self?.showErrorAlert()
             }
         }
     }
@@ -92,12 +92,6 @@ final class SuccessfulAuthViewController: UIViewController {
             continueButton.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             continueButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
-    }
-    
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
     }
     
     private func navigate() {

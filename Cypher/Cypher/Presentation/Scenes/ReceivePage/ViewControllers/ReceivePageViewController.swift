@@ -105,10 +105,8 @@ final class ReceivePageViewController: UIViewController {
             self?.coinsTableView.reloadData()
         }
         
-        viewModel.errorMessage = { [weak self] errorMessage in
-            let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self?.present(alert, animated: true)
+        viewModel.errorMessage = { [weak self] _ in
+            self?.showErrorAlert()
         }
         
         viewModel.fetchWalletData()

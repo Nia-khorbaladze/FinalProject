@@ -112,7 +112,7 @@ final class SwapPageViewController: UIViewController {
                     let successVC = SuccessfulTransactionViewController()
                     self?.navigationController?.pushViewController(successVC, animated: true)
                 } else {
-                    self?.showError("Please try again later.")
+                    self?.showErrorAlert()
                 }
             }
         }
@@ -120,11 +120,5 @@ final class SwapPageViewController: UIViewController {
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
-    }
-    
-    private func showError(_ message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
     }
 }

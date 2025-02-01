@@ -132,7 +132,7 @@ final class EmailOptionsViewController: UIViewController {
                     let state: AuthenticationState = user.isNewUser ? .register : .login
                     self?.navigateToSuccessScreen(state: state)
                 case .failure(let error):
-                    self?.showErrorAlert(error: error)
+                    self?.showErrorAlert()
                 }
             }
         }
@@ -144,12 +144,6 @@ final class EmailOptionsViewController: UIViewController {
         
         let successAuthViewController = SuccessfulAuthViewController(state: state, viewModel: successfulAuthViewModel)
         navigationController?.pushViewController(successAuthViewController, animated: true)
-    }
-    
-    private func showErrorAlert(error: Error) {
-        let alert = UIAlertController(title: "Error", message: "Something went wrong. Try again later.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
     }
 }
 

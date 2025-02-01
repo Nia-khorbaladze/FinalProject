@@ -221,7 +221,7 @@ final class CredentialsInputViewController: UIViewController {
                     self?.navigateToSuccessScreen(for: user)
                 case .failure(let error):
                     if case AuthError.emailAlreadyInUse = error {
-                        self?.showErrorAlert(error: error)
+                        self?.showErrorAlert()
                     } else if let validationErrors = error as? ValidationErrors {
                         self?.validateFields(validationErrors.errors)
                     }
@@ -246,19 +246,5 @@ final class CredentialsInputViewController: UIViewController {
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
-    }
-    
-    private func showErrorAlert(error: Error) {
-        let errorMessage: String
-
-        if let authError = error as? AuthError {
-            errorMessage = authError.errorDescription ?? "Something went wrong. Try again later."
-        } else {
-            errorMessage = "Something went wrong. Try again later."
-        }
-
-        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
     }
 }

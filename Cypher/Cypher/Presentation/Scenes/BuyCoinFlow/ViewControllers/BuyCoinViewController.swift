@@ -203,7 +203,7 @@ final class BuyCoinViewController: UIViewController {
                 }
             } catch {
                 DispatchQueue.main.async { [weak self] in
-                    self?.showErrorAlert(error: error)
+                    self?.showErrorAlert()
                 }
             }
         }
@@ -213,10 +213,8 @@ final class BuyCoinViewController: UIViewController {
         view.endEditing(true)
     }
     
-    private func showErrorAlert(error: Error) {
-        let alert = UIAlertController(title: "Error", message: "Something went wrong. Try again later.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+    private func navigateBack() {
+        navigationController?.popViewController(animated: true)
     }
 }
 

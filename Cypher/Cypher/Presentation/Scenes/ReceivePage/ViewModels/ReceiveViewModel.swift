@@ -15,7 +15,7 @@ final class WalletViewModel {
     
     var walletAddresses: (([WalletData]) -> Void)?
     var isLoading: ((Bool) -> Void)?
-    var errorMessage: ((String) -> Void)?
+    var errorMessage: ((Error) -> Void)?
 
     init(walletAddressUseCase: WalletAddressUseCaseProtocol) {
         self.walletAddressUseCase = walletAddressUseCase
@@ -39,7 +39,7 @@ final class WalletViewModel {
                 }
             } catch {
                 await MainActor.run { [weak self] in
-                    self?.errorMessage?(error.localizedDescription)
+                    self?.errorMessage?(error)
                     self?.isLoading?(false)
                 }
             }
