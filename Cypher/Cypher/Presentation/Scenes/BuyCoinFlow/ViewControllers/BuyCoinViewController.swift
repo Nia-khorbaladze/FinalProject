@@ -14,31 +14,13 @@ final class BuyCoinViewController: UIViewController {
     private var keyboardHandler: KeyboardHandler?
 
     // MARK: - UI Elements
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: AppColors.white.rawValue)
-        label.font = Fonts.medium.uiFont(size: 18)
-        label.text = "Buy"
-        return label
-    }()
-    
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = UIColor(named: AppColors.white.rawValue)
-        button.addAction(UIAction(handler: { [weak self] _ in
-            self?.navigationController?.popViewController(animated: true)
-        }), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var header: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: AppColors.darkGrey.rawValue)
-        return view
+    private lazy var headerView: HeaderView = {
+        let header = HeaderView(title: "Buy")
+        header.translatesAutoresizingMaskIntoConstraints = false
+        header.onBackButtonTapped = { [weak self] in
+            self?.navigateBack()
+        }
+        return header
     }()
     
     private lazy var amountField: UITextField = {
@@ -127,10 +109,7 @@ final class BuyCoinViewController: UIViewController {
     }
     
     private func setupUI() {
-        header.addSubview(backButton)
-        header.addSubview(titleLabel)
-        
-        view.addSubview(header)
+        view.addSubview(headerView)
         view.addSubview(amountField)
         view.addSubview(coinAmountLabel)
         view.addSubview(quickAmountStack)
@@ -142,17 +121,12 @@ final class BuyCoinViewController: UIViewController {
     private func setupConstraints() {
         buttonBottomConstraint = buyButton.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         NSLayoutConstraint.activate([
-            backButton.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 20),
-            backButton.topAnchor.constraint(equalTo: header.topAnchor, constant: 17),
-            titleLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-            titleLabel.centerXAnchor.constraint(equalTo: header.centerXAnchor),
+            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            headerView.heightAnchor.constraint(equalToConstant: 55),
             
-            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            header.heightAnchor.constraint(equalToConstant: 55),
-            
-            amountField.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 40),
+            amountField.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 40),
             amountField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             amountField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             amountField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),

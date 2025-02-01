@@ -17,34 +17,13 @@ final class EnterSendAmountViewController: UIViewController {
     private var isErrorMessageVisible: Bool = false
     
     // MARK: - UI Elements
-    private lazy var headerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: AppColors.darkGrey.rawValue)
-        
-        return view
-    }()
-    
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = UIColor(named: AppColors.white.rawValue)
-        button.addAction(UIAction(handler: { [weak self] _ in
+    private lazy var headerView: HeaderView = {
+        let header = HeaderView(title: "Enter Amount")
+        header.translatesAutoresizingMaskIntoConstraints = false
+        header.onBackButtonTapped = { [weak self] in
             self?.navigateBack()
-        }), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    private lazy var headerTitle: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: AppColors.white.rawValue)
-        label.font = Fonts.medium.uiFont(size: 18)
-        label.text = "Enter Amount"
-        
-        return label
+        }
+        return header
     }()
     
     private lazy var nextButton: UIButton = {
@@ -203,8 +182,6 @@ final class EnterSendAmountViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(headerView)
-        headerView.addSubview(backButton)
-        headerView.addSubview(headerTitle)
         headerView.addSubview(nextButton)
         view.addSubview(amountInputContainer)
         amountInputContainer.addSubview(amountField)
@@ -221,15 +198,9 @@ final class EnterSendAmountViewController: UIViewController {
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            headerView.heightAnchor.constraint(equalToConstant: 55),
             
-            backButton.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 13),
-            backButton.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 13),
-            backButton.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -13),
-            
-            headerTitle.centerXAnchor.constraint(equalTo: headerView.centerXAnchor),
-            headerTitle.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            
-            nextButton.centerYAnchor.constraint(equalTo: headerTitle.centerYAnchor),
+            nextButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
             nextButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -13)
         ])
         
