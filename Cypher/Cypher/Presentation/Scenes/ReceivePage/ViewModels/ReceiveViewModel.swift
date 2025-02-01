@@ -35,17 +35,19 @@ final class WalletViewModel {
         
         let userID = currentUser.uid
         
-        Task {
+        Task { [weak self] in
+            guard let self = self else { return }
+            
             do {
                 let addresses = try await walletAddressUseCase.getWalletAddresses(for: userID)
-                await MainActor.run { [weak self] in
-                    self?.walletAddresses?(addresses)
-                    self?.isLoading?(false)
+                await MainActor.run {
+                    self.walletAddresses?(addresses)
+                    self.isLoading?(false)
                 }
             } catch {
-                await MainActor.run { [weak self] in
-                    self?.errorMessage?(error)
-                    self?.isLoading?(false)
+                await MainActor.run { 
+                    self.errorMessage?(error)
+                    self.isLoading?(false)
                 }
             }
         }

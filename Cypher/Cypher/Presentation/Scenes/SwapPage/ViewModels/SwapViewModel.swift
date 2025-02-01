@@ -69,16 +69,18 @@ final class SwapViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] (completion: Subscribers.Completion<NetworkError>) in
+                    guard let self = self else { return }
                     switch completion {
                     case .finished:
-                        self?.isLoading = false
+                        self.isLoading = false
                     case .failure(let networkError):
-                        self?.isLoading = false
-                        self?.error = networkError.localizedDescription
+                        self.isLoading = false
+                        self.error = networkError.localizedDescription
                     }
                 },
                 receiveValue: { [weak self] (coins: [CoinResponse]) in
-                    self?.coins = coins
+                    guard let self = self else { return }
+                    self.coins = coins
                 }
             )
             .store(in: &cancellables)
@@ -93,17 +95,19 @@ final class SwapViewModel: ObservableObject {
         }
         let userID = currentUser.uid
         
-        Task {
+        Task { [weak self] in
+            guard let self = self else { return }
+            
             do {
                 let purchasedCoins = try await fetchPurchasedCoinsUseCase.execute(userID: userID)
-                await MainActor.run { [weak self] in
-                    self?.purchasedCoins = purchasedCoins
-                    self?.isLoading = false
+                await MainActor.run {
+                    self.purchasedCoins = purchasedCoins
+                    self.isLoading = false
                 }
             } catch {
-                await MainActor.run { [weak self] in
-                    self?.error = error.localizedDescription
-                    self?.isLoading = false
+                await MainActor.run {
+                    self.error = error.localizedDescription
+                    self.isLoading = false
                 }
             }
         }
@@ -135,13 +139,15 @@ final class SwapViewModel: ObservableObject {
             )
 
             await MainActor.run { [weak self] in
-                self?.isLoading = false
+                guard let self = self else { return }
+                self.isLoading = false
             }
             return true
         } catch {
             await MainActor.run { [weak self] in
-                self?.error = error.localizedDescription
-                self?.isLoading = false
+                guard let self = self else { return }
+                self.error = error.localizedDescription
+                self.isLoading = false
             }
             return false
         }
@@ -152,7 +158,8 @@ final class SwapViewModel: ObservableObject {
         timer = Timer.publish(every: timeInterval, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
-                self?.calculateReceiveAmount()
+                guard let self = self else { return }
+                self.calculateReceiveAmount()
             }
     }
 
@@ -170,8 +177,9 @@ final class SwapViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
+                    guard let self = self else { return }
                     if case .failure = completion {
-                        self?.receiveAmount = "0"
+                        self.receiveAmount = "0"
                     }
                 },
                 receiveValue: { [weak self] exchangeRate in

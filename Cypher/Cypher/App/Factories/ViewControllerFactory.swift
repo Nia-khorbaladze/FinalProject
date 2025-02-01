@@ -23,8 +23,7 @@ final class ViewControllerFactory {
     func makeFavoritesPageViewController() -> UINavigationController {
         let viewModel = FavoritesViewModel(
             fetchCoinsUseCase: dependencies.fetchCoinsUseCase,
-            fetchFavoritesUseCase: dependencies.fetchFavoriteCoinsUseCase,
-            fetchImagesUseCase: dependencies.fetchImagesUseCase
+            fetchFavoritesUseCase: dependencies.fetchFavoriteCoinsUseCase
         )
         let viewController = FavoritesPageViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)
@@ -44,8 +43,7 @@ final class ViewControllerFactory {
     func makePortfolioPageViewController() -> UINavigationController {
         let viewModel = PortfolioViewModel(
             fetchCoinsUseCase: dependencies.fetchCoinsUseCase,
-            fetchPurchasedCoinsUseCase: dependencies.fetchPurchasedCoinsUseCase,
-            fetchImagesUseCase: dependencies.fetchImagesUseCase
+            fetchPurchasedCoinsUseCase: dependencies.fetchPurchasedCoinsUseCase
         )
         let viewController = PortfolioViewController(viewModel: viewModel)
         return UINavigationController(rootViewController: viewController)

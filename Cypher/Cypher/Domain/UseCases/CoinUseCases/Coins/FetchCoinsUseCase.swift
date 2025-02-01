@@ -19,7 +19,10 @@ final class FetchCoinsUseCase: FetchCoinsUseCaseProtocol {
     
     func execute() -> AnyPublisher<[CoinResponse], NetworkError> {
         return coinRepository.fetchCoins()
-            .flatMap { coins -> AnyPublisher<[CoinResponse], NetworkError> in
+            .flatMap { [weak self] coins -> AnyPublisher<[CoinResponse], NetworkError> in
+                guard let self = self else {
+                    return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()
+                }
                 let imageRequests = coins.map { coin -> AnyPublisher<CoinResponse, NetworkError> in
                     guard let imageUrl = URL(string: coin.imageURL) else {
                         return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()

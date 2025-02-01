@@ -12,17 +12,15 @@ import FirebaseAuth
 final class PortfolioViewModel: ObservableObject {
     private let fetchCoinsUseCase: FetchCoinsUseCaseProtocol
     private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol
-    private let fetchImagesUseCase: ImageUseCaseProtocol
 
     @Published var portfolioCoins: [PortfolioCoin] = []
     @Published var isLoading: Bool = false
     @Published var error: String?
     var cancellables = Set<AnyCancellable>()
 
-    init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol, fetchImagesUseCase: ImageUseCaseProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
-        self.fetchImagesUseCase = fetchImagesUseCase
     }
     
     deinit {
@@ -40,23 +38,23 @@ final class PortfolioViewModel: ObservableObject {
         
         let userID = currentUser.uid
 
-        Task {
+        Task { [weak self] in
+            guard let self = self else { return }
+            
             do {
                 let purchasedCoins = try await fetchPurchasedCoinsUseCase.execute(userID: userID)
                 
                 fetchCoinsUseCase.execute()
                     .receive(on: DispatchQueue.main)
-                    .sink(receiveCompletion: { [weak self] completion in
+                    .sink(receiveCompletion: { completion in
                         switch completion {
                         case .finished:
-                            self?.isLoading = false
+                            self.isLoading = false
                         case .failure(let networkError):
-                            self?.error = networkError.localizedDescription
-                            self?.isLoading = false
+                            self.error = networkError.localizedDescription
+                            self.isLoading = false
                         }
-                    }, receiveValue: { [weak self] marketData in
-                        guard let self = self else { return }
-                        
+                    }, receiveValue: { marketData in
                         let combinedCoins = purchasedCoins.compactMap { purchasedCoin in
                             marketData.first { $0.symbol.lowercased() == purchasedCoin.symbol.lowercased() }
                                 .map { marketCoin in
@@ -68,30 +66,21 @@ final class PortfolioViewModel: ObservableObject {
                                         currentPrice: marketCoin.currentPrice,
                                         worthInUSD: purchasedCoin.totalAmount * marketCoin.currentPrice,
                                         changePercentage24h: marketCoin.priceChangePercentage24h,
-                                        imageURL: marketCoin.imageURL
+                                        imageURL: marketCoin.imageURL,
+                                        image: marketCoin.image
                                     )
                                 }
                         }
 
                         self.portfolioCoins = combinedCoins
-                        self.fetchImages(for: combinedCoins)
                     })
                     .store(in: &self.cancellables)
             } catch {
-                await MainActor.run { [weak self] in
-                    self?.error = error.localizedDescription
-                    self?.isLoading = false
+                await MainActor.run {
+                    self.error = error.localizedDescription
+                    self.isLoading = false
                 }
             }
         }
-    }
-    
-    private func fetchImages(for coins: [PortfolioCoin]) {
-        fetchImagesUseCase.execute(for: coins)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] updatedCoins in
-                self?.portfolioCoins = updatedCoins
-            }
-            .store(in: &self.cancellables)
     }
 }

@@ -48,7 +48,9 @@ final class HomePageViewModel: ObservableObject {
         
         let userID = currentUser.uid
         
-        Task {
+        Task { [weak self] in
+            guard let self = self else { return }
+            
             do {
                 let purchasedCoins = try await purchasedCoinUseCase.execute(userID: userID)
                 self.portfolioCoins = purchasedCoins
@@ -66,16 +68,15 @@ final class HomePageViewModel: ObservableObject {
                 Publishers.MergeMany(coinDetailsPublisher)
                     .collect()
                     .receive(on: DispatchQueue.main)
-                    .sink(receiveCompletion: { [weak self] completion in
+                    .sink(receiveCompletion: { completion in
                         switch completion {
                         case .finished:
-                            self?.isLoading = false
+                            self.isLoading = false
                         case .failure(let networkError):
-                            self?.error = networkError.localizedDescription
-                            self?.isLoading = false
+                            self.error = networkError.localizedDescription
+                            self.isLoading = false
                         }
-                    }, receiveValue: { [weak self] coinDetails in
-                        guard let self = self else { return }
+                    }, receiveValue: { coinDetails in
                         
                         var totalValue: Double = 0.0
                         var totalPriceChange: Double = 0.0
@@ -120,12 +121,13 @@ final class HomePageViewModel: ObservableObject {
         fetchCoinsUseCase.execute()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
                 switch completion {
                 case .finished:
-                    self?.isLoading = false
+                    self.isLoading = false
                 case .failure(let networkError):
-                    self?.isLoading = false
-                    self?.error = networkError.localizedDescription
+                    self.isLoading = false
+                    self.error = networkError.localizedDescription
                 }
             }, receiveValue: { [weak self] coins in
                 self?.coins = coins

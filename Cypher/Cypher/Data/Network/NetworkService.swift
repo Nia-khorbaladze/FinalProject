@@ -48,4 +48,8 @@ final class NetworkService: NetworkServiceProtocol {
             }
             .eraseToAnyPublisher()
     }
+    
+    deinit {
+        session.finishTasksAndInvalidate()
+    }
 }
