@@ -130,22 +130,27 @@ final class HomePageViewController: UIViewController {
         
     }
     
+    // MARK: - Functions
     private func openProfilePopup() {
         blurEffectService.addBlurEffect(to: view)
-        let profilePopupVC = ProfilePopupViewController(blurEffectService: blurEffectService, viewModel: ProfilePopupViewModel())
-        profilePopupVC.modalPresentationStyle = .pageSheet
-        profilePopupVC.sheetPresentationController?.delegate = profilePopupVC
+        let profilePopupVC = ProfilePopupViewController(blurEffectService: blurEffectService, viewModel: Dependencies.shared.makeProfilePopupViewModel())
 
-        if let sheet = profilePopupVC.sheetPresentationController {
+        profilePopupVC.delegate = self
+        
+        let profilePopupNavigationVC = UINavigationController(rootViewController: profilePopupVC)
+        profilePopupNavigationVC.modalPresentationStyle = .pageSheet
+        profilePopupVC.sheetPresentationController?.delegate = profilePopupVC
+        
+        if let sheet = profilePopupNavigationVC.sheetPresentationController {
             sheet.detents = [
                 .custom { context in
-                    return 200
+                    return 300
                 }
             ]
             sheet.preferredCornerRadius = 40
         }
         
-        present(profilePopupVC, animated: true)
+        present(profilePopupNavigationVC, animated: true)
     }
     
     private func navigateToCoinDetails(coinName: String) {
@@ -170,5 +175,13 @@ final class HomePageViewController: UIViewController {
     private func navigateToBuyView() {
         let selectCoinVC = ViewControllerFactory().makeSelectCoinViewController()
         self.navigationController?.pushViewController(selectCoinVC, animated: true)
+    }
+}
+
+// MARK: - Extensions
+extension HomePageViewController: ProfilePopupViewControllerDelegate {
+    func didTapEditProfile() {
+        let viewController = ManageProfileViewController()
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }

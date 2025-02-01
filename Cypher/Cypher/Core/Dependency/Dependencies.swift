@@ -42,6 +42,10 @@ final class Dependencies {
         HistoryRepository(networkService: networkService)
     }()
     
+    private(set) lazy var usernameRepository: UsernameRepository = {
+        UsernameRepository()
+    }()
+    
     // MARK: - Use Cases
     private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCase = {
         FetchCoinDetailUseCase(repository: coinRepository)
@@ -67,6 +71,10 @@ final class Dependencies {
         SavePurchasedCoinUseCase(purchasedCoinRepository: purchasedCoinRepository)
     }()
     
+    private(set) lazy var saveUsernameUseCase: SaveUsernameUseCase = {
+        SaveUsernameUseCase(usernameRepository: usernameRepository)
+    }()
+    
     private let iconProvider = WalletIconProvider()
     
     private(set) lazy var walletAddressUseCase: WalletAddressUseCase = {
@@ -76,6 +84,15 @@ final class Dependencies {
     private(set) lazy var fetchPriceChangeUseCase = {
         FetchCoinPriceChangeUseCase(repository: historyRepository)
     }()
+
+    private(set) lazy var logoutUseCase: LogoutUseCase = {
+        LogoutUseCase()
+    }()
+
+    private(set) lazy var getUsernameUseCase: GetUsernameUseCase = {
+        GetUsernameUseCase(usernameRepository: usernameRepository)
+    }()
+
     
     // MARK: - View Models
     private(set) lazy var googleSignInViewModel: GoogleSignInViewModel = {
@@ -99,6 +116,17 @@ final class Dependencies {
             saveFavoriteUseCase: saveFavoriteCoinUseCase,
             removeFavoriteUseCase: removeFavoriteCoinUseCase,
             isFavoriteUseCase: isFavoriteCoinUseCase
+        )
+    }
+    
+    func makeCreateUsernameViewModel() -> CreateUsernameViewModel {
+        return CreateUsernameViewModel(saveUsernameUseCase: saveUsernameUseCase)
+    }
+    
+    func makeProfilePopupViewModel() -> ProfilePopupViewModel {
+        return ProfilePopupViewModel(
+            logoutUseCase: logoutUseCase,
+            getUsernameUseCase: getUsernameUseCase
         )
     }
     
