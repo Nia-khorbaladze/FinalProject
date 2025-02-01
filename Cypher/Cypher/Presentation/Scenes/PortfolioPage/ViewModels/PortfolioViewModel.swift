@@ -10,8 +10,8 @@ import Combine
 import FirebaseAuth
 
 final class PortfolioViewModel: ObservableObject {
-    private let fetchCoinsUseCase: FetchCoinsUseCase
-    private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase
+    private let fetchCoinsUseCase: FetchCoinsUseCaseProtocol
+    private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol
     private let fetchImagesUseCase: ImageUseCaseProtocol
 
     @Published var portfolioCoins: [PortfolioCoin] = []
@@ -19,7 +19,7 @@ final class PortfolioViewModel: ObservableObject {
     @Published var error: String?
     var cancellables = Set<AnyCancellable>()
 
-    init(fetchCoinsUseCase: FetchCoinsUseCase, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase, fetchImagesUseCase: ImageUseCaseProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol, fetchImagesUseCase: ImageUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
         self.fetchImagesUseCase = fetchImagesUseCase

@@ -47,19 +47,19 @@ final class Dependencies {
     }()
     
     // MARK: - Use Cases
-    private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCase = {
+    private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol = {
         FetchCoinDetailUseCase(repository: coinRepository)
     }()
     
-    private(set) lazy var saveFavoriteCoinUseCase: SaveFavoriteCoinUseCase = {
+    private(set) lazy var saveFavoriteCoinUseCase: SaveFavoriteCoinUseCaseProtocol = {
         SaveFavoriteCoinUseCase(repository: favoriteCoinsRepository)
     }()
     
-    private(set) lazy var removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase = {
+    private(set) lazy var removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCaseProtocol = {
         RemoveFavoriteCoinUseCase(repository: favoriteCoinsRepository)
     }()
     
-    private(set) lazy var isFavoriteCoinUseCase: IsFavoriteCoinUseCase = {
+    private(set) lazy var isFavoriteCoinUseCase: IsFavoriteCoinUseCaseProtocol = {
         IsFavoriteCoinUseCase(repository: favoriteCoinsRepository)
     }()
     
@@ -71,21 +71,21 @@ final class Dependencies {
         SavePurchasedCoinUseCase(purchasedCoinRepository: purchasedCoinRepository)
     }()
     
-    private(set) lazy var saveUsernameUseCase: SaveUsernameUseCase = {
+    private(set) lazy var saveUsernameUseCase: SaveUsernameUseCaseProtocol = {
         SaveUsernameUseCase(usernameRepository: usernameRepository)
     }()
     
     private let iconProvider = WalletIconProvider()
     
-    private(set) lazy var getWalletAddressUseCase: GetWalletAddressUseCase = {
+    private(set) lazy var getWalletAddressUseCase: GetWalletAddressUseCaseProtocol = {
         GetWalletAddressUseCase(repository: walletAddressRepository, iconProvider: iconProvider)
     }()
 
-    private(set) lazy var saveWalletAddressUseCase: SaveWalletAddressUseCase = {
+    private(set) lazy var saveWalletAddressUseCase: SaveWalletAddressUseCaseProtocol = {
         SaveWalletAddressUseCase(repository: walletAddressRepository)
     }()
     
-    private(set) lazy var fetchPriceChangeUseCase = {
+    private(set) lazy var fetchPriceChangeUseCase: FetchCoinPriceChangeUseCaseProtocol = {
         FetchCoinPriceChangeUseCase(repository: historyRepository)
     }()
 

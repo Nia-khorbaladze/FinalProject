@@ -39,16 +39,16 @@ final class SwapViewModel: ObservableObject {
         didSet { startDebounceTimer() }
     }
 
-    private let fetchCoinsUseCase: FetchCoinsUseCase
+    private let fetchCoinsUseCase: FetchCoinsUseCaseProtocol
     private let getExchangeRateUseCase: GetExchangeRateUseCaseProtocol
-    private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase
+    private let fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol
     private var cancellables: Set<AnyCancellable> = []
     private let swapCoinsUseCase: SwapCoinsUseCaseProtocol
     
     private var timer: AnyCancellable?
     private var timeInterval: TimeInterval = 0.3
 
-    init(fetchCoinsUseCase: FetchCoinsUseCase, getExchangeRateUseCase: GetExchangeRateUseCaseProtocol, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCase, swapCoinsUseCase: SwapCoinsUseCaseProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol, getExchangeRateUseCase: GetExchangeRateUseCaseProtocol, fetchPurchasedCoinsUseCase: FetchPurchasedCoinsUseCaseProtocol, swapCoinsUseCase: SwapCoinsUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.getExchangeRateUseCase = getExchangeRateUseCase
         self.fetchPurchasedCoinsUseCase = fetchPurchasedCoinsUseCase
@@ -61,17 +61,20 @@ final class SwapViewModel: ObservableObject {
 
         fetchCoinsUseCase.execute()
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case .finished:
-                    self?.isLoading = false
-                case .failure(let networkError):
-                    self?.isLoading = false
-                    self?.error = networkError.localizedDescription
+            .sink(
+                receiveCompletion: { [weak self] (completion: Subscribers.Completion<NetworkError>) in
+                    switch completion {
+                    case .finished:
+                        self?.isLoading = false
+                    case .failure(let networkError):
+                        self?.isLoading = false
+                        self?.error = networkError.localizedDescription
+                    }
+                },
+                receiveValue: { [weak self] (coins: [CoinResponse]) in
+                    self?.coins = coins
                 }
-            }, receiveValue: { [weak self] coins in
-                self?.coins = coins
-            })
+            )
             .store(in: &cancellables)
     }
 

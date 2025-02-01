@@ -10,11 +10,11 @@ import Combine
 import FirebaseAuth
 
 final class DetailsPageViewModel: ObservableObject {
-    private let fetchCoinDetailUseCase: FetchCoinDetailUseCase
-    private let fetchPriceChangeUseCase: FetchCoinPriceChangeUseCase
-    private let saveFavoriteUseCase: SaveFavoriteCoinUseCase
-    private let removeFavoriteUseCase: RemoveFavoriteCoinUseCase
-    private let isFavoriteUseCase: IsFavoriteCoinUseCase
+    private let fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol
+    private let fetchPriceChangeUseCase: FetchCoinPriceChangeUseCaseProtocol
+    private let saveFavoriteUseCase: SaveFavoriteCoinUseCaseProtocol
+    private let removeFavoriteUseCase: RemoveFavoriteCoinUseCaseProtocol
+    private let isFavoriteUseCase: IsFavoriteCoinUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
     @Published var coinDetail: CoinDetailModel?
@@ -23,7 +23,7 @@ final class DetailsPageViewModel: ObservableObject {
     @Published var isFavorited: Bool = false
     @Published var priceHistory: [String: [Double]] = [:]
     
-    init(fetchCoinDetailUseCase: FetchCoinDetailUseCase, fetchPriceChangeUseCase: FetchCoinPriceChangeUseCase, saveFavoriteUseCase: SaveFavoriteCoinUseCase, removeFavoriteUseCase: RemoveFavoriteCoinUseCase, isFavoriteUseCase: IsFavoriteCoinUseCase) {
+    init(fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol, fetchPriceChangeUseCase: FetchCoinPriceChangeUseCaseProtocol, saveFavoriteUseCase: SaveFavoriteCoinUseCaseProtocol, removeFavoriteUseCase: RemoveFavoriteCoinUseCaseProtocol, isFavoriteUseCase: IsFavoriteCoinUseCaseProtocol) {
         self.fetchCoinDetailUseCase = fetchCoinDetailUseCase
         self.fetchPriceChangeUseCase = fetchPriceChangeUseCase
         self.saveFavoriteUseCase = saveFavoriteUseCase

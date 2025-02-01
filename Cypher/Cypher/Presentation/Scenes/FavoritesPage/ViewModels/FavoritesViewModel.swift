@@ -11,8 +11,8 @@ import FirebaseAuth
 import UIKit
 
 final class FavoritesViewModel: ObservableObject {
-    private let fetchCoinsUseCase: FetchCoinsUseCase
-    private let fetchFavoritesUseCase: FetchFavoritesUseCase
+    private let fetchCoinsUseCase: FetchCoinsUseCaseProtocol
+    private let fetchFavoritesUseCase: FetchFavoritesUseCaseProtocol
     private let fetchImagesUseCase: ImageUseCaseProtocol
     
     @Published var favoriteCoins: [FavoriteCoin] = []
@@ -20,7 +20,7 @@ final class FavoritesViewModel: ObservableObject {
     @Published var error: String?
     var cancellables = Set<AnyCancellable>()
     
-    init(fetchCoinsUseCase: FetchCoinsUseCase, fetchFavoritesUseCase: FetchFavoritesUseCase, fetchImagesUseCase: ImageUseCaseProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol, fetchFavoritesUseCase: FetchFavoritesUseCaseProtocol, fetchImagesUseCase: ImageUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.fetchFavoritesUseCase = fetchFavoritesUseCase
         self.fetchImagesUseCase = fetchImagesUseCase

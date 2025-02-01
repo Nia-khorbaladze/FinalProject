@@ -11,7 +11,7 @@ import FirebaseAuth
 
 final class HomePageViewModel: ObservableObject {
     
-    private let fetchCoinsUseCase: FetchCoinsUseCase
+    private let fetchCoinsUseCase: FetchCoinsUseCaseProtocol
     private let purchasedCoinUseCase: FetchPurchasedCoinsUseCaseProtocol
     private let fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol
     
@@ -27,7 +27,7 @@ final class HomePageViewModel: ObservableObject {
     
     private var cancellables: Set<AnyCancellable> = []
     
-    init(fetchCoinsUseCase: FetchCoinsUseCase, purchasedCoinUseCase: FetchPurchasedCoinsUseCaseProtocol, fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol) {
+    init(fetchCoinsUseCase: FetchCoinsUseCaseProtocol, purchasedCoinUseCase: FetchPurchasedCoinsUseCaseProtocol, fetchCoinDetailUseCase: FetchCoinDetailUseCaseProtocol) {
         self.fetchCoinsUseCase = fetchCoinsUseCase
         self.purchasedCoinUseCase = purchasedCoinUseCase
         self.fetchCoinDetailUseCase = fetchCoinDetailUseCase
