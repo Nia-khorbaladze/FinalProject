@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 
 final class CreateUsernameViewController: UIViewController {
+    private let viewModel: CreateUsernameViewModel
     private var buttonBottomConstraint: NSLayoutConstraint!
     private var isSaveButtonActive = false {
         didSet {
@@ -80,7 +81,7 @@ final class CreateUsernameViewController: UIViewController {
                 title: "Save",
                 isActive: isSaveButtonActive,
                 action: { [weak self] in
-                    
+                    self?.saveUsername()
                 }
             )
         )
@@ -88,6 +89,15 @@ final class CreateUsernameViewController: UIViewController {
         hostingController.view.backgroundColor = .clear
         return hostingController
     }()
+    
+    init(viewModel: CreateUsernameViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -193,10 +203,33 @@ final class CreateUsernameViewController: UIViewController {
         saveButton.rootView = PrimaryButton(
             title: "Next",
             isActive: isSaveButtonActive,
-            action: {
-                
+            action: { [weak self] in
+                self?.saveUsername()
             }
         )
+    }
+    
+    private func saveUsername() {
+        guard let username = usernameTextField.text, !username.isEmpty else {
+            print("Username is empty!")
+            return
+        }
+        
+        Task { [weak self] in
+            do {
+                try await self?.viewModel.saveUsername(username: username)
+                DispatchQueue.main.async {
+                    self?.navigateToSuccessPage()
+                }
+            } catch {
+                print("Failed to save username: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func navigateToSuccessPage() {
+        let viewController = SuccessfulUsernameChangeViewController()
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
 

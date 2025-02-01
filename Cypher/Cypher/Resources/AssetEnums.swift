@@ -24,6 +24,7 @@ public enum Icons: String {
     case emptyPortfolio = "emptyPortfolio"
     case successfulTransaction = "successfulTransaction"
     case copy = "copy"
+    case successfulChange = "successfulChange"
 }
 
 public enum AppColors: String {

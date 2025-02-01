@@ -42,6 +42,10 @@ final class Dependencies {
         HistoryRepository(networkService: networkService)
     }()
     
+    private(set) lazy var usernameRepository: UsernameRepository = {
+        UsernameRepository()
+    }()
+    
     // MARK: - Use Cases
     private(set) lazy var fetchCoinDetailUseCase: FetchCoinDetailUseCase = {
         FetchCoinDetailUseCase(repository: coinRepository)
@@ -65,6 +69,10 @@ final class Dependencies {
     
     private(set) lazy var savePurchasedCoinUseCase: SavePurchasedCoinUseCase = {
         SavePurchasedCoinUseCase(purchasedCoinRepository: purchasedCoinRepository)
+    }()
+    
+    private(set) lazy var saveUsernameUseCase: SaveUsernameUseCase = {
+        SaveUsernameUseCase(usernameRepository: usernameRepository)
     }()
     
     private let iconProvider = WalletIconProvider()
@@ -100,6 +108,10 @@ final class Dependencies {
             removeFavoriteUseCase: removeFavoriteCoinUseCase,
             isFavoriteUseCase: isFavoriteCoinUseCase
         )
+    }
+    
+    func makeCreateUsernameViewModel() -> CreateUsernameViewModel {
+        return CreateUsernameViewModel(saveUsernameUseCase: saveUsernameUseCase)
     }
     
     private init() {

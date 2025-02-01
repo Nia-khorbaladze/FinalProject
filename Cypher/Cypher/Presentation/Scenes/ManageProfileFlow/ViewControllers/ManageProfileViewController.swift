@@ -163,7 +163,8 @@ final class ManageProfileViewController: UIViewController {
     }
     
     private func navigateToUsernameCreationPage() {
-        let viewController = CreateUsernameViewController()
+        let viewModel = Dependencies.shared.makeCreateUsernameViewModel()
+        let viewController = CreateUsernameViewController(viewModel: viewModel)
         navigationController?.pushViewController(viewController, animated: true)
     }
 }
