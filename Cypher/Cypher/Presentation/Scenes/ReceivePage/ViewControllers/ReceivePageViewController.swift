@@ -54,6 +54,7 @@ final class ReceivePageViewController: UIViewController {
         return label
     }()
     
+    // MARK: - Initializers
     init(viewModel: WalletViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -63,6 +64,7 @@ final class ReceivePageViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -70,6 +72,7 @@ final class ReceivePageViewController: UIViewController {
         loadWalletData()
     }
     
+    // MARK: - UI Setup
     private func setup() {
         view.backgroundColor = UIColor(named: AppColors.backgroundColor.rawValue)
         view.addSubview(headerView)
@@ -99,6 +102,7 @@ final class ReceivePageViewController: UIViewController {
         ])
     }
     
+    // MARK: - Functions
     private func loadWalletData() {
         viewModel.walletAddresses = { [weak self] wallets in
             self?.walletData = wallets
