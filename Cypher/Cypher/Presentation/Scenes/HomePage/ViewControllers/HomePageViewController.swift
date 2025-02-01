@@ -148,6 +148,7 @@ final class HomePageViewController: UIViewController {
                 }
             ]
             sheet.preferredCornerRadius = 40
+            sheet.delegate = profilePopupVC
         }
         
         present(profilePopupNavigationVC, animated: true)
