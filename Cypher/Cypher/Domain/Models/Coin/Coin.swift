@@ -13,7 +13,7 @@ struct CoinResponse: Identifiable, Codable {
     let symbol: String
     let name: String
     let currentPrice: Double
-    let priceChangePercentage24h: Double
+    let priceChangePercentage24h: Double?
     let marketCap: Double
     let imageURL: String
     var image: UIImage? = nil

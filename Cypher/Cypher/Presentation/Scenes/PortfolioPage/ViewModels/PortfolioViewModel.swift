@@ -65,7 +65,7 @@ final class PortfolioViewModel: ObservableObject {
                                         totalAmount: purchasedCoin.totalAmount,
                                         currentPrice: marketCoin.currentPrice,
                                         worthInUSD: purchasedCoin.totalAmount * marketCoin.currentPrice,
-                                        changePercentage24h: marketCoin.priceChangePercentage24h,
+                                        changePercentage24h: marketCoin.priceChangePercentage24h ?? 0,
                                         imageURL: marketCoin.imageURL,
                                         image: marketCoin.image
                                     )
