@@ -67,7 +67,7 @@ final class FavoritesViewModel: ObservableObject {
                                         image: marketCoin.image,
                                         imageURL: marketCoin.imageURL,
                                         currentPrice: marketCoin.currentPrice,
-                                        changePercentage24h: marketCoin.priceChangePercentage24h,
+                                        changePercentage24h: marketCoin.priceChangePercentage24h ?? 0,
                                         symbol: marketCoin.symbol
                                     )
                                 }

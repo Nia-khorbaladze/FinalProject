@@ -41,9 +41,9 @@ struct CoinRowView: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 2) {
-                Text("\(coin.priceChangePercentage24h >= 0 ? "+" : "")\(String(format: "%.2f", coin.priceChangePercentage24h))%")
+                Text("\(coin.priceChangePercentage24h ?? 0 >= 0 ? "+" : "")\(String(format: "%.2f", coin.priceChangePercentage24h ?? 0))%")
                     .font(Fonts.semiBold.size(18))
-                    .foregroundColor(coin.priceChangePercentage24h >= 0 ? Color(AppColors.green.rawValue) : Color(AppColors.red.rawValue))
+                    .foregroundColor(coin.priceChangePercentage24h ?? 0 >= 0 ? Color(AppColors.green.rawValue) : Color(AppColors.red.rawValue))
                 Text("$\(String(format: "%.2f", coin.currentPrice))")
                     .font(Fonts.medium.size(13))
                     .foregroundColor(Color(AppColors.lightGrey.rawValue))

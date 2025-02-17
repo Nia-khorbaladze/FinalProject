@@ -44,9 +44,9 @@ struct TrendingCoinRow: View {
                 Text(String(format: "%.2f $", coin.currentPrice))
                     .font(Fonts.medium.size(15))
                     .foregroundStyle(Color(AppColors.white.rawValue))
-                Text(String(format: "%.2f%%", coin.priceChangePercentage24h))
+                Text(String(format: "%.2f%%", coin.priceChangePercentage24h ?? 0))
                     .font(Fonts.regular.size(16))
-                    .foregroundColor(coin.priceChangePercentage24h >= 0 ? Color(AppColors.green.rawValue) : Color(AppColors.red.rawValue))
+                    .foregroundColor(coin.priceChangePercentage24h ?? 0 >= 0 ? Color(AppColors.green.rawValue) : Color(AppColors.red.rawValue))
             }
         }
         .padding(.vertical, 8)
